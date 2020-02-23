@@ -1,7 +1,7 @@
 <template>
   <footer class="footer text-center">
     <div class="container p-3">
-      <span class="text-muted">&copy; {{date}} <a class="specColor" href="http://www.mis.ui.edu.ng">Information Technology and Media Services</a> (ITeMS), University of Ibadan </span>
+      <span class="text-muted">&copy; {{date}} <a class="blueColor" href="http://uiballot.ng">The UI Ballot Team</a>, All Rights Reserved. </span>
     </div>
   </footer>
 </template>

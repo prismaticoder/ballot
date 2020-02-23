@@ -2,16 +2,16 @@
   <div class="container mt-4">
     <h4 class="text-center mt-5"><span class="redColor text-uppercase">{{region.name}}</span> VOTERS</h4>
 
-    <form action="" class="voterForm" >
+    <form action="" class="voterForm mt-4 mb-5" >
     <div class="input-group mb-3 col-md-5 mx-auto">
-            <input type="search" v-model="matric" id="voterText" class="form-control" placeholder="Enter a Matric Number" aria-label="Enter Matric Number" aria-describedby="basic-addon2">
+            <input type="search" v-model="matric" id="voterText" class="form-control" placeholder="Search Voters By Matric..." aria-label="Enter Matric Number" aria-describedby="basic-addon2">
             <div class="input-group-append">
             <button @click.prevent="getMatric(matric)" class="btn myBtn voterBtn" type="submit"><i class="fa fa-search" style="color: #BF1111;"></i></button>
             </div>
     </div>
     </form>
 
-    <table class="table table-sm">
+    <table class="table mt-1 table-sm table-bordered">
         <thead class="blueColor">
             <tr>
                 <th>S/N</th>
