@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         init() {
-            axios.get('http://localhost:4010/ransome-kuti/admin/candidates')
+            axios.get('http://localhost:4010/arts/admin/candidates')
             .then(res => {
                 if (res.data.ok) {
                     this.candidates = res.data.candidates
@@ -37,16 +37,31 @@ export default {
             .catch(err => console.log(err))
         },
         acceptCandidate(id) {
-            axios.post(`http://localhost:4010/ransome-kuti/admin/candidates/${id}/confirm`)
-            .then(res => {console.log(res)
-            this.init()})
+            axios.post(`http://localhost:4010/arts/admin/candidates/${id}/confirm`)
+            .then(res => {
+                if (res.data.ok) {
+                    console.log(res)
+                    this.candidates.forEach(candidate => {
+                        if (candidate.id == id) {
+                            candidate.status = "confirmed"
+                        }
+                    })
+                }
+                else {
+                    alert(res.data.message)
+                }
+                this.init()})
             .catch(err => console.log(err))
         },
         rejectCandidate(id) {
-            axios.post(`http://localhost:4010/ransome-kuti/admin/candidates/${id}/deny`)
+            axios.post(`http://localhost:4010/arts/admin/candidates/${id}/deny`)
             .then(res => {
-                console.log(res)
-                this.init()
+                if (res.data.ok) {
+                    this.candidates = this.candidates.filter(candidate => candidate.id !== id)
+                }
+                else {
+                    alert (res.data.message)
+                }
                 })
             .catch(err => console.log(err))
         }
