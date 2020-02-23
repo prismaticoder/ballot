@@ -21,7 +21,7 @@
         <table class="table table-sm table-bordered mt-1">
             <thead class="blueColor">
             <tr>
-                <!-- <th class="text-center">S/N</th> -->
+                <th class="text-center">S/N</th>
                 <th class="text-center">Matric</th>
                 <th class="text-center">Name</th>
                 <!-- <th class="text-center">Category</th> -->
@@ -32,7 +32,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-bind:key="candidate.id" v-for="candidate in candidates">
+            <tr v-bind:key="candidate.id" v-for="(candidate, index) in candidates">
+                <td>{{index+1}}</td>
                 <td>{{candidate.matric}}</td>
                 <td class="text-capitalize fullName">{{candidate.fullName}}</td>
                 <td>{{candidate.level}}</td>
