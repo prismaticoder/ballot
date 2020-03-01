@@ -38,6 +38,30 @@
         </tbody>
         
     </table>
+
+
+    <nav v-show="!showVisible" class="mt-4" v-if="pages > 1" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li v-if="currentPage == 1" class="page-item disabled">
+                <span class="page-link" tabindex="-1">Previous</span>
+            </li>
+            <li class="page-item" v-else>
+                <span class="page-link" @click="getPage(parseInt(currentPage) - 1)">Previous</span>
+            </li>
+
+            <li v-bind:key="page" v-bind:class="{'page-item':true, 'active':(page == currentPage)}" v-for="page in pages">
+                <span v-if="page == currentPage" @click="getPage(page)" class="page-link active">{{page}}</span>
+                <span v-else @click="getPage(page)" class="page-link">{{page}}</span>
+            </li>
+
+           <li v-if="currentPage == pages" class="page-item disabled">
+                <span class="page-link" tabindex="-1">Next</span>
+            </li>
+            <li class="page-item" v-else>
+                <span class="page-link" @click="getPage(parseInt(currentPage) + 1)">Next</span>
+            </li>
+        </ul>
+    </nav>
     <div class="col-md-8 mx-auto text-center" v-if="showVisible">
         <a @click.prevent="init" class="backBtn specColor" href="">Back to Main List</a>
     </div>
@@ -56,23 +80,29 @@ export default {
             voters: [],
             region: {},
             matric: '',
+            pages: '',
+            currentPage: null,
+            nextPage: '',
             showVisible: false
         }
     },
     methods: {
         init() {
-            axios.get('http://localhost:4010/sultan-bello/admin/voters')
+            axios.get('http://localhost:4010/queen-idia/admin/voters')
             .then(res => {
                 if (res.data.ok) {
                     this.voters = res.data.voters;
                     this.region = res.data.region;
+                    this.pages = res.data.totalPages;
+                    this.nextPage = res.data.nextPage;
+                    this.currentPage = res.data.currentPage
                     this.showVisible = false;
                 }
             })
             .catch(err => console.log(err))
         },
         getMatric(matric) {
-            axios.get(`http://localhost:4010/sultan-bello/admin/voters/search?q=${matric}`)
+            axios.get(`http://localhost:4010/queen-idia/admin/voters/search?q=${matric}`)
             .then(res => {
                 if (res.data.ok) {
                     this.voters = [res.data.voter];
@@ -80,6 +110,20 @@ export default {
                 }
                 else {
                     alert (res.data.message)
+                }
+            })
+            .catch(err => console.log(err))
+        },
+        getPage(page) {
+            axios.get(`http://localhost:4010/queen-idia/admin/voters?page=${page}`)
+            .then(res => {
+                if (res.data.ok) {
+                    this.voters = res.data.voters;
+                    this.region = res.data.region;
+                    this.pages = res.data.totalPages;
+                    this.currentPage = res.data.currentPage
+                    this.nextPage = res.data.nextPage;
+                    this.showVisible = false;
                 }
             })
             .catch(err => console.log(err))

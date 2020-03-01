@@ -1,17 +1,18 @@
 <template>
 
-  <nav class="navbar navbar-expand-lg sticky-top navbar-light p-3">
+    <nav class="myNav navbar navbar-expand-lg sticky-top navbar-light p-3">
         <a class="navbar-brand" href="/">
             <span class="main-logo">
                 <!-- <img class="rounded-circle inline" src="/images/archive.svg" alt="UI Logo" srcset="" width="30" height="30" style="border: solid #162059 1px; padding: 5px;">  -->
-                BALLOT</span>
+                BALLOT
+            </span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse col-md-2 mx-auto" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul v-if="!(path.includes('admin'))" class="navbar-nav mr-auto">
                  <router-link to="/" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
                  </router-link>
@@ -25,6 +26,21 @@
                     <a class="nav-link">REGISTER</a>
                  </router-link>
             </ul>
+            <ul v-else class="navbar-nav mr-auto">
+                 <router-link to="/admin" exact tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">HOME</a>
+                 </router-link>
+                  <router-link to="/admin/voters" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">VOTERS</a>
+                 </router-link>
+                  <router-link to="/admin/candidates" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">CANDIDATES</a>
+                 </router-link>
+                  <router-link to="/admin/settings" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">SETTINGS</a>
+                 </router-link>
+            </ul>
+
             <!-- <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
             <!-- <button class="btn btn-outline-dark col-sm-2" type="submit">VOTE</button> -->
@@ -35,7 +51,12 @@
 
 <script>
 export default {
-    name: "Header"
+    name: "Header",
+    data() {
+        return {
+            path: location.pathname
+        }
+    }
 }
 </script>
 
@@ -47,7 +68,7 @@ export default {
 
 @import "../assets/sticky-footer.css";
 
-nav {
+nav.myNav {
             /* font-family: 'Roboto', sans-serif; */
             /* /* font-family: 'Lato', sans-serif; */
             font-family: 'Abel', sans-serif;
@@ -68,10 +89,14 @@ nav {
         body {
             font-family: 'Ubuntu', sans-serif;
         }
-        h1 {
+        h1,h2 {
             font-family: 'Abel', sans-serif;
             color: #162059;
             font-size: 2.6rem;
+        }
+        h3,h4,h5,h6 {
+            font-family: 'Abel', sans-serif;
+            color: #162059;
         }
         .myBtn {
             background-color: #162059;
@@ -98,6 +123,18 @@ nav {
         li.nav-item>a:hover, li.active>a{
             border-bottom:solid #162059 2px;
         }
+        .blueColor {
+        color : #162059;
+       }
+       .redColor {
+        color: #BF1111;
+       }
+       .editor {
+           cursor:pointer
+       }
+       .editor:hover {
+        background-color:rgba(0,0,0,.03)
+       }
 
 
 </style>
