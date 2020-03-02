@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Candidates from '../components/Candidates.vue'
+import AdminHome from '../views/admin/Home.vue'
+import Voters from '../views/admin/Voters.vue'
+import Candidates from '../views/admin/Candidates.vue'
 
 Vue.use(VueRouter)
 
@@ -22,14 +24,24 @@ const routes = [
   {
     path: '/admin',
     name: 'admin-home',
-    component: Candidates,
+    component: AdminHome,
     // children: [
     //   {
-    //     path: '/candidates',
-    //     name: 'candidates',
-    //     component: Candidates
+    //     // path: '/voters',
+    //     // name: 'voters',
+    //     // component: Voters
     //   },
     // ]
+  },
+  {
+    path: '/admin/voters',
+    name: 'voters',
+    component: Voters
+  },
+  {
+    path: '/admin/candidates',
+    name: 'candidates',
+    component: Candidates
   }
 
 ]
