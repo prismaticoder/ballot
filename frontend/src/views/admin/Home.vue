@@ -2,7 +2,7 @@
   <div class="container mt-4">
       <h2 class="text-center mt-5"><span class="redColor text-uppercase">{{region}}</span> ADMIN DASHBOARD</h2>
       <div class="row mt-5">
-          <ElectionTimer v-bind:time="time" :currentDay="currentDay" :currentHour="currentHour" :currentMin="currentMin" :currentSec="currentSec"/>
+          <ElectionTimer v-bind:time="time" v-on:changeTime="changeTime" :currentDay="currentDay" :currentHour="currentHour" :currentMin="currentMin" :currentSec="currentSec"/>
             <CandidateCounter :totalCount="totalCount" :pending="pending" :confirmed="confirmed"/>
       </div>
       
@@ -55,6 +55,15 @@ export default {
             })
             .catch(err => console.log(err))
         },
+        changeTime() {
+            axios.get(`http://localhost:4010/law/admin/settings`)
+            .then(res => {
+                if (res.data.ok) {
+                    this.time = res.data.setting.endDate;
+                }
+            })
+            .catch(err => console.log(err))
+        }
     },
     created() {
         this.getTime();
