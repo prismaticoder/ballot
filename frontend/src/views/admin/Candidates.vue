@@ -69,16 +69,19 @@ export default {
     },
     methods: {
         init() {
-            axios.get("http://localhost:4010/sultan-bello/admin/candidates")
+            axios.get("http://localhost:4010/law/admin/candidates")
             .then(res => {
                 if (res.data.ok) {
                     this.candidates = res.data.candidates
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                alert("Sorry, there was an error connecting to the server. Please check your internet connection and try again")
+                })
         },
         acceptCandidate(id) {
-            axios.post(`http://localhost:4010/sultan-bello/admin/candidates/${id}/confirm`)
+            axios.post(`http://localhost:4010/law/admin/candidates/${id}/confirm`)
             .then(res => {
                 if (res.data.ok) {
                     console.log(res)
@@ -95,7 +98,7 @@ export default {
             .catch(err => console.log(err))
         },
         rejectCandidate(id) {
-            axios.post(`http://localhost:4010/sultan-bello/admin/candidates/${id}/deny`)
+            axios.post(`http://localhost:4010/law/admin/candidates/${id}/deny`)
             .then(res => {
                 if (res.data.ok) {
                     this.candidates = this.candidates.filter(candidate => candidate.id !== id)
@@ -107,7 +110,7 @@ export default {
             .catch(err => console.log(err))
         },
         filterCandidates(value) {
-            axios.get(`http://localhost:4010/sultan-bello/admin/candidates?status=${value}`)
+            axios.get(`http://localhost:4010/law/admin/candidates?status=${value}`)
             .then(res => {
                 if (res.data.ok) {
                     this.candidates = res.data.candidates

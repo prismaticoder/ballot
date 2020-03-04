@@ -26,7 +26,8 @@
         </thead>
         <tbody id="tableBody">
                 <tr v-bind:key="voter.id" v-for="(voter, index) in voters">
-                    <td>{{index+1}}</td>
+                    <!-- The "10" here is dependent on what is in the perPage attribute -->
+                    <td>{{(10 * (currentPage - 1)) + index+1}}</td>
                     <td>{{ voter.matric }}</td>
                     <td class="text-capitalize">{{ voter.firstName.toLowerCase() }}</td>
                     <td class="text-capitalize">{{ voter.lastName.toLowerCase() }}</td>
@@ -46,19 +47,19 @@
                 <span class="page-link" tabindex="-1">Previous</span>
             </li>
             <li class="page-item" v-else>
-                <span class="page-link" @click="getPage(parseInt(currentPage) - 1)">Previous</span>
+                <a href="#" class="page-link" @click.prevent="getPage(parseInt(currentPage) - 1)">Previous</a>
             </li>
 
             <li v-bind:key="page" v-bind:class="{'page-item':true, 'active':(page == currentPage)}" v-for="page in pages">
-                <span v-if="page == currentPage" @click="getPage(page)" class="page-link active">{{page}}</span>
-                <span v-else @click="getPage(page)" class="page-link">{{page}}</span>
+                <a href="#" v-if="page == currentPage" @click.prevent="getPage(page)" class="page-link active">{{page}}</a>
+                <a href="#" v-else @click.prevent="getPage(page)" class="page-link">{{page}}</a>
             </li>
 
            <li v-if="currentPage == pages" class="page-item disabled">
-                <span class="page-link" tabindex="-1">Next</span>
+                <a href="" class="page-link" tabindex="-1">Next</a>
             </li>
             <li class="page-item" v-else>
-                <span class="page-link" @click="getPage(parseInt(currentPage) + 1)">Next</span>
+                <a href="#" class="page-link" tabindex="-1" @click.prevent="getPage(parseInt(currentPage) + 1)">Next</a>
             </li>
         </ul>
     </nav>
@@ -88,7 +89,7 @@ export default {
     },
     methods: {
         init() {
-            axios.get('http://localhost:4010/queen-idia/admin/voters')
+            axios.get('http://localhost:4010/law/admin/voters?perPage=10')
             .then(res => {
                 if (res.data.ok) {
                     this.voters = res.data.voters;
@@ -102,7 +103,7 @@ export default {
             .catch(err => console.log(err))
         },
         getMatric(matric) {
-            axios.get(`http://localhost:4010/queen-idia/admin/voters/search?q=${matric}`)
+            axios.get(`http://localhost:4010/law/admin/voters/search?q=${matric}`)
             .then(res => {
                 if (res.data.ok) {
                     this.voters = [res.data.voter];
@@ -115,7 +116,7 @@ export default {
             .catch(err => console.log(err))
         },
         getPage(page) {
-            axios.get(`http://localhost:4010/queen-idia/admin/voters?page=${page}`)
+            axios.get(`http://localhost:4010/law/admin/voters?page=${page}&perPage=10`)
             .then(res => {
                 if (res.data.ok) {
                     this.voters = res.data.voters;
