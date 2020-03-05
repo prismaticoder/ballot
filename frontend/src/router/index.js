@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 import AdminHome from '../views/admin/Home.vue'
 import Voters from '../views/admin/Voters.vue'
 import Candidates from '../views/admin/Candidates.vue'
+import Settings from '../views/admin/Settings.vue'
+
 
 Vue.use(VueRouter)
 
@@ -42,7 +44,13 @@ const routes = [
     path: '/admin/candidates',
     name: 'candidates',
     component: Candidates
-  }
+  },
+  {
+    path: '/admin/settings',
+    name: 'settings',
+    component: Settings
+  },
+
 
 ]
 
