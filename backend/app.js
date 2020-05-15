@@ -2,35 +2,44 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var logger = require('morgan');
 var dotenv = require('dotenv');
-
 dotenv.config();
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
+var apiRouter = require('./routes/api');
 var usersRouter = require('./routes/users');
+var regionRouter = require('./routes/region');
+var candidateRouter = require('./routes/candidates')
+var adminRouter = require('./routes/admin');
+
+var { checkRegion,checkAdminState } = require('./controllers/middleware'); 
 
 var app = express();
-
-app.locals({
-  app: {
-    name: process.env.APP_NAME,
-    type: process.env.APP_TYPE
-  }
-})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({secret: process.env.SESSION_SECRET}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', apiRouter);
+app.use('/:region', checkRegion, regionRouter);
+app.use('/:region/candidates', checkRegion, candidateRouter);
+// app.use('/:region/admin/login', checkRegion, adminRouter);
+// app.use('/:region/admin', checkAdminState, checkRegion, adminRouter);
+app.use('/:region/admin', checkRegion, adminRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
