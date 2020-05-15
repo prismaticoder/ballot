@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Ballot | Page Not Found</title>
+    <title>Ballot | <%= title %></title>
     <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -39,10 +39,14 @@
         body {
             font-family: 'Ubuntu', sans-serif;
         }
-        h1 {
+        h1,h2 {
             font-family: 'Abel', sans-serif;
             color: #162059;
             font-size: 2.6rem;
+        }
+        h3,h4,h5,h6 {
+            font-family: 'Abel', sans-serif;
+            color: #162059;
         }
         .myBtn {
             background-color: #162059;
@@ -69,6 +73,27 @@
         li.nav-item>a:hover, li.active>a{
             border-bottom:solid #162059 2px;
         }
+
+        ol.breadcrumb {
+            background-color:rgba(0,0,0,.03)
+        }
+        ol.breadcrumb .specColor {
+            text-decoration: none;
+        }
+        ol.breadcrumb .specColor:hover {
+            text-decoration: underline;
+        }
+       .breadcrumb-active {
+           text-decoration: underline;
+           font-weight: bolder;
+           color: #BF1111;
+       }
+       .blueColor {
+        color : #162059;
+       }
+       .redColor {
+        color: #BF1111;
+       }
     </style>
   </head>
   <body>
@@ -83,14 +108,22 @@
 
         <div class="collapse navbar-collapse col-md-2 mx-auto" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/" style="">HOME <span class="sr-only">(current)</span></a>
+            <li class="nav-item <%= (page_name == 'home')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>">HOME <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/about" style="">ABOUT</a>
+            <li class="nav-item <%= (page_name == 'about')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>/vote">VOTE</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/regions" style="">REGIONS</a>
+            <li class="nav-item <%= (page_name == 'about')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>/vote">MANIFESTOES</a>
+            </li>
+            <li class="nav-item dropdown <%= (page_name == 'candidates')?"active":"" %>">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">CANDIDATES</a>
+                <div class="dropdown-menu">
+                    <a href="/<%= region.slug %>/candidates" class="dropdown-item">ALL CANDIDATES</a>
+                    <a href="/<%= region.slug %>/candidates/apply" class="dropdown-item">APPLY AS A CANDIDATE</a>
+                    <a href="/<%= region.slug %>/candidates/application-status" class="dropdown-item">CHECK APPLICATION STATUS</a>
+                </div>
             </li>
             </ul>
             <!-- <form class="form-inline my-2 my-lg-0">
@@ -99,24 +132,3 @@
             <!-- </form> -->
         </div>
     </nav>
-
-<div class="container text-center mt-4">
-    <h1> <span style="color: #BF1111;">ERROR</span> : <%= message %></h1>
-    <h2><%= error.status %></h2>
-
-    <a class="specColor" href="/">Go Home</a>
-
-    <p> <%= error.stack %> </p>
-</div>
-
-
-<%- include ('./partials/footer.ejs') %>
-
-
-
-
-
-
-
-
-

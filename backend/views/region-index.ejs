@@ -1,0 +1,24 @@
+<%- include ('./regions/partials/header.ejs') %> 
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="specColor" href="/">Home</a></li>
+    <li class="breadcrumb-item"><a class="specColor" href="/regions">Regions</a></li>
+    <li class="breadcrumb-item breadcrumb-active"><a style="color: #BF1111;" href="/<%= region.slug %> "><%= region.name %> </a class="specColor"></li>
+    <!-- <li class="breadcrumb-item active" aria-current="page">Data</li> -->
+</ol>
+
+<div class="container mt-5">
+    <h1 class="text-center">
+        <% if (region.type == "faculty" || region.type == "department") { %>
+         
+            <%= region.type.toUpperCase() %> OF <span style="color: #BF1111;"><%= region.name.toUpperCase() %></span>  
+
+        <% } else { %>
+
+            <span style="color: #BF1111;"><%= region.name.toUpperCase() %></span> <%= region.type.toUpperCase() %>
+            
+        <% }  %> 
+    </h1>
+</div>
+
+<%- include ('./partials/footer.ejs') %> 

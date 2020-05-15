@@ -1,0 +1,99 @@
+<%- include ('./admin/partials/header.ejs') %>
+
+<h4 class="text-center mt-5"><span class="redColor text-uppercase"><%= region.name %></span> VOTERS</h4>
+
+<form action="" class="voterForm" >
+<div class="input-group mb-3 col-md-5 mx-auto">
+        <input type="search" id="voterText" class="form-control" placeholder="Enter a Matric Number" aria-label="Enter Matric Number" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+        <button class="btn myBtn voterBtn" type="submit"><i class="fa fa-search" style="color: #BF1111;"></i></button>
+        </div>
+</div>
+</form>
+
+<div class="container">
+    <table class="table table-sm">
+        <thead class="blueColor">
+            <tr>
+                <th>S/N</th>
+                <th>Matric</th>
+                <th>Firstname</th>
+                <th>Surname</th>
+                <% if (region.type == 'hall') { %>
+                    <th>Faculty</th>
+                    <th>Department</th>
+                <% } else if (region.type == 'faculty') {%>
+                    <th>Department</th>
+                <% } %>
+                <th>Level</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <% voters.forEach((voter,index) => { %>
+                <tr>
+                    <td><%= index+1 %></td>
+                    <td><%= voter.matric %></td>
+                    <td class="text-capitalize"><%= voter.firstName.toLowerCase() %></td>
+                    <td class="text-capitalize"><%= voter.lastName.toLowerCase() %></td>
+                    <% if (region.type == 'hall') { %>
+                        <td><%= voter.faculty %></td>
+                        <td><%= voter.department %></td>
+                    <% } else if (region.type == 'faculty') {%>
+                        <td><%= voter.department %></td>
+                    <% } %>
+                    <td><%= voter.level %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+        <tfoot></tfoot>
+        
+        
+    </table>
+</div>
+
+
+<script>
+
+$('.voterForm').submit(function(event) {
+        event.preventDefault();
+        let val = $('#voterText').val();
+        let type = '<%= region.type %>';
+
+        if (val !== "") {
+
+        }
+        $.ajax({
+            method: 'GET',
+            data: {
+                q: val
+            },
+            url: `/`+ '<%= region.slug %>' + `/admin/voters/search`,
+            success: function(response) {
+                if (response.ok) {
+                    let { voter } = response;
+                    $('#tableBody').html(`<tr><td>-</td><td>${voter.matric}</td><td class="text-capitalize">${voter.firstName.toLowerCase()}</td><td class="text-capitalize">${voter.lastName.toLowerCase()}</td>`)
+                    if (type == 'hall') {
+                        $('#tableBody>tr').append(`<td>${voter.faculty}</td><td>${voter.department}</td>`)
+                    }
+                    else if (type == 'faculty') {
+                        $('#tableBody>tr').append(`<td>${voter.department}</td>`)
+                    } 
+                    $('#tableBody>tr').append(`<td>${voter.level}</td>`)   
+                }
+                else {
+                    $('#tableBody').html(`<td colspan='5' class="text-center redColor">${response.message}</td>`)
+                }
+
+                $('table>tfoot').html(`<td class="text-center" colspan='5'><a class="backBtn specColor" href="">Back to Main List</a></td>`)
+                
+                
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        })
+    })
+
+</script>
+
+<%- include ('./partials/footer.ejs') %> 

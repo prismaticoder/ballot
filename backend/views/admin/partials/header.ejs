@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Ballot | Page Not Found</title>
+    <title>Ballot Admin | <%= title %></title>
     <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -18,7 +18,7 @@
      <link href="/stylesheets/sticky-footer.css" rel="stylesheet">
 
     <style>
-        nav {
+       nav {
             /* font-family: 'Roboto', sans-serif; */
             /* /* font-family: 'Lato', sans-serif; */
             font-family: 'Abel', sans-serif;
@@ -39,10 +39,14 @@
         body {
             font-family: 'Ubuntu', sans-serif;
         }
-        h1 {
+        h1,h2 {
             font-family: 'Abel', sans-serif;
             color: #162059;
             font-size: 2.6rem;
+        }
+        h3,h4,h5,h6 {
+            font-family: 'Abel', sans-serif;
+            color: #162059;
         }
         .myBtn {
             background-color: #162059;
@@ -69,6 +73,33 @@
         li.nav-item>a:hover, li.active>a{
             border-bottom:solid #162059 2px;
         }
+
+        ol.breadcrumb {
+            background-color:rgba(0,0,0,.03)
+        }
+        ol.breadcrumb .specColor {
+            text-decoration: none;
+        }
+        ol.breadcrumb .specColor:hover {
+            text-decoration: underline;
+        }
+       .breadcrumb-active {
+           text-decoration: underline;
+           font-weight: bolder;
+           color: #BF1111;
+       }
+       .blueColor {
+        color : #162059;
+       }
+       .redColor {
+        color: #BF1111;
+       }
+       .editor {
+           cursor:pointer
+       }
+       .editor:hover {
+        background-color:rgba(0,0,0,.03)
+       }
     </style>
   </head>
   <body>
@@ -81,42 +112,30 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse col-md-2 mx-auto" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse col-md-6 mx-auto" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/" style="">HOME <span class="sr-only">(current)</span></a>
+            <li class="nav-item <%= (page_name == 'home')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>/admin" style="">HOME<span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/about" style="">ABOUT</a>
+            <li class="nav-item <%= (page_name == 'voters')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>/admin/voters" style="">VOTERS</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/regions" style="">REGIONS</a>
+            <li class="nav-item <%= (page_name == 'candidates')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>/admin/candidates" style="">CANDIDATES</a>
             </li>
+            <li class="nav-item <%= (page_name == 'settings')?"active":"" %>">
+                <a class="nav-link" href="/<%= region.slug %>/admin/settings" style="">SETTINGS</a>
+            </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/<%= region.slug %>/admin/logout" style="color:#162059"><i class="fa fa-user"></i> LOGOUT</a>
+                </li>
             </ul>
             <!-- <form class="form-inline my-2 my-lg-0">
             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
             <!-- <button class="btn btn-outline-dark col-sm-2" type="submit">VOTE</button> -->
             <!-- </form> -->
         </div>
+        
     </nav>
-
-<div class="container text-center mt-4">
-    <h1> <span style="color: #BF1111;">ERROR</span> : <%= message %></h1>
-    <h2><%= error.status %></h2>
-
-    <a class="specColor" href="/">Go Home</a>
-
-    <p> <%= error.stack %> </p>
-</div>
-
-
-<%- include ('./partials/footer.ejs') %>
-
-
-
-
-
-
-
-
-

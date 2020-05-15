@@ -1,0 +1,28 @@
+<%- include ('./regions/partials/header.ejs') %>
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="specColor" href="/">Home</a></li>
+    <li class="breadcrumb-item"><a class="specColor" href="/regions">Regions</a></li>
+    <li class="breadcrumb-item"><a class="specColor" href="/<%= region.slug %> "><%= region.name %></a></li>
+    <li class="breadcrumb-item"><a class="specColor" href="/<%= region.slug %>/candidates">Candidates</a></li>
+    <li class="breadcrumb-item breadcrumb-active"><a style="color: #BF1111;" href="">Application Status</a></li>
+    <!-- <li class="breadcrumb-item active" aria-current="page">Data</li> -->
+</ol>
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 mx-auto mt-5">
+            <form class="form-group p-3 mt-5" action="" method="get">
+                <div class="input-group p-3">
+                    <input type="search" name="userCode" class="form-control" placeholder="Enter your status code here" aria-label="Status Code" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                      <button class="btn myBtn" type="submit"><i class="fa fa-search" style="color: #BF1111;"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</div>
+
+<%- include ('./partials/footer.ejs') %> 
