@@ -1,16 +1,34 @@
-exports.sendRes = function(data,status) {
+exports.sendRes = function(res,data,status=0) {
     const message = {};
     message.data = data;
     message.success = true;
-    message.status = status;
+    message.status = 200 || status;
 
-    return message
+    return res.status(message.status).json(message);
 };
 
-exports.sendError = function(data,status) {
+exports.sendError = function(res,status) {
     const message = {};
-    message.message = data;
+
+    switch (status) {
+        case 404:
+            message.message = "Resource Not Found"
+            break;
+        case 500:
+            message.message = "Internal Server Error"
+            break;
+        case 400:
+            message.message = "Invalid Request"
+            break;
+        case 401:
+            message.message = "You are not authorized to make this request"
+            break;
+        case 403:
+            message.message = "Access Forbidden"
+            break;
+    }
+
     message.success = false;
     message.status = status;
-    return message;
+    return res.status(message.status).json(message);
 }

@@ -10,14 +10,14 @@ var ok = true;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Home', page_name: "home" });
+  res.status(200).json({success: true, message: "Welcome to the Ballot API 😁"});
 });
 
 
 //Check the state of the application
 router.get('/checkappstate', async (req, res) => {
   try {
-
+    
     let [ config ] = await Config.findAll();
 
     if (config) {
@@ -44,12 +44,39 @@ router.get('/checkappstate', async (req, res) => {
       data.state = "prevoting"
     }
 
-    return res.status(200).json(sendRes(data,200));
+    sendRes(res,data)
     
   } catch (err) {
     console.error(err)
 
-    return res.status(500).json(sendError("Internal Server Error",200)); 
+    sendError(res,500); 
+  }
+})
+
+//Check if user has accreeditation code and if so accredit him/her
+router.post('/accreditation', async (req, res) => {
+  try {
+    
+    let { matric, code } = req.body;
+
+    let student = await Voter.findOne({
+      where: {
+        matric,
+        code
+      }
+    })
+
+    if (!student) {
+      sendError(res,404)
+    }
+    
+    else {
+      sendRes(res,{student})
+    }
+
+  } catch (error) {
+    console.error(error)
+    sendError(res,500)
   }
 })
 

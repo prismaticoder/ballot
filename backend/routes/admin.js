@@ -18,34 +18,20 @@ router.get('/', (req,res) => {
 
 //Admin Viewing all voters
 router.get('/voters', async (req, res) => {
-    let { region } = res.locals;
-    let { type } = region;
+
+    let { type } = req.app.locals;
     let perPage = (req.query.perPage)?req.query.perPage:15
     let page = (req.query.page)?req.query.page:1
 
     try {
-        let voters = [];
-        if (type == 'faculty') {
-            voters = await Voter.findAll({
-                where: {
-                    faculty: region.name
+
+        let voters = await Voter.findAll({
+            where: {
+                accreditedAt: {
+                    [Op.not] : null
                 }
-            })
-        }
-        else if (type == 'department') {
-            voters = await Voter.findAll({
-                where: {
-                    department: region.name
-                }
-            })
-        }
-        else {
-            voters = await Voter.findAll({
-                where: {
-                    hall: region.name
-                }
-            })
-        }
+            }
+        })
 
         voters = voters.sort((a,b) => {
             if (a.firstName < b.firstName) {
@@ -58,13 +44,6 @@ router.get('/voters', async (req, res) => {
                 return 0
             }
         })
-
-        // return res.render('all-voters',{
-        //     region,
-        //     voters,
-        //     title: `${region.name} Voters`,
-        //     page_name: `voters`
-        // })
 
         //Implement Pagination
         let count = voters.length;
@@ -80,65 +59,49 @@ router.get('/voters', async (req, res) => {
             nextPage = null;
         }
 
-        console.log(page,perPage,count)
-
-        return res.json({ok:true, region, totalPages, nextPage, currentPage:page, voters})
+        sendRes(res,{totalPages, nextPage, currentPage: page, voters})
+        
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Error Understanding Request", error})
+        console.error(error);
+        sendError(res,500)
     }
 })
 
 //Search for a voter by matric
 router.get('/voters/search', async (req, res) => {
-    let { region } = res.locals;
+
     let { q } = req.query;
-    let { type } = region;
 
     if (q) {
-        let voter = [];
         try {
-            if (type == 'faculty') {
-                voter = await Voter.findOne({
-                    where: {
-                        faculty: region.name,
-                        matric:q
-                    }
-                })
-            }
-            else if (type == 'department') {
-                voter = await Voter.findOne({
-                    where: {
-                        department: region.name,
-                        matric: q
-                    }
-                })
-            }
-            else {
-               voter = await Voter.findOne({
-                    where: {
-                        hall: region.name,
-                        matric: q
-                    }
-                })
-            }
-            if (voter !== null) {
-                return res.status(200).json({ok: true, voter})
+            let voter = await Voter.findOne({
+                where: {
+                    accreditedAt: {
+                        [Op.not] : null
+                    },
+                    matric:q
+                }
+            })
+            
+            if (voter) {
+                sendRes(res, {voter})
             }
     
-            return res.status(200).json({ok: false, message: "Voter not found"})
+            sendError(res,404)
                    
         } catch (error) {
-            return res.status(400).json({ok: false, message: "There is an error in your request"})
+            console.error(error);
+            sendError(res,500)
         }
     }
     else {
-        return res.status(400).json({ok: false, message: "Bad Request"});
+        sendError(res,400)
     }
 })
 
 //View all candidates
 router.get('/candidates', async (req, res) => {
-    let { region } = res.locals;
+    
     let { status } = req.query;
     var select = {}
 
@@ -146,19 +109,19 @@ router.get('/candidates', async (req, res) => {
         if (status) {
             if (["pending","confirmed"].includes(status)) {
                 (status == "pending")?select.a='selected':select.b='selected';
-                var candidates = await region.getCandidates({
+                var candidates = await Candidate.findAll({
                     where: {
                         status
                     }
                 })
             }
             else {
-                throw new Error("Wrong Status")
+                sendError(res,400)
             }
             
         }
         else {
-            var candidates = await region.getCandidates({
+            var candidates = await Candidate.findAll({
                 where: {
                     [Op.or]: [{status: "confirmed"}, {status: "pending"}]
                 }
@@ -172,153 +135,140 @@ router.get('/candidates', async (req, res) => {
             categories.push(category.name)  
         }
 
-        return res.json({ok:true, candidates})
-        // return res.render('admin-candidates', {
-        //     candidates,
-        //     categories,
-        //     select,
-        //     page_name: "candidates",
-        //     title: "Candidates"
-        // })
+        sendRes(res, {candidates})
 
-        // return res.render('admin-candidates', {
-        //     candidates,
-        //     page_name: 'candidates',
-        //     title: `${region.name} Candidates`
-        // })
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Error: Bad Request", error})
+        console.error(error)
+        sendError(res,500)
     }
     
-    // res.send("List of all candidates!")
 })
 
 //View single candidates
-router.get('/candidates/:id', (req, res) => {
-    res.send("Details of a single candidate")
+router.get('/candidates/:id', async (req, res) => {
+    let {id} = req.params;
+    
+    try {
+        
+        let candidate = await Candidate.findOne({
+            where: {
+                id,
+                [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+            }
+        })
+
+        if (candidate) {
+            sendRes(res,{candidate})
+        }
+        else {
+            sendError(res,404)
+        } 
+
+    } catch (err) {
+        console.error(err)
+        sendError(res,500)
+    }
 })
 
 //Create Election Settings for a region
-router.post('/settings/create', async (req, res) => {
-    let { region } = res.locals;
+router.post('/settings', async (req, res) => {
 
     try {
         let { startDate,endDate } = req.body;
 
-        let settings = await region.createSetting({
+        let settings = await Config.create({
             startDate,
             endDate
         })
         
-        return res.status(201).json({ok: true, message: "Settings Created Successfully",settings})
+        sendRes(res,{settings},201)
     } catch (error) {
-        return res.status(400).json({ok:false, message: "Error in resolving request"})
+        console.error(error);
+        sendError(res,500)
     }
 })
 
 //Update settings for a region
-router.post('/settings/update', async (req, res) => {
-    let { region } = res.locals;
+router.put('/settings', async (req, res) => {
 
     try {
-        let { startDate,endDate } = req.body;
+        let { startDate,endDate } = req.body
+        , [setting] = await Config.findAll()
 
-        let setting = await region.getSetting()
-
-        if (setting !== null) {
+        if (setting) {
             setting.startDate = startDate;
             setting.endDate = endDate;
 
             await setting.save();
             
-            return res.status(200).json({ok: true, message: "Settings Updated Successfully",setting})
+            sendRes(res,{setting})
         }
 
-        return res.status(404).json({ok: false, message: "Settings Not Found for this region"})
+        sendError(res,404)
 
         
     } catch (error) {
-        return res.status(400).json({ok:false, message: "Error in resolving request", error})
-    }
-})
-
-//Delete the settings of a region
-router.get('/settings/delete', async (req, res) => {
-    let { region } = res.locals;
-
-    try {
-        let setting = await region.getSetting();
-
-        await setting.destroy()
-
-        return res.json({ok: true, message: "Setting Cleared Successfully"})
-    } catch (error) {
-        return res.status(400).json({ok: false, message: "Error in deleting setting"}, error)
+        console.error(error)
+        sendError(res,500)
     }
 })
 
 //Get the configured settings for a particular region
 router.get('/settings', async (req, res) => {
-    let { region } = res.locals;
 
     try {
-        let setting = await region.getSetting();
+        let [setting] = await Config.findAll();
 
-        if (setting !== null) {
-            return res.json({ok: true, setting})    
+        if (setting) {
+            sendRes(res,{setting})    
         }
-        // return res.json({ok: false, setting, message: "No settings configured for the selected region"})
-        return res.render('admin-settings', {
-            title: "Admin Settings",
-            page_name: "settings"
-        })
+        
+        sendError(res,404)
+
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Error in request", error})
+        console.error(error)
+        sendError(res,500)
     }
 })
 
 //Confirm a candidate
-router.post('/candidates/:id/confirm', async (req, res) => {
-    let { region } = res.locals;
+router.get('/candidates/:id/confirm', async (req, res) => {
 
     try {
         //Array destructuring to retrieve the candidate
-        var [ candidate ] = await region.getCandidates({
+        var candidate = await Candidate.findOne({
             where: {
                 id: req.params.id
             }
         })
-        
-        // console.log(candidate);
 
-        if (candidate !== null) {
+        if (candidate) {
             //Check if the candidate was already confirmed
             if (candidate.status !== "confirmed") {
                 candidate.status = "confirmed";
 
                 await candidate.save();
-                return res.status(200).json({ok: true, message: `You have successfully confirmed ${candidate.firstName} ${candidate.lastName} as a candidate in the upcoming regional elections`})
+                sendRes(res,{candidate})
             }
-
-            return res.status(200).json({ok: true, message: "This candidate has already been confirmed"})
             
+            sendRes(res,{candidate})
         }
 
-        return res.status(404).json({ok: false, message: `This candidate does not exist!`})
+        sendError(res,404)
         
     } catch (error) {
-        return res.status(400).json({ok: false, message: "There was an error processing your request"})        
+        console.error(error)
+        sendError(res,500)        
     }
 })
 
 
-//Confirm a candidate
-router.post('/candidates/:id/deny', async (req, res) => {
-    let { region } = res.locals;
+//Deny a candidate
+router.get('/candidates/:id/deny', async (req, res) => {
 
     try {
         //Array destructuring to retrieve the candidate
-        var [ candidate ] = await region.getCandidates({
+        var candidate = await Candidate.findOne({
             where: {
                 id: req.params.id
             }
@@ -326,130 +276,97 @@ router.post('/candidates/:id/deny', async (req, res) => {
         
         // console.log(candidate);
 
-        if (candidate !== null) {
+        if (candidate) {
             //Check if the candidate was already confirmed
             if (candidate.status !== "denied") {
                 candidate.status = "denied";
 
                 await candidate.save();
-                return res.status(200).json({ok: true, message: `${candidate.firstName} ${candidate.lastName} has been denied from participating as a candidate in the upcoming regional elections`})
+                
+                sendRes(res,{candidate})
             }
 
-            return res.status(200).json({ok: true, message: "This candidate has already been denied participation in the election"})
+            sendRes(res,{candidate})
             
         }
 
-        return res.status(404).json({ok: false, message: `This candidate does not exist!`})
+        sendError(res,404)
         
     } catch (error) {
-        return res.status(400).json({ok: false, message: "There was an error processing your request"})        
+        console.error(error)
+        sendError(res,500)        
     }
 })
 
 //Get all categories (position) associated with a region
 router.get('/categories', async (req, res) => {
-    let { region } = res.locals;
 
     try {
-        let categories = await region.getCategories();
+        let categories = await Category.findAll();
 
-        return res.status(200).json({ok: true, categories})
+        sendRes(res,{categories})
+
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Bad Request"})
+
+        console.error(error)
+        sendError(res,500)
     }
 })
 
 //Create a new category
-router.post('/categories/create', async (req, res) => {
-    let { region } = res.locals;
+router.post('/categories', async (req, res) => {
 
     try {
-        let { name } = req.body
+        let { name,minLevel,maxLevel } = req.body
 
-        let category = await region.createCategory({
-            name
+        let category = await Category.create({
+            name,
+            minLevel,
+            maxLevel
         })
 
-        return res.status(201).json({ok: true, message: `New Category Created: ${name}`})
+        sendRes(res,{category},201)
+
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Error Processing request", error})
+        console.error(error)
+        sendError(res,500)
     }
 })
 
 //Update an existing category
-router.post('/categories/:id/update', async (req, res) => {
-    let { region } = res.locals;
+router.put('/categories/:id', async (req, res) => {
 
     try {
-        let { name } = req.body
+        let { name,minLevel,maxLevel } = req.body
 
-        let [ category ] = await region.getCategories({
-            where: {
-                id: req.params.id
-            }
-        })
+        let category = await Category.findByPk(req.params.id)
 
-        category.name = name;
+        category = {...category, name, minLevel, maxLevel}
 
         await category.save();
 
-        return res.status(200).json({ok: true, message: `Category Update Successful`})
+        sendRes(res,{category})
+
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Error Processing request", error})
+        console.error(error)
+        sendError(res,500)
     }
 })
 
-//Start an election manually
-router.get('/election/start', async (req,res) => {
-    let { region } = res.locals;
-
-    try {
-        let setting = await region.getSetting();
-
-        setting.isStarted = 1
-        await setting.save()
-
-        return res.json({ok:true, message: "Election Started Successfully"})
-
-    } catch (error) {
-        return res.status(400).json({ok: false, message: "There was an error with your request", error})
-    }
-})
-
-//Start an election manually
-router.get('/election/stop', async (req,res) => {
-    let { region } = res.locals;
-
-    try {
-        let setting = await region.getSetting();
-
-        setting.isStarted = 0
-        await setting.save()
-
-        return res.json({ok:true, message: "Election Stopped Successfully"})
-
-    } catch (error) {
-        return res.status(400).json({ok: false, message: "There was an error with your request", error})
-    }
-})
 
 //Delete a category
-router.get('/categories/:id/delete', async (req, res) => {
-    let { region } = res.locals;
+router.delete('/categories/:id', async (req, res) => {
 
     try {
         //Get the category from the db
-        let [ category ] = await region.getCategories({
-            where: {
-                id: req.params.id
-            }
-        })
-        //Delete the category
-        await category.destroy();
 
-        return res.status(200).json({ok: true, message: `Category Deleted Successfully`})
+        await Category.destroy(req.params.id)
+
+        sendRes(res,{message: "Deletion Successful"})
+
     } catch (error) {
-        return res.status(400).json({ok: false, message: "Error Processing request", error})
+        console.error(error)
+        sendError(res,500)
     }
 })
 

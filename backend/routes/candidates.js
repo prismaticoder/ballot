@@ -1,41 +1,66 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models'); // loads index.js
-var { Candidate,Region } = models;
+var { Candidate,Category } = models;
+var { sendRes,sendError } = require('../controllers/res')
 var cloudinary = require('cloudinary').v2;
 
 //Display all *confirmed* candidates of a particular region
 router.get('/', async (req, res) => {
-    let { region }= res.locals;
 
     try {
-        let categories = await region.getCategories();
+        let categories = await Category.findAll();
 
         for (let i = 0; i < categories.length; i++) {
-            let candidates = await categories[i].getCandidates();
+
+            let candidates = await categories[i].getCandidates({
+                where: {
+                    status: "confirmed"
+                }
+            });
 
             categories[i].candidates = candidates;   
         }
+
+        sendRes(res,{categories})
         // console.log(categories)
-    
-        return res.render('all-candidates', {
-            page_name: "candidates",
-            title: region.name + " Candidates",
-            categories
-        })  
+        
     } catch (error) {
         console.error(error);
+        sendError(res,500)
     }
     
 })
 
-//Candidate application form
-router.get('/apply', (req, res) => {
-    res.send("This is where the application form will be;")
+//Display Single Candidate
+router.get('/:id', async (req, res) => {
+    let { id } = req.params;
+
+    try {
+        
+        let candidate = await Candidate.findOne({
+            where: {
+                id,
+                status: "confirmed"
+            }
+        })
+
+        if (candidate) {
+            sendRes(res,{candidate})
+        }
+        else {
+            sendError(res,404)
+        }
+
+    } catch (error) {
+        console.error(error)
+        sendError(res, 500)
+    }
 })
 
-//Application Success Page
-router.post('/apply/success', (req, res) => {
+
+//Candidate Applying For A Position
+router.post('/apply', (req, res) => {
     res.send("Your application is successful but pending")
 })
 
@@ -68,13 +93,6 @@ router.get('/application-status', async (req, res) => {
             title: "Check Application Status"
         })
     }
-})
-
-//Display Single Candidate
-router.get('/:id', (req, res) => {
-    let { id } = req.params;
-
-    res.send(`Single Candidate ${id}`)
 })
 
 

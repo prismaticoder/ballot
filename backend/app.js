@@ -8,6 +8,7 @@ var dotenv = require('dotenv');
 dotenv.config();
 var cors = require('cors');
 
+
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 var usersRouter = require('./routes/users');
@@ -34,8 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
-app.use('/:region', checkRegion, regionRouter);
-app.use('/:region/candidates', checkRegion, candidateRouter);
+app.use('/candidates', candidateRouter);
 // app.use('/:region/admin/login', checkRegion, adminRouter);
 // app.use('/:region/admin', checkAdminState, checkRegion, adminRouter);
 app.use('/:region/admin', checkRegion, adminRouter);
