@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
-
-var models = require('../models'); // loads index.js
-var { Category,Region,Candidate,Voter } = models;       // the model keyed by its name
-
-var { Op } = require('sequelize')
+var models = require('../models');
+var { Category,Candidate,Voter } = models;
+var { Op } = require('sequelize');
+var { sendError, sendRes } = require('../controllers/res')
 
 //Login middleware needed to access the site
 //JWT must verify all these routes before access
