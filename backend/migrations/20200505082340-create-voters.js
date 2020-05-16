@@ -1,11 +1,14 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Candidates', {
+    return queryInterface.createTable('Voters', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      matric: {
         type: Sequelize.INTEGER
       },
       firstName: {
@@ -14,34 +17,20 @@ module.exports = {
       lastName: {
         type: Sequelize.STRING
       },
-      alias: {
+      otherName: {
         type: Sequelize.STRING
       },
-      statusCode: {
+      faculty: {
         type: Sequelize.STRING
       },
-      matric: {
+      department: {
+        type: Sequelize.STRING
+      },
+      hall: {
         type: Sequelize.STRING
       },
       level: {
         type: Sequelize.INTEGER
-      },
-      status: {
-        type: Sequelize.ENUM(['pending','confirmed','denied'])
-      },
-      manifesto: {
-        type: Sequelize.TEXT('long')
-      },
-      image: {
-        type: Sequelize.STRING
-      },
-      categoryId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'categories', key: 'id' }
-      },
-      regionId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'regions', key: 'id' }
       },
       createdAt: {
         allowNull: false,
@@ -54,6 +43,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Candidates');
+    return queryInterface.dropTable('Voters');
   }
 };

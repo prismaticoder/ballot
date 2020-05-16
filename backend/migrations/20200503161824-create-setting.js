@@ -1,22 +1,22 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Admins', {
+    return queryInterface.createTable('Settings', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      username: {
-        type: Sequelize.STRING
+      startDate: {
+        type: Sequelize.DATE
       },
-      password: {
-        type: Sequelize.STRING
+      endDate: {
+        type: Sequelize.DATE
       },
-      regionId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'regions', key: 'id' }
+      isStarted: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: 0
       },
       createdAt: {
         allowNull: false,
@@ -29,6 +29,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Admins');
+    return queryInterface.dropTable('Settings');
   }
 };

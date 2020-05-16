@@ -1,27 +1,26 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Settings', {
+    return queryInterface.createTable('Votes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      regionId: {
+      voterId: {
         type: Sequelize.INTEGER,
-        references: { model: 'regions', key: 'id' },
-        unique: true
+        references: { model: 'voters', key: 'id' }
       },
-      startDate: {
-        type: Sequelize.DATE
+      level: {
+        type: Sequelize.INTEGER
       },
-      endDate: {
-        type: Sequelize.DATE
+      facDept: {
+        type: Sequelize.STRING
       },
-      isStarted: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: 0
+      candidateId: {
+        type: Sequelize.INTEGER,
+        references: { model: 'candidates', key: 'id' }
       },
       createdAt: {
         allowNull: false,
@@ -34,6 +33,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Settings');
+    return queryInterface.dropTable('Votes');
   }
 };

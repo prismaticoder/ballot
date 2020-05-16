@@ -8,12 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      regionId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'regions', key: 'id' }
-      },
       name: {
         type: Sequelize.STRING
+      },
+      minLevel: {
+        type: Sequelize.INTEGER
+      },
+      maxLevel: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

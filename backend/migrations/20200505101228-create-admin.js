@@ -1,24 +1,18 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Votes', {
+    return queryInterface.createTable('Admins', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      voterId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'voters', key: 'id' }
+      username: {
+        type: Sequelize.STRING
       },
-      regionId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'regions', key: 'id' }
-      },
-      candidateId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'candidates', key: 'id' }
+      password: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +25,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Votes');
+    return queryInterface.dropTable('Admins');
   }
 };
