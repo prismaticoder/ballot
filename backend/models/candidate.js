@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
     manifesto: DataTypes.TEXT,
     image: DataTypes.STRING,
     categoryId: DataTypes.INTEGER,
-    regionId: DataTypes.INTEGER,
     fullName: {
       type: DataTypes.VIRTUAL,
       get() {

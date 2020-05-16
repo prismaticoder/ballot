@@ -2,7 +2,8 @@
 module.exports = (sequelize, DataTypes) => {
   const Vote = sequelize.define('Vote', {
     voterId: DataTypes.INTEGER,
-    regionId: DataTypes.INTEGER,
+    level: DataTypes.INTEGER,
+    facDept: DataTypes.STRING,
     candidateId: DataTypes.INTEGER
   }, {});
   Vote.associate = function(models) {

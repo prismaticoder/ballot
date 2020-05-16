@@ -1,8 +1,9 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Category = sequelize.define('Category', {
-    regionId: DataTypes.INTEGER,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    minLevel: DataTypes.ENUM(100,200,300,400,500,600),
+    maxLevel: DataTypes.ENUM(200,300,400,500,600)
   }, {});
   Category.associate = function(models) {
     // associations can be defined here
