@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var models = require('../models'); // loads index.js
+var models = require('../models');
 var Config = models.Setting;
+var { Admin } = models
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcryptjs');
 var { sendRes,sendError } = require('../controllers/res')
-const fetch = require('node-fetch');
 var dotenv = require('dotenv');
 dotenv.config();
-var ok = true;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -71,7 +72,7 @@ router.post('/accreditation', async (req, res) => {
     }
     
     else {
-      sendRes(res,{student})
+      sendRes(res,student)
     }
 
   } catch (error) {
@@ -80,21 +81,44 @@ router.post('/accreditation', async (req, res) => {
   }
 })
 
-router.get('/regions', async (req, res) => {
-  //Fetch the regions from the API
-  let regionsAPI = await fetch(`${process.env.BASE_URL}/api/regions`);
-  regionsJSON = await regionsAPI.json()
+//Admin Login
+router.post('/admin/login', async (req, res) => {
+  try {
+    
+    let { username, password } = req.body;
 
-  let { regions } = regionsJSON
-
-  if (regionsJSON.ok) {
-    return res.render('regions', {
-      regions: regions.slice(0,21),
-      title: "All Regions",
-      page_name: "regions"
+    let admin = await Admin.findOne({
+      where: {
+        username
+      }
     })
+
+
+    if (!admin) {
+      sendError(res,404,"User Not Found")
+    }
+
+    else {
+      let valid = await bcrypt.compare(password, admin.password);
+
+      if (!valid) {
+        sendError(res,404,"Incorrect username or password")
+      } 
+
+      let token = jwt.sign(
+        {username: admin.username},
+        process.env.TOKEN_SECRET_KEY,
+        {expiresIn: '24h'}
+        )
+
+      sendRes(res,{username: admin.username, token})
+    }
+
+
+  } catch (error) {
+    console.error(error)
+    sendError(res,500)
   }
-  return res.render('error')
 })
 
 module.exports = router;

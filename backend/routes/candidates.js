@@ -9,21 +9,17 @@ var cloudinary = require('cloudinary').v2;
 router.get('/', async (req, res) => {
 
     try {
-        let categories = await Category.findAll();
-
-        for (let i = 0; i < categories.length; i++) {
-
-            let candidates = await categories[i].getCandidates({
+        
+        let categories = await Category.findAll({
+            include: {
+                model: Candidate,
+                as: "candidates",
                 where: {
                     status: "confirmed"
                 }
-            });
-
-            categories[i].candidates = candidates;   
-        }
-
+            }
+        })
         sendRes(res,{categories})
-        // console.log(categories)
         
     } catch (error) {
         console.error(error);
@@ -42,11 +38,16 @@ router.get('/:id', async (req, res) => {
             where: {
                 id,
                 status: "confirmed"
+            },
+            include: {
+                attributes: ['name'],
+                model: Category,
+                as: "category"
             }
         })
 
         if (candidate) {
-            sendRes(res,{candidate})
+            sendRes(res,candidate)
         }
         else {
             sendError(res,404)

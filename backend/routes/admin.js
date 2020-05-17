@@ -2,18 +2,11 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 var { Category,Candidate,Voter } = models;
+var Config = models.Setting
 var { Op } = require('sequelize');
 var { sendError, sendRes } = require('../controllers/res')
 
-//Login middleware needed to access the site
-//JWT must verify all these routes before access
-
-router.get('/', (req,res) => {
-    res.render('admin-index', {
-        page_name: "home",
-        title: "Home"
-    })
-})
+//Login middleware needed to access this section
 
 //Admin Viewing all voters
 router.get('/voters', async (req, res) => {
@@ -123,16 +116,14 @@ router.get('/candidates', async (req, res) => {
             var candidates = await Candidate.findAll({
                 where: {
                     [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+                },
+                include: {
+                    attributes: ['name'],
+                    model: Category,
+                    as: "category"
                 }
             });
         }    
-
-        let categories = [];
-
-        for (let index = 0; index < candidates.length; index++) {
-            let category = await candidates[index].getCategory();
-            categories.push(category.name)  
-        }
 
         sendRes(res, {candidates})
 
@@ -153,11 +144,16 @@ router.get('/candidates/:id', async (req, res) => {
             where: {
                 id,
                 [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+            },
+            include: {
+                attributes: ['name'],
+                model: Category,
+                as: "category"
             }
         })
 
         if (candidate) {
-            sendRes(res,{candidate})
+            sendRes(res,candidate)
         }
         else {
             sendError(res,404)
@@ -165,67 +161,6 @@ router.get('/candidates/:id', async (req, res) => {
 
     } catch (err) {
         console.error(err)
-        sendError(res,500)
-    }
-})
-
-//Create Election Settings for a region
-router.post('/settings', async (req, res) => {
-
-    try {
-        let { startDate,endDate } = req.body;
-
-        let settings = await Config.create({
-            startDate,
-            endDate
-        })
-        
-        sendRes(res,{settings},201)
-    } catch (error) {
-        console.error(error);
-        sendError(res,500)
-    }
-})
-
-//Update settings for a region
-router.put('/settings', async (req, res) => {
-
-    try {
-        let { startDate,endDate } = req.body
-        , [setting] = await Config.findAll()
-
-        if (setting) {
-            setting.startDate = startDate;
-            setting.endDate = endDate;
-
-            await setting.save();
-            
-            sendRes(res,{setting})
-        }
-
-        sendError(res,404)
-
-        
-    } catch (error) {
-        console.error(error)
-        sendError(res,500)
-    }
-})
-
-//Get the configured settings for a particular region
-router.get('/settings', async (req, res) => {
-
-    try {
-        let [setting] = await Config.findAll();
-
-        if (setting) {
-            sendRes(res,{setting})    
-        }
-        
-        sendError(res,404)
-
-    } catch (error) {
-        console.error(error)
         sendError(res,500)
     }
 })
@@ -247,10 +182,10 @@ router.get('/candidates/:id/confirm', async (req, res) => {
                 candidate.status = "confirmed";
 
                 await candidate.save();
-                sendRes(res,{candidate})
+                sendRes(res,candidate,null,"Candidate approval successful!")
             }
             
-            sendRes(res,{candidate})
+            sendRes(res,candidate,null,"This candidate has already been approved")
         }
 
         sendError(res,404)
@@ -282,10 +217,10 @@ router.get('/candidates/:id/deny', async (req, res) => {
 
                 await candidate.save();
                 
-                sendRes(res,{candidate})
+                sendRes(res,candidate,null,"You have successfully denied this candidate's participation in the upcoming election")
             }
 
-            sendRes(res,{candidate})
+            sendRes(res,{},null,"Candidate already denied participation")
             
         }
 
@@ -294,6 +229,68 @@ router.get('/candidates/:id/deny', async (req, res) => {
     } catch (error) {
         console.error(error)
         sendError(res,500)        
+    }
+})
+
+
+//Create Election Settings for a region
+router.post('/settings', async (req, res) => {
+
+    try {
+        let { startDate,endDate } = req.body;
+
+        let settings = await Config.create({
+            startDate,
+            endDate
+        })
+        
+        sendRes(res,settings,201)
+    } catch (error) {
+        console.error(error);
+        sendError(res,500)
+    }
+})
+
+//Update settings for a region
+router.put('/settings', async (req, res) => {
+
+    try {
+        let { startDate,endDate } = req.body
+        , [setting] = await Config.findAll()
+
+        if (setting) {
+            setting.startDate = startDate;
+            setting.endDate = endDate;
+
+            await setting.save();
+            
+            sendRes(res,setting)
+        }
+
+        sendError(res,404)
+
+        
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
+//Get the configured settings for a particular region
+router.get('/settings', async (req, res) => {
+
+    try {
+        let [setting] = await Config.findAll();
+
+        if (setting) {
+            sendRes(res,setting)    
+        }
+        
+        sendError(res,404)
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
     }
 })
 
@@ -324,7 +321,7 @@ router.post('/categories', async (req, res) => {
             maxLevel
         })
 
-        sendRes(res,{category},201)
+        sendRes(res,category,201,"Category added successfully!")
 
     } catch (error) {
         console.error(error)
@@ -344,7 +341,7 @@ router.put('/categories/:id', async (req, res) => {
 
         await category.save();
 
-        sendRes(res,{category})
+        sendRes(res,category,null,"Category updated successfully")
 
     } catch (error) {
         console.error(error)
@@ -361,18 +358,12 @@ router.delete('/categories/:id', async (req, res) => {
 
         await Category.destroy(req.params.id)
 
-        sendRes(res,{message: "Deletion Successful"})
+        sendRes(res,{},null,"Category successfully removed")
 
     } catch (error) {
         console.error(error)
         sendError(res,500)
     }
-})
-
-router.get('/logout', async (req, res) => {
-    let { region } = res.locals;
-    delete req.session.admin;
-    return res.redirect(`/${region.slug}/admin/login`)
 })
 
 

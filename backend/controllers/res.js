@@ -1,8 +1,12 @@
-exports.sendRes = function(res,data,status=0) {
+exports.sendRes = function(res,data,status=0,customMsg=undefined) {
     const message = {};
     message.data = data;
     message.success = true;
     message.status = 200 || status;
+
+    if (typeof customMsg !== 'undefined') {
+        message.message = customMsg
+    }
 
     return res.status(message.status).json(message);
 };

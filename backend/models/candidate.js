@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     })
     Candidate.belongsTo(models.Category, {
       foreignKey: 'categoryId',
+      as: 'category'
     })
   };
   return Candidate;
