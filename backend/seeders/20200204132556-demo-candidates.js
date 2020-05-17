@@ -16,7 +16,7 @@ module.exports = {
     */
       var newData = [];
 
-      for (let i = 0; i < 1001; i++) {
+      for (let i = 0; i < 50; i++) {
           const seedData = {
               firstName: faker.name.firstName(),
               lastName: faker.name.lastName(),
@@ -25,8 +25,7 @@ module.exports = {
               statusCode: faker.random.alphaNumeric(6),
               matric: faker.random.number({min:190000,max:215999}),
               status: faker.helpers.randomize(['pending','confirmed']),
-              categoryId: faker.random.number({min:1,max:602}),
-              regionId: faker.random.number({min:1,max:93}),
+              categoryId: faker.random.number({min:1,max:10}),
               manifesto: faker.lorem.paragraph(),
               level: faker.random.arrayElement([100,200,300,400,500]),
               createdAt: new Date(),

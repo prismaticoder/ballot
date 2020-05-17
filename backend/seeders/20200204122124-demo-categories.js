@@ -16,10 +16,11 @@ module.exports = {
     */
    var newData = [];
 
-   for (let i = 0; i < 600; i++) {
+   for (let i = 0; i < 10; i++) {
        const seedData = {
            name: faker.name.jobTitle(),
-           regionId: faker.random.number({min:1,max:93}),
+           minLevel: faker.random.arrayElement([100,200,300,400,500]),
+           maxLevel: faker.random.arrayElement([200,300,400,500]),
            createdAt: new Date(),
            updatedAt: new Date()
        };
