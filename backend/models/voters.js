@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     faculty: DataTypes.STRING,
     department: DataTypes.STRING,
     hall: DataTypes.STRING,
+    accreditedAt: DataTypes.DATE,
     level: DataTypes.ENUM(100,200,300,400,500,600),
     // voterNumber: {
     //   type: DataTypes.VIRTUAL,

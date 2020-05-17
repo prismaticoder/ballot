@@ -29,6 +29,9 @@ module.exports = {
       hall: {
         type: Sequelize.STRING
       },
+      accreditedAt: {
+        type: Sequelize.DATE
+      },
       level: {
         type: Sequelize.INTEGER
       },
