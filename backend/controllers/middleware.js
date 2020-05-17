@@ -1,6 +1,7 @@
 var { Op } = require('sequelize');
 var models = require('../models'); // loads index.js
 var { Category,Region } = models; 
+var { sendError } = require('./res')
 var jwt = require('jsonwebtoken');
 
 exports.checkRegion = async (req, res, next) => {
@@ -46,11 +47,30 @@ exports.checkAdminState = async (req, res, next) => {
     }
 }
 
-// exports.adminValidate = async (req, res, next) => {
-//     let token = req.headers.authorization.split(' ')[1]
+exports.validateAdminToken = async (req, res, next) => {
 
-//     let decodedToken = jwt.verify(token, 'SECRET_API_KEY')
+    try {
 
-//     let { username }= decodedToken
+        if (req.headers.authorization) {
+            let token = req.headers.authorization.split(' ')[1]
+            let decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY)
+    
+            let { username } = decodedToken
+            if (req.body.username && req.body.username !== username) {
+                sendError(res,401)
+            }
+        
+            else {
+                next()
+            }
+        }
+        else {
+            sendError(res,400,"Invalid Request: No Token sent")
+        }
 
-// }
+    } catch (error) {
+        console.error(error);
+        sendError(res,500,error)
+    }
+
+}

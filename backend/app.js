@@ -7,8 +7,9 @@ var logger = require('morgan');
 var dotenv = require('dotenv');
 dotenv.config();
 var cors = require('cors');
+var { sendError } = require('./controllers/res')
 
-
+//Define route files
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 var usersRouter = require('./routes/users');
@@ -16,7 +17,7 @@ var regionRouter = require('./routes/region');
 var candidateRouter = require('./routes/candidates')
 var adminRouter = require('./routes/admin');
 
-var { checkRegion,checkAdminState } = require('./controllers/middleware'); 
+var { validateAdminToken } = require('./controllers/middleware'); 
 
 var app = express();
 
@@ -29,16 +30,14 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({secret: process.env.SESSION_SECRET}));
+// app.use(session({secret: process.env.SESSION_SECRET}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 app.use('/candidates', candidateRouter);
-// app.use('/:region/admin/login', checkRegion, adminRouter);
-// app.use('/:region/admin', checkAdminState, checkRegion, adminRouter);
-app.use('/:region/admin', checkRegion, adminRouter);
+app.use('/admin', validateAdminToken , adminRouter);
 
 
 // catch 404 and forward to error handler
@@ -52,9 +51,9 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // send error json
+  
+  sendError(res,err.status || 500)
 });
 
 module.exports = app;
