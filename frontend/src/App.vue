@@ -21,8 +21,8 @@ export default {
   },
   beforeCreate() {
     this.$store.dispatch('setState')
-    .then(res => console.log("App state updated!"))
-    .catch(err => console.log(`Couldn't check app state: ${err}`))
+    .then(res => console.log(res))
+    .catch(err => console.log(`${err}`))
   },
   created: function () {
     this.$http.interceptors.response.use(undefined, function (err) {
@@ -40,24 +40,79 @@ export default {
 </script>
 
 <style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
 
-#nav {
-  padding: 30px;
-}
+@import "https://fonts.googleapis.com/css2?family=Lato&family=PT+Sans&display=swap";
+/* @import "https://fonts.googleapis.com/css?family=Abel|Roboto|Ubuntu&display=swap"; */
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+@import "./assets/sticky-footer.css";
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-} */
+        nav.myNav {
+            font-family: 'PT Sans', sans-serif;
+            color: #020824;
+            background: #4a558f;
+        }
+        .tag{font-weight:700;display:block;color:#020824}
+        .main-logo {
+            color: floralwhite;
+            font-size:x-large
+        }
+        .main-logo:hover {
+            text-decoration: none;
+        }
+        body {
+            font-family: 'Lato', sans-serif;
+        }
+        h1,h2 {
+            font-family: 'PT Sans', sans-serif;
+            color: #020824;
+            font-size: 2.6rem;
+        }
+        h3,h4,h5,h6 {
+            font-family: 'PT Sans', sans-serif;
+            color: #020824;
+        }
+        .myBtn {
+             background: #162059;
+          color: floralwhite;
+        }
+        .myBtn:hover {
+          background: #162059;
+          color: floralwhite;
+        }
+        a.myBtn {
+            color: rgb(196, 175, 175);
+        }
+        footer {
+            background-color:rgba(0,0,0,.03)
+        }
+        .specColor {
+            color : #162059;
+            text-decoration: underline;
+        }
+        .specColor:hover {
+            color: #BF1111;
+            text-decoration: underline;
+        }
+        li.nav-item {
+            font-size: larger;
+            padding: 4px;
+            /* margin-left: 5px; */
+        }
+        li.nav-item>a:hover, li.active>a{
+            border-bottom:solid #162059 2px;
+        }
+        .blueColor {
+        color : #162059;
+       }
+       .redColor {
+        color: #BF1111;
+       }
+       .editor {
+           cursor:pointer
+       }
+       .editor:hover {
+        background-color:rgba(0,0,0,.03)
+       }
+
 </style>
