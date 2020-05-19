@@ -30,24 +30,24 @@ export default new Vuex.Store({
   actions: {
     setState({commit}) {
       return new Promise((resolve, reject) => {
-        axios({url: `${process.env.API_BASE_URL}/checkappstate`})
+        axios.get(`${process.env.VUE_APP_URL}/checkappstate`)
         .then(res => {
-          if (res.success) {
+          if (res.data.success) {
             commit('CHANGE_ELECTION_STATE', res.data.state)
-            resolve();
+            resolve("app state set");
           }
           else {
             reject(res.error)
           }
         })
         .catch(err => {
-          reject("Internal Server Error")
+          reject(err)
         })
       })
       
     },
     logout({commit}) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         commit('USER_LOGOUT')
         localStorage.removeItem('userToken')
         delete axios.defaults.headers.common['Authorization']
