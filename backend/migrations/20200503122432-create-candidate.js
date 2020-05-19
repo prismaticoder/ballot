@@ -32,7 +32,7 @@ module.exports = {
       manifesto: {
         type: Sequelize.TEXT('long')
       },
-      image: {
+      imageUrl: {
         type: Sequelize.STRING
       },
       categoryId: {

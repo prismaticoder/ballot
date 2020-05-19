@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     level: DataTypes.INTEGER,
     status: DataTypes.STRING,
     manifesto: DataTypes.TEXT,
-    image: DataTypes.STRING,
+    imageUrl: DataTypes.STRING,
     categoryId: DataTypes.INTEGER,
     fullName: {
       type: DataTypes.VIRTUAL,
@@ -20,6 +20,18 @@ module.exports = (sequelize, DataTypes) => {
         else {
           return `${this.firstName} ${this.lastName}`
         }
+      }
+    },
+    refinedLink: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        let name = `${this.firstName} ${this.lastName}`
+
+        let link = name.toLowerCase().split(' ')
+        link.push(this.id)
+        link = link.join('-')
+
+        return link
       }
     }
   }, {});

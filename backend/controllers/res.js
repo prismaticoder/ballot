@@ -1,6 +1,5 @@
 exports.sendRes = function(res,data,status=0,customMsg=undefined) {
-    const message = {};
-    message.data = data;
+    const message = data
     message.success = true;
     message.status = 200 || status;
 
@@ -40,5 +39,5 @@ exports.sendError = function(res,status,customMsg=undefined) {
 
     message.success = false;
     message.status = status;
-    return res.status(message.status).json(message);
+    return res.status(message.status).send(message);
 }

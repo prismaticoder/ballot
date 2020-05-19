@@ -47,7 +47,7 @@ router.get('/:id', async (req, res) => {
         })
 
         if (candidate) {
-            sendRes(res,candidate)
+            sendRes(res,{candidate})
         }
         else {
             sendError(res,404)
