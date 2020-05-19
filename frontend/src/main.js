@@ -7,6 +7,7 @@ import router from './router'
 import VModal from 'vue-js-modal'
 import store from './store'
 import axios from 'axios'
+import vuetify from './plugins/vuetify';
 
 Vue.use(VModal)
 
@@ -22,5 +23,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+  vuetify,
   render: h => h(App)
 }).$mount('#app')
