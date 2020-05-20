@@ -4,11 +4,14 @@ import Home from '../views/Home.vue'
 import AdminHome from '../views/admin/Home.vue'
 import Voters from '../views/admin/Voters.vue'
 import Candidates from '../views/Candidates.vue'
+import CandidateApply from '../views/CandidateApply.vue'
+import CandidateAppCheck from '../views/CandidateAppCheck.vue'
 import Accreditation from '../views/Accreditation.vue'
 import SingleCandidate from '../views/SingleCandidate.vue'
 import AdminLogin from '../views/AdminLogin.vue'
 import AdminCandidates from '../views/admin/Candidates.vue'
 import Settings from '../views/admin/Settings.vue'
+import PageNotFound from '../views/PageNotFound.vue'
 import store from '../store'
 
 
@@ -32,6 +35,16 @@ const routes = [
     path: '/candidates',
     name: 'all-candidates',
     component: Candidates
+  },
+  {
+    path: '/candidates/apply',
+    name: 'candidate-apply',
+    component: CandidateApply
+  },
+  {
+    path: '/candidates/application-check',
+    name: 'candidate-app-check',
+    component: CandidateAppCheck
   },
   {
     path: '/candidates/:id',
@@ -74,7 +87,7 @@ const routes = [
   },
   {
     path: '/admin/candidates/:id',
-    name: 'candidates',
+    name: 'candidates-single',
     component: SingleCandidate,
     meta: {
       requireAuth: true
@@ -86,6 +99,22 @@ const routes = [
     component: Settings,
     meta: {
       requireAuth: true
+    }
+  },
+  {
+    path: '/page-not-found',
+    name: '404',
+    component: PageNotFound,
+    meta: {
+      title: "Ballot | Page Not Found"
+    }
+  },
+  {
+    path: '*',
+    name: 'PageNotFound',
+    component: PageNotFound,
+    meta: {
+      title: "Ballot | Page Not Found"
     }
   },
 
