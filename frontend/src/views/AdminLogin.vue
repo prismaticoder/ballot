@@ -1,15 +1,15 @@
 <template>
-  <div class="container mt-5">
+  <div class="container">
 
-      <h1 class="main-header mt-5" style="text-align: center;">Admin Login | Ballot</h1>
+      <h3 class="main-header" style="text-align: center;">Admin Login | Ballot</h3>
       <hr>
 
-        <b-alert show variant="warning" v-if="errorMsg" dismissible>
+        <b-alert class="mt-4 col-md-5 mx-auto" v-model="showAlert" variant="warning" dismissible>
             <strong>{{errorMsg}}</strong>
         </b-alert>
 
 
-    <form class="text-dark mt-4" @submit.prevent="attemptLogin()">
+    <form class="text-dark mt-5" @submit.prevent="attemptLogin()">
     
         <div class="form-group" style="text-align: center;">
             <label for="username">Username</label>
@@ -26,7 +26,7 @@
 
 
         <div class="d-flex justify-content-center mt-5">
-                <button type="submit" class="btn btn-block myBtn col-md-5 col-xs-12 col-sm-12">Submit</button>
+                <v-btn type="submit" :loading="loading" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-5 col-xs-12 col-sm-12">Submit</v-btn>
         </div>
 
     </form>
@@ -41,13 +41,17 @@ export default {
         return {
             username: "",
             password: "",
-            errorMsg: null
+            errorMsg: null,
+            loading: false,
+            showAlert: false,
+            btnColor: "#162059",
         }
     },
     methods: {
         attemptLogin() {
             let username = this.username;
             let password = this.password;
+            this.loading = true
 
             this.$http.post(`${process.env.VUE_APP_URL}/admin/login`, {
                 username,
@@ -61,11 +65,14 @@ export default {
                     this.$router.push('/admin/')
                 }
                 else {
+                    this.showAlert = true
                     this.errorMsg = res.data.error;
                 }
             })
             .catch(err => {
-                this.errorMsg = err.response.data.error;
+                this.showAlert = true
+                this.errorMsg = err.response ? err.response.data.error : "Internal Server Error"
+                this.loading = false
             })
         }
     }
