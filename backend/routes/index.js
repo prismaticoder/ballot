@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 var Config = models.Setting;
-var { Admin } = models
+var { Admin,Category,Candidate,Voter } = models
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var { sendRes,sendError } = require('../controllers/res')
@@ -120,5 +120,31 @@ router.post('/admin/login', async (req, res) => {
     sendError(res,500)
   }
 })
+
+router.get('/categories', async (req, res) => {
+
+  try {
+      let categories = await Category.findAll();
+
+      sendRes(res,{categories})
+
+  } catch (error) {
+
+      console.error(error)
+      sendError(res,500)
+  }
+})
+
+
+// router.get('/voter/:matric', async (req, res) => {
+//   let { matric } = req.params
+
+//   try {
+    
+//   } catch (error) {
+    
+//   }
+  
+// })
 
 module.exports = router;
