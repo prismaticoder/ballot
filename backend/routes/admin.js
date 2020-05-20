@@ -153,7 +153,7 @@ router.get('/candidates/:id', async (req, res) => {
         })
 
         if (candidate) {
-            sendRes(res,candidate)
+            sendRes(res,{candidate})
         }
         else {
             sendError(res,404)
@@ -182,10 +182,10 @@ router.get('/candidates/:id/confirm', async (req, res) => {
                 candidate.status = "confirmed";
 
                 await candidate.save();
-                sendRes(res,candidate,null,"Candidate approval successful!")
+                sendRes(res,{candidate},null,"Candidate approval successful!")
             }
             
-            sendRes(res,candidate,null,"This candidate has already been approved")
+            sendRes(res,{candidate},null,"This candidate has already been approved")
         }
 
         sendError(res,404)
@@ -217,7 +217,7 @@ router.get('/candidates/:id/deny', async (req, res) => {
 
                 await candidate.save();
                 
-                sendRes(res,candidate,null,"You have successfully denied this candidate's participation in the upcoming election")
+                sendRes(res,{candidate},null,"You have successfully denied this candidate's participation in the upcoming election")
             }
 
             sendRes(res,{},null,"Candidate already denied participation")

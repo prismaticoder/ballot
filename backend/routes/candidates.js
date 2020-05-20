@@ -108,15 +108,16 @@ router.post('/apply', async (req, res) => {
             }
 
             else {
-                sendError(res,401,"Candidate already exists!")
+                sendError(res,401,"You have an existing application already!")
             }
         }
 
         else {
-            sendError(res,400,"Invalid Category ID")
+            sendError(res,400,"The category selected does not exist")
         }
     } catch (error) {
-        
+        console.log(error)
+        sendError(res,500)
     }
 })
 
