@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" data-app="true">
     <Header />
     <div class="col-md-9 mx-auto text-center">
       <router-view/>

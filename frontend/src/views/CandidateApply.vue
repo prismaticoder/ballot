@@ -164,6 +164,7 @@ export default {
                     this.$http.post(process.env.VUE_APP_CLOUDINARY_URL, formData)
                     .then(res => {
                         let imageUrl = res.data.secure_url;
+                        let { delete_token } = res.data;
 
                         return this.$http.post(`${process.env.VUE_APP_URL}/candidates/apply`, {
                             instagram, twitter, phoneNumber, alias, manifesto,firstName,lastName,level,imageUrl,categoryId,matric
@@ -184,6 +185,16 @@ export default {
                                 this.errorMsg = "Error processing request, please reload the page and try again"
                             }
                             window.scrollTo(0,0);
+
+                            return this.$http.post(`${process.env.VUE_APP_CLOUDINARY_DELETE}`, {token: delete_token})
+                            .then(res => {
+                                console.log(res)
+                                window.location.reload(true)
+                            })
+                            .catch(err => {
+                                console.log(err.response)
+                                window.location.reload(true)
+                            })
 
                         })
                     })
