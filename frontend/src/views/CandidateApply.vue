@@ -55,15 +55,15 @@
                     </b-form-group>
 
                     <b-form-group label="Phone Number" label-for="phoneNumber">
-                        <b-form-input required id="phoneNumber" v-model="phoneNumber" type="text" placeholder="E.g 08012345678"></b-form-input>
+                        <b-form-input required id="phoneNumber" v-model="phoneNumber" type="text" minlength="11" maxlength="11" pattern="\d*" title="This field must contain numbers only" placeholder="E.g 08012345678"></b-form-input>
                     </b-form-group>
 
-                    <b-form-group label="Twitter Handle" label-for="twitter">
-                        <b-form-input id="twitter" v-model="twitter" type="text" placeholder="E.g @myhandle"></b-form-input>
+                    <b-form-group label="Twitter Profile Link" label-for="twitter">
+                        <b-form-input id="twitter" pattern="http://(www\.)?twitter\.com\/(\w+)|https://(www\.)?twitter\.com\/(\w+)" title="This field must contain a valid twitter url" v-model="twitter" type="url" placeholder="E.g https://twitter.com/myusername"></b-form-input>
                     </b-form-group>
 
-                     <b-form-group label="Instagram Handle" label-for="instagram">
-                        <b-form-input id="instagram" v-model="instagram" type="text" placeholder="E.g @myhandle"></b-form-input>
+                     <b-form-group label="Instagram Profile Link" label-for="instagram">
+                        <b-form-input id="instagram" pattern="http://(www\.)?instagram\.com\/(\w+)|https://(www\.)?instagram\.com\/(\w+)" title="This field must contain a valid instagram url"  v-model="instagram" type="url" placeholder="E.g https://instagram.com/myusername"></b-form-input>
                     </b-form-group>
 
                     <b-form-group label="Briefly state your plans as a candidate (<100 words)" label-for="manifesto">
