@@ -65,12 +65,12 @@ export default {
         }
         h1,h2 {
             font-family: 'PT Sans', sans-serif;
-            color: #020824;
+            color: #162059;
             font-size: 2.6rem;
         }
         h3,h4,h5,h6 {
             font-family: 'PT Sans', sans-serif;
-            color: #020824;
+            color: #162059;
         }
         .myBtn {
              background: #162059;
