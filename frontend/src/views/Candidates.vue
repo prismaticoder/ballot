@@ -1,13 +1,28 @@
 <template>
   <div class="container">
 
-      <h1 class="main-header mt-5" style="text-align: center;">{{appName}} ELECTION CANDIDATES</h1>
+      <h3 class="main-header" style="text-align: center;">{{appName}} ELECTION CANDIDATES</h3>
       <hr>
 
-      <div class="mt-5" v-for="category in categories" v-bind:key="category.id">
-          <h3 class="text-center">CATEGORY: {{category.name.toUpperCase()}}</h3>
-          <SingleCategory class="justify-content-center" :category="category"></SingleCategory>
-          <hr>
+      <div v-if="isLoaded">
+          <div class="mt-5 mx-auto" v-for="category in categories" v-bind:key="category.id">
+            <h4 class="text-center"><strong>CATEGORY: {{category.name.toUpperCase()}}</strong></h4>
+            <SingleCategory class="justify-content-center" :category="category"></SingleCategory>
+            <hr>
+          </div>
+      </div>
+
+      <div v-else>
+          <v-skeleton-loader class="mx-auto mt-5" type="heading"></v-skeleton-loader>
+
+          <div class="row justify-content-center">
+              <v-skeleton-loader type="card, text" class="m-3" width="20rem"></v-skeleton-loader>
+              <v-skeleton-loader type="card, text" class="m-3" width="20rem"></v-skeleton-loader>
+              <v-skeleton-loader type="card, text" class="m-3" width="20rem"></v-skeleton-loader>
+              <v-skeleton-loader type="card, text" class="m-3" width="20rem"></v-skeleton-loader>
+              <v-skeleton-loader type="card, text" class="m-3" width="20rem"></v-skeleton-loader>
+              <v-skeleton-loader type="card, text" class="m-3" width="20rem"></v-skeleton-loader>
+          </div>
       </div>
 
                 
@@ -28,6 +43,7 @@ export default {
         return {
             appName: process.env.VUE_APP_NAME,
             categories : [],
+            isLoaded: false
         }
     },
     mounted() {
@@ -37,6 +53,7 @@ export default {
         init() {
             this.$http.get(`${process.env.VUE_APP_URL}/candidates`)
             .then(res => {
+                this.isLoaded = true
                 this.categories = res.data.categories
             })
             .catch(err => {
