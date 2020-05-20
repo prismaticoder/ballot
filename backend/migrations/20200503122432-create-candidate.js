@@ -29,6 +29,17 @@ module.exports = {
       status: {
         type: Sequelize.ENUM(['pending','confirmed','denied'])
       },
+      instagram: {
+        type: Sequelize.STRING,
+        defaultValue: null
+      },
+      twitter: {
+        type: Sequelize.STRING,
+        defaultValue: null
+      },
+      phoneNumber: {
+        type: Sequelize.STRING
+      },
       manifesto: {
         type: Sequelize.TEXT('long')
       },
