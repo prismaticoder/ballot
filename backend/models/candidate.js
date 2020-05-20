@@ -1,18 +1,36 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Candidate = sequelize.define('Candidate', {
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     alias: DataTypes.STRING,
     statusCode: DataTypes.STRING,
     matric: DataTypes.STRING,
-    level: DataTypes.INTEGER,
+    level: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     status: DataTypes.STRING,
     instagram: DataTypes.STRING,
     twitter: DataTypes.STRING,
-    phoneNumber: DataTypes.STRING,
-    manifesto: DataTypes.TEXT,
-    imageUrl: DataTypes.STRING,
+    phoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    manifesto: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     categoryId: DataTypes.INTEGER,
     fullName: {
       type: DataTypes.VIRTUAL,
