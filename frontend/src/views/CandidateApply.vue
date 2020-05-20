@@ -5,11 +5,11 @@
       <hr>
 
         <div v-if="state == 'prevoting'">
-            <b-alert class="mt-4 col-md-8 mx-auto" v-model="showAlert" variant="danger" dismissible>
+            <b-alert class="mt-4 col-md-8 mx-auto" v-model="showAlert" variant="warning" dismissible>
                 <strong>{{errorMsg}}</strong>
             </b-alert>
 
-            <b-form class="col-md-6 mx-auto text-left" @submit.prevent="checkIfQualify()">
+            <b-form class="col-md-6 mx-auto text-left" @submit.prevent="attemptSubmit()">
 
                 <b-form-group label="Category" label-for="category">
                     <b-form-select :disabled="showFullForm" id="category" v-model="category" required>
@@ -26,6 +26,25 @@
                     <v-btn type="submit" :loading="loading" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Submit</v-btn>
                 </div>
 
+                <v-dialog v-model="dialog" persistent max-width="400">
+
+                    <v-card>
+                        <v-card-title class="headline">Hey {{candidate.firstName}},</v-card-title>
+
+                        <v-card-text>
+                        Your application has been submitted and has been placed in the <strong>pending</strong> category. After being vetted and verified, the electoral committee will either confirm or deny your application.<br>
+                        Your status code is <strong>{{candidate.statusCode}}</strong>. Save this code somewhere and use it in checking your application status and performing any necessary edits before you are confirmed as a candidate. 
+                        </v-card-text>
+
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="green darken-1" text @click="goBack()">Okay, got it!</v-btn>
+                        </v-card-actions>
+
+                    </v-card>
+
+
+                </v-dialog>
                 <div v-if="showFullForm">
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -36,7 +55,7 @@
                     </b-form-group>
 
                     <b-form-group label="Phone Number" label-for="phoneNumber">
-                        <b-form-input required id="phoneNumber" v-model="phoneNumber" type="text" placeholder="Enter your phone number here..."></b-form-input>
+                        <b-form-input required id="phoneNumber" v-model="phoneNumber" type="text" placeholder="E.g 08012345678"></b-form-input>
                     </b-form-group>
 
                     <b-form-group label="Twitter Handle" label-for="twitter">
@@ -78,6 +97,7 @@ export default {
     data() {
         return {
             category: "",
+            candidate: {},
             matric: "",
             categories: [],
             alias: null,
@@ -86,6 +106,7 @@ export default {
             showAlert: false,
             showFullForm: false,
             errorMsg: "",
+            dialog: false,
             loading: false,
             instagram: null,
             twitter: null,
@@ -108,7 +129,7 @@ export default {
                 console.log(err)
             })
         },
-        checkIfQualify() {
+        attemptSubmit() {
             let matric = this.matric;
             let categoryId = this.category;
 
@@ -118,29 +139,62 @@ export default {
                 let {instagram, twitter, phoneNumber, alias, manifesto} = this;
                 let {firstName,lastName,level} = this.voter;
 
-                let formData = new FormData();
+                let numWords = manifesto.split(' ').length;
 
-                formData.append('file', this.image);
-                formData.append('upload_preset', 'h7emmbnz')
+                if (this.image.size > 1024*1024) {
+                    this.loading = false
+                    this.showAlert = true;
+                    this.errorMsg = "Image must have a size less than 1MB";
+                    window.scrollTo(0,0);
+                }
 
-                this.$http.post("https://api.cloudinary.com/v1_1/ballotdev/image/upload", formData)
-                .then(res => {
-                    let imageUrl = res.data.secure_url;
+                else if (numWords > 100) {
+                    this.loading = false
+                    this.showAlert = true;
+                    this.errorMsg = "Your plans shouldn't be more than 100 words";
+                    window.scrollTo(0,0);  
+                }
 
-                    return this.$http.post(`${process.env.VUE_APP_URL}/candidates/apply`, {
-                        instagram, twitter, phoneNumber, alias, manifesto,firstName,lastName,level,imageUrl,categoryId,matric
-                    })
+                else {
+                    let formData = new FormData();
+
+                    formData.append('file', this.image);
+                    formData.append('upload_preset', process.env.VUE_APP_UPLOAD_PRESET)
+
+                    this.$http.post(process.env.VUE_APP_CLOUDINARY_URL, formData)
                     .then(res => {
-                        alert ("Your application has been submitted as pending " + res.data.candidate.fullName)
+                        let imageUrl = res.data.secure_url;
+
+                        return this.$http.post(`${process.env.VUE_APP_URL}/candidates/apply`, {
+                            instagram, twitter, phoneNumber, alias, manifesto,firstName,lastName,level,imageUrl,categoryId,matric
+                        })
+                        .then(res => {
+                            this.loading = false
+                            this.candidate = res.data.candidate;
+                            this.dialog = true
+                        })
+                        .catch(err => {
+                            this.loading = false;
+                            this.showAlert = true
+
+                            if (err.response) {
+                                this.errorMsg = err.response.data.error
+                            }
+                            else {
+                                this.errorMsg = "Error processing request, please reload the page and try again"
+                            }
+                            window.scrollTo(0,0);
+
+                        })
                     })
                     .catch(err => {
+                        this.loading = false;
+                        this.showAlert = true;
+                        this.errorMsg = "Error uploading image, please reload the page and try again"
+                        window.scrollTo(0,0);
                         console.log(err)
                     })
-                })
-                .catch(err => console.log(err))
-                
-                    
-                // console.log(formData)
+                }
 
 
             }
@@ -155,9 +209,15 @@ export default {
                 .catch(err => {
                     this.showAlert = true;
                     this.loading = false;
-                    this.errorMsg = err.response ? err.response.data.error : "Internal Server Error"
+                    this.errorMsg = err.response ? err.response.data.error : "Error processing request, please try again"
+                    window.scrollTo(0,0);
                 })
             }
+        },
+
+        goBack() {
+            this.dialog = false;
+            this.$router.replace({name: 'all-candidates'})
         }
     },
     computed: {
