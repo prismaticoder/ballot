@@ -2,7 +2,19 @@
   <div id="app" data-app="true">
     <Header />
     <div class="col-md-9 mx-auto text-center">
-      <router-view/>
+      <router-view v-if="!error"/>
+      <div v-else>
+        <div class="container mt-5">
+          <h1 class="text-center mt-5">
+              500 | Internal Server Error
+          </h1>
+
+          <p class="text-center mt-3">
+              Sorry, our servers are currently down :( <br>
+              Be rest assured that our brightest minds are doing all they can to bring the server back up. Please bear with us :)<br>
+          </p>
+        </div>
+      </div>
     </div>
     
     <Footer />
@@ -19,10 +31,18 @@ export default {
     Header,
     Footer
   },
+  data() {
+    return {
+      error: false
+    }
+  },
   beforeCreate() {
     this.$store.dispatch('setState')
     .then(res => console.log(res))
-    .catch(err => console.log(`${err}`))
+    .catch(err => {
+      
+      this.error = true
+      console.log(`${err}`)})
   },
   created: function () {
     this.$http.interceptors.response.use(undefined, function (err) {
