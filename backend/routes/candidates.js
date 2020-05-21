@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var nanoid = require('nanoid')
+var { customAlphabet } = require('nanoid')
 var models = require('../models'); // loads index.js
 var { Candidate,Category,Voter } = models;
 var { sendRes,sendError } = require('../controllers/res')
@@ -94,8 +94,9 @@ router.post('/apply', async (req, res) => {
                     [Op.or]: [{status: "confirmed"}, {status: "pending"}]
                 }
             })
+            let nanoid = customAlphabet('123456789abcdefghjklmnpqrstuvwxyz', 6)
 
-            let statusCode = nanoid(6)
+            let statusCode = nanoid()
 
             if (!check) {
                 let candidate = await category.createCandidate({
@@ -104,7 +105,7 @@ router.post('/apply', async (req, res) => {
                     status: "pending"
                 })
 
-                sendRes(res,{candidate})
+                sendRes(res,{candidate},201)
             }
 
             else {
@@ -122,33 +123,44 @@ router.post('/apply', async (req, res) => {
 })
 
 //Check application status, a middleware should be here for login, or one can just use passport to check if the application code matches
-router.get('/application-status', async (req, res) => {
-    let { region } = res.locals;
+router.get('/checkStatus', async (req, res) => {
+    
+    if (req.query.statusCode && req.query.matric) {
+        let { statusCode,matric } = req.query
 
-    if (req.query.userCode) {
-        let { userCode } = req.query
-
-        let [ candidate ] = await region.getCandidates({
-            where: {
-                statusCode: userCode
+        try {
+         
+            let candidate = await Candidate.findOne({
+                where: {
+                    matric
+                },
+                include: {
+                    attributes: ['name'],
+                    model: Category,
+                    as: "category"
+                }
+            })
+    
+            if (!candidate) {
+                sendError(res,404,"Candidate not found")
             }
-        })
 
-        if (!candidate) {
-            return res.status(404).json({ok:false, message: "No Candidate with the requested statuscode"})
+            else {
+                if (candidate.statusCode == statusCode) {
+                    sendRes(res,{candidate})
+                }
+
+                else {
+                    sendError(res,404,"Incorrect status code")
+                }
+            }
+            
+        } catch (error) {
+            sendError(res,500)
         }
-        return res.render('application-status', {
-            candidate,
-            region,
-            page_name: "Candidates",
-            title:"Check Application Status"
-        })
     }
     else {
-        return res.render('application-check', {
-            page_name: "Candidates",
-            title: "Check Application Status"
-        })
+        sendError(res,400)
     }
 })
 
@@ -181,6 +193,44 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error(error)
         sendError(res, 500)
+    }
+})
+
+router.put('/:id', async (req, res) => {
+    let {id} = req.params
+    let {alias, phoneNumber, twitter, manifesto, instagram} = req.body;
+
+
+    try {
+        
+        let candidate = await Candidate.findByPk(id);
+
+
+        if (candidate) {
+            if (candidate.status != "pending") {
+                sendError(res,401,"Details can only be updated for candidates with a pending status")
+            }
+
+            else {
+                candidate.alias = alias;
+                candidate.phoneNumber = phoneNumber;
+                candidate.manifesto = manifesto;
+                candidate.twitter = twitter;
+                candidate.instagram = instagram;
+
+                await candidate.save()
+
+                sendRes(res,{message: "Details updated successfully"})
+            }
+        }
+
+        else {
+            sendError(res,404,"Candidate not found!")
+        }
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
     }
 })
 
