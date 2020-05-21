@@ -196,6 +196,60 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+router.delete('/:id', async (req, res) => {
+    let { id } = req.params;
+
+    let { statusCode } = req.query;
+
+    if (statusCode) {
+
+        try {
+         
+            let candidate = await Candidate.findOne({
+                where: {
+                    id
+                }
+            })
+    
+            if (candidate) {
+
+                if (candidate.statusCode == statusCode) {
+
+                    if (candidate.status == "pending") {
+                        await candidate.destroy();
+                        sendRes(res,{message: "Your application has been cancelled successfully"})
+                    }
+
+                    else {
+                        sendError(res,401,"Sorry, only candidates who are on a pending status can make a request to cancel an application")
+                    }
+                    
+                }
+    
+                else {
+                    sendError(res,401,"You are unauthorized to make this request")
+                }
+            }
+    
+            else {
+                sendError(res,404,"Candidate not found")
+            }    
+
+
+        } catch (error) {
+            console.error(error)
+            sendError(res,500)
+        }
+
+    }
+
+    else {
+        sendError(res,400)
+    }
+
+
+})
+
 router.put('/:id', async (req, res) => {
     let {id} = req.params
     let {alias, phoneNumber, twitter, manifesto, instagram} = req.body;

@@ -41,15 +41,15 @@
       </div>
       <div v-else-if="candidate.status == 'denied'">
         <p>
-          Dear {{candidate.firstName}},<br>
-          We regret to inform you that your application for candidacy for the post of {{candidate.category.name}} in the upcoming election has been denied after thorough vetting by the electoral committee. Do well to check in with us if you assume we made any error as reagrds this decision.<br>
+          <strong>Dear {{candidate.firstName}},</strong><br><br>
+          We regret to inform you that your application for candidacy for the post of <strong>{{candidate.category.name}}</strong> in the upcoming election has been denied after thorough vetting by the electoral committee. Do well to check in with us if you assume we made any error as reagrds this decision.<br><br>
           Regards,<br>
           The {{appName}} Electoral Committee.
         </p>
       </div>
       <div v-else>
         Dear {{candidate.firstName}},<br>
-        Your application for the candidacy for the post of {{candidate.category.name}} in the upcoming election is still <strong>pending</strong>. Keep checking this page as regards any updates.<br>
+        Your application for the candidacy for the post of <strong>{{candidate.category.name}}</strong> in the upcoming election is still <strong>pending</strong>. Keep checking this page as regards any updates.<br>
         In the mean time, you can update some parts of your application here:
 
         <form class="mt-5 col-md-5" action="" @submit.prevent="updateCandidate(candidate.id)">
@@ -57,6 +57,20 @@
           <b-alert class="mt-4 col-md-8" v-model="showAlert" variant="warning" dismissible>
             <strong>{{errorMsg}}</strong>
           </b-alert>
+
+          <v-dialog v-model="dialog" persistent max-width="300">
+              <v-card>
+                  <v-card-title class="headline">Cancel Application?</v-card-title>
+                  <v-card-text>
+                    Are you sure you want to cancel your application as a candidate in the upcoming elections? 
+                  </v-card-text>
+                  <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
+                      <v-btn :loading="dialogLoad" color="green darken-1" text @click="cancelApplication(candidate.id)">Yes</v-btn>
+                  </v-card-actions>
+              </v-card>
+          </v-dialog>
 
           <div class="form-group">
               <label for="name">Name</label>
@@ -83,11 +97,15 @@
           </b-form-group>
 
 
-          <div class="mt-5">
+          <div class="mt-3">
             <v-btn type="submit" :loading="loading" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Submit</v-btn>
           </div>
 
         </form>
+
+        <p class="mt-5">
+          In the event that you wish to cancel your application, you can click <a href="#" @click.prevent="dialog = true">here</a>
+        </p>
       </div>
 
     </div>
@@ -105,12 +123,9 @@ export default {
         loading: false,
         showAlert: false,
         errorMsg: "",
+        dialogLoad: false,
         matric:"",
-        alias: "",
-        phoneNumber: "",
-        instagram: "",
-        manifesto: "",
-        twitter: "",
+        dialog: false,
         appName: process.env.VUE_APP_NAME,
         items: [
             {
@@ -146,7 +161,7 @@ export default {
 
       },
       updateCandidate(id) {
-        let {alias,twitter,instagram,manifesto,phoneNumber} = this
+        let {alias,twitter,instagram,manifesto,phoneNumber} = this.candidate
 
         let numWords = manifesto.split(' ').length;
 
@@ -175,6 +190,22 @@ export default {
             window.scrollTo(0,0);
           })
         }
+      },
+
+      cancelApplication(id) {
+        this.dialogLoad = true;
+
+        this.$http.delete(`${process.env.VUE_APP_URL}/candidates/${id}?statusCode=${this.statusCode}`)
+        .then(res => {
+          this.dialog = false;
+          alert(res.data.message)
+          this.$router.replace({name : 'all-candidates'})
+        })
+        .catch(err => {
+          this.dialogLoad = false
+          this.dialog = false
+          err.response ? alert(err.response.data.error) : alert("Error processing your request, please try again")
+        })
       }
 
     }
