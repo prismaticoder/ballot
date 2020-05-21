@@ -2,6 +2,12 @@
   <div class="container">
 
       <h3 class="main-header" style="text-align: center;">Candidate Application | Ballot</h3>
+      <v-breadcrumbs :items="items" class="">
+            <template v-slot:divider>
+                <v-icon>mdi-chevron-right</v-icon>
+            </template>
+        </v-breadcrumbs>
+
       <hr>
 
         <div v-if="state == 'prevoting'">
@@ -114,6 +120,18 @@ export default {
             phoneNumber: "",
             type: process.env.VUE_APP_TYPE.toLowerCase(),
             btnColor: "#162059",
+            items: [
+            {
+                disabled: false,
+                text: "CANDIDATES",
+                exact: true,
+                link: true,
+                to: "/candidates"
+            },
+            {
+                disabled: false,
+                text: `APPLY FOR CANDIDACY`,
+            },]
         }
     },
     mounted() {
