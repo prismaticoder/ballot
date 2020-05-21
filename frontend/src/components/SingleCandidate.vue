@@ -1,5 +1,5 @@
 <template>
-  <v-card style="text-decoration:none" class="m-3" width="20rem" :hover="true" :shaped="true" :to="{name: 'single-candidate', params: {id: candidate.refinedLink}}">
+  <v-card style="text-decoration:none" class="mx-auto" width="20rem" :hover="true" :shaped="true" :to="{name: 'single-candidate', params: {id: candidate.refinedLink}}">
 
     <v-img
       

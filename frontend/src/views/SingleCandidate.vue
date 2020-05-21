@@ -11,7 +11,7 @@
       <div class="row mt-5">
           <div class="col-md-4 p-4 d-flex align-items-center rounded" style="background-color: rgba(0,0,0,.075)">
 
-              <v-img :src="candidate.imageUrl" class="img-fluid rounded"></v-img>
+              <v-img :src="candidate.imageUrl" class="img-fluid rounded-left"></v-img>
           </div>
           <div class="col-md-8 border-left mt-3 pt-3 text-center">
               <span class="tag">NAME</span> <span>{{candidate.fullName}}</span>
