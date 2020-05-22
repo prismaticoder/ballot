@@ -29,7 +29,12 @@ module.exports = {
       hall: {
         type: Sequelize.STRING
       },
+      voterCode: {
+        defaultValue: null,
+        type: Sequelize.STRING
+      },
       accreditedAt: {
+        defaultValue: null,
         type: Sequelize.DATE
       },
       level: {

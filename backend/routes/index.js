@@ -55,24 +55,62 @@ router.get('/checkappstate', async (req, res) => {
 })
 
 //Check if user has accreeditation code and if so accredit him/her
-router.post('/accreditation', async (req, res) => {
+router.post('/accredit', async (req, res) => {
   try {
     
-    let { matric, code } = req.body;
+    let { matric, lastName } = req.body;
 
-    let student = await Voter.findOne({
-      where: {
-        matric,
-        code
+    if (matric && lastName) {
+      let student = await Voter.findOne({
+        where: {
+          matric
+        }
+      })
+  
+      if (!student) {
+        sendError(res,404,"Student not found")
       }
-    })
+      
+      else {
+        if (student.lastName.toLowerCase() != lastName.toLowerCase()) {
+          sendError(res,404,"Error: Credentials do not match")
+        }
 
-    if (!student) {
-      sendError(res,404)
+        else {
+
+          if (!student.accreditedAt) {
+
+            if (!student.voterCode) {
+
+              //generate the voter code
+              let firstString = Math.floor(1000 + Math.random() * 9000);
+              let firstAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+              let secondAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+
+              let voterCode = `${firstString}${firstAlphabet}${secondAlphabet}`
+
+              console.log(voterCode)
+              //This is where a mail is sent to the student
+              //await sendMail(student.prospectiveMail)
+
+              sendRes(res,{student})
+            }
+
+            else {
+              sendError(res,401,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
+            }
+          }
+
+          else {
+            sendError(res,401,"You have already been accredited and given a voter's number")
+          }
+        }
+      }
+  
     }
-    
+
     else {
-      sendRes(res,student)
+      sendError(res,400,"Bad Request")
     }
 
   } catch (error) {

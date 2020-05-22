@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     faculty: DataTypes.STRING,
     department: DataTypes.STRING,
     hall: DataTypes.STRING,
+    voterCode: DataTypes.STRING,
     accreditedAt: DataTypes.DATE,
     level: DataTypes.ENUM(100,200,300,400,500,600),
     fullName: {
@@ -25,6 +26,21 @@ module.exports = (sequelize, DataTypes) => {
         firstname = firstname.join('-')
 
         return `${firstname} ${lastname}`
+      }
+    },
+    prospectiveMail: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        let lastname = this.lastName.toLowerCase()
+        let firstname = this.firstName.toLowerCase()
+        let matric = this.matric
+
+        let firstWord = firstname[0];
+        let lastThree = matric.toString().slice(3)
+
+        let prospectiveMail = `${firstWord}${lastname}${lastThree}@stu.ui.edu.ng`
+
+        return prospectiveMail;
       }
     }
   }, {});
