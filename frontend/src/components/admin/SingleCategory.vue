@@ -44,10 +44,10 @@
         </div>
       </div>
       <div class="col-12 justify-content-center">
-        <v-btn fab small :color="btnColor" dark style="color: #162059" title="Edit Category Details" class="mr-3 btn-fix" @click.prevent="editMode = false">
+        <v-btn fab small :color="btnColor" dark style="color: #162059" title="Cancel" class="mr-3 btn-fix" @click.prevent="editMode = false">
             <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-btn fab small :color="btnColor" style="color: #162059" title="Remove Categoty" dark class="ml-5 btn-fix" @click.prevent="updateCategory()">
+        <v-btn fab small :color="btnColor" style="color: #162059" title="Update" dark class="ml-5 btn-fix" @click.prevent="updateCategory()">
             <v-icon>mdi-check</v-icon>
         </v-btn>
       </div>
