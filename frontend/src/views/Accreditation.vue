@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="state == 'prevoting'">
      <h3 class="main-header" style="text-align: center;">Voter Accreditation</h3>
       <hr>
 
@@ -10,7 +10,7 @@
         If you are still having challenges with your student email address after following the steps above, you will have to physically meet any member of the electoral committee and present a proof of identification after which a voter's number will be generated for you.
       </p>
      
-    <div class="col-md-6 mt-5 mx-auto" v-if="student == null">
+    <div class="col-md-6 mt-3 mx-auto" v-if="student == null">
       <hr>
       <v-dialog v-model="dialog" hide-overlay persistent width="300">
         <v-card color="primary" dark>
@@ -55,6 +55,14 @@
     </div>
       
   </div>
+
+  <div class="container" v-else>
+    <h3 class="main-header" style="text-align: center;">Voter Accreditation</h3>
+      <hr>
+    <p class="mt-3">
+      Sorry, accreditation can only be performed during the pre-election period. You would have to wait till the next election iteration to get accredited.
+    </p>
+  </div>
 </template>
 
 <script>
@@ -94,6 +102,12 @@ export default {
 
       goBack() {
         window.location.reload()
+      }
+    },
+
+    computed: {
+      state() {
+        return this.$store.getters.state
       }
     }
 }
