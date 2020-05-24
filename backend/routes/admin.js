@@ -240,12 +240,19 @@ router.post('/settings', async (req, res) => {
     try {
         let { startDate,endDate } = req.body;
 
-        let settings = await Config.create({
-            startDate,
-            endDate
-        })
-        
-        sendRes(res,settings,201)
+        if (endDate > startDate) {
+            let settings = await Config.create({
+                startDate,
+                endDate
+            })
+            
+            sendRes(res,settings,201)
+        }
+
+        else {
+            sendError(res,401,"Election end date must be greater than the start date")
+        }
+
     } catch (error) {
         console.error(error);
         sendError(res,500)
@@ -259,16 +266,22 @@ router.put('/settings', async (req, res) => {
         let { startDate,endDate } = req.body
         , [setting] = await Config.findAll()
 
-        if (setting) {
-            setting.startDate = startDate;
-            setting.endDate = endDate;
-
-            await setting.save();
-            
-            sendRes(res,setting)
+        if (endDate > startDate) {
+            if (setting) {
+                setting.startDate = startDate;
+                setting.endDate = endDate;
+    
+                await setting.save();
+                
+                sendRes(res,setting)
+            }
+    
+            sendError(res,404)
         }
 
-        sendError(res,404)
+        else {
+            sendError(res,401,"Election end date must be greater than the start date")
+        }
 
         
     } catch (error) {
