@@ -4,6 +4,7 @@ var { customAlphabet } = require('nanoid')
 var models = require('../models'); // loads index.js
 var { Candidate,Category,Voter } = models;
 var { sendRes,sendError } = require('../controllers/res')
+var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting } = require('../controllers/middleware')
 var { Op } = require('sequelize')
 var cloudinary = require('cloudinary').v2;
 
@@ -81,41 +82,49 @@ router.get('/checkIfQualify', async (req, res) => {
 
 
 //Candidate Applying For A Position
-router.post('/apply', async (req, res) => {
+router.post('/apply', onlyPreVoting, async (req, res) => {
     try {
-        var { firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
 
-        var category = await Category.findByPk(categoryId);
+        if (res.locals.state == "prevoting") {
+            var { firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
 
-        if (category) {
-            let check = await Candidate.count({
-                where: {
-                    matric,
-                    [Op.or]: [{status: "confirmed"}, {status: "pending"}]
-                }
-            })
-            let nanoid = customAlphabet('123456789abcdefghjklmnpqrstuvwxyz', 6)
+            var category = await Category.findByPk(categoryId);
 
-            let statusCode = nanoid()
-
-            if (!check) {
-                let candidate = await category.createCandidate({
-                    firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
-                    statusCode,
-                    status: "pending"
+            if (category) {
+                let check = await Candidate.count({
+                    where: {
+                        matric,
+                        [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+                    }
                 })
+                let nanoid = customAlphabet('123456789abcdefghjklmnpqrstuvwxyz', 6)
 
-                sendRes(res,{candidate},201)
+                let statusCode = nanoid()
+
+                if (!check) {
+                    let candidate = await category.createCandidate({
+                        firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
+                        statusCode,
+                        status: "pending"
+                    })
+
+                    sendRes(res,{candidate},201)
+                }
+
+                else {
+                    sendError(res,401,"You have an existing application already!")
+                }
             }
 
             else {
-                sendError(res,401,"You have an existing application already!")
+                sendError(res,400,"The category selected does not exist")
             }
         }
 
         else {
-            sendError(res,400,"The category selected does not exist")
+            sendError(res,401,"Applications are only allowed in the pre-election phase")
         }
+
     } catch (error) {
         console.log(error)
         sendError(res,500)

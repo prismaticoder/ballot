@@ -1,6 +1,6 @@
 var { Op } = require('sequelize');
 var models = require('../models'); // loads index.js
-var { Category,Region } = models; 
+var { Category,Region, Setting} = models; 
 var { sendError } = require('./res')
 var jwt = require('jsonwebtoken');
 
@@ -47,22 +47,161 @@ exports.checkAdminState = async (req, res, next) => {
     }
 }
 
+exports.checkState = async (req, res, next) => {
+    try {
+
+        let [ config ] = await Setting.findAll();
+
+        if (config) {
+
+            var currentTime = new Date()
+            , hasStarted = currentTime >= config.startDate
+            , hasEnded = currentTime >= config.endDate
+            , state = null;
+      
+            if (!hasStarted && !hasEnded) {
+              state = "prevoting"
+            }
+      
+            else if (hasStarted && !hasEnded) {
+              state = "voting";
+            }
+      
+            else {
+              state = "postvoting"
+            }
+          }
+      
+          else {
+            state = "prevoting"
+          }
+      
+          res.locals.state = state;
+          next();
+        
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+}
+
+exports.onlyPreVoting = async (req, res, next) => {
+    try {
+        
+
+        let [ config ] = await Setting.findAll();
+
+        if (config) {
+
+            var currentTime = new Date()
+            , hasStarted = currentTime >= config.startDate
+            , hasEnded = currentTime >= config.endDate
+            , state = null;
+      
+            if (!hasStarted && !hasEnded) {
+                res.locals.state = "prevoting"
+                next()
+            }
+
+            else {
+                sendError(res,401,"Error: This action can only be performed in the pre-election phase")
+            }
+        }
+
+        else {
+            res.locals.state = "prevoting"
+            next()
+        }
+
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+}
+
+exports.onlyVoting = async (req, res, next) => {
+    try {
+        
+
+        let [ config ] = await Setting.findAll();
+
+        if (config) {
+
+            var currentTime = new Date()
+            , hasStarted = currentTime >= config.startDate
+            , hasEnded = currentTime >= config.endDate
+      
+            if (hasStarted && !hasEnded) {
+                res.locals.state = "voting"
+                next()
+            }
+
+            else {
+                sendError(res,401,"Error: This action can only be performed when voting is ongoing")
+            }
+        }
+
+        else {
+            sendError(res,401,"Action cannot be performed because election parameters have not been set")
+        }
+
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+}
+
+exports.onlyPostVoting = async (req, res, next) => {
+    try {
+        
+
+        let [ config ] = await Setting.findAll();
+
+        if (config) {
+
+            var currentTime = new Date()
+            , hasStarted = currentTime >= config.startDate
+            , hasEnded = currentTime >= config.endDate
+            , state = null;
+      
+            if (hasStarted && hasEnded) {
+                res.locals.state = "postvoting"
+                next()
+            }
+
+            else {
+                sendError(res,401,"Error: This action can only be performed in the post-election phase")
+            }
+        }
+
+        else {
+            sendError(res,401,"Action cannot be performed because election parameters have not been set")
+        }
+
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+}
+
 exports.validateAdminToken = async (req, res, next) => {
 
     try {
 
         if (req.headers.authorization) {
             let token = req.headers.authorization.split(' ')[1]
-            let decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY)
-    
-            let { username } = decodedToken
-            if (req.body.username && req.body.username !== username) {
-                sendError(res,401)
-            }
-        
-            else {
-                next()
-            }
+
+            jwt.verify(token,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+                if (err) {
+                    sendError(res,401,err)
+                }
+                else {
+                    next()
+                }
+            })
         }
         else {
             sendError(res,400,"Invalid Request: No Token sent")

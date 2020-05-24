@@ -4,6 +4,7 @@ var models = require('../models');
 var { Category,Candidate,Voter } = models;
 var Config = models.Setting
 var { Op } = require('sequelize');
+var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting } = require('../controllers/middleware')
 var { sendError, sendRes } = require('../controllers/res')
 
 //Login middleware needed to access this section
@@ -310,18 +311,40 @@ router.get('/categories', async (req, res) => {
 })
 
 //Create a new category
-router.post('/categories', async (req, res) => {
+router.post('/categories', onlyPreVoting, async (req, res) => {
 
     try {
         let { name,minLevel,maxLevel } = req.body
 
-        let category = await Category.create({
-            name,
-            minLevel,
-            maxLevel
-        })
+        if (name && minLevel && maxLevel) {
+            if (maxLevel >= minLevel) {
 
-        sendRes(res,category,201,"Category added successfully!")
+                if (res.locals.state == "prevoting") {
+                    let category = await Category.create({
+                        name,
+                        minLevel,
+                        maxLevel
+                    })
+            
+                    sendRes(res,{category},201,"Category added successfully!")
+                }
+
+                else {
+                    sendError(res,401,"Error: cannot only add new category in pre-election phase")
+                }
+
+            }
+
+            else {
+
+                sendError(res,400,"Error: The minimum level must be either less than or equal to the maximum level set")
+
+            }
+        }
+
+        else {
+            sendError(res,400)
+        }
 
     } catch (error) {
         console.error(error)
@@ -335,13 +358,29 @@ router.put('/categories/:id', async (req, res) => {
     try {
         let { name,minLevel,maxLevel } = req.body
 
-        let category = await Category.findByPk(req.params.id)
+        if (name && minLevel && maxLevel) {
 
-        category = {...category, name, minLevel, maxLevel}
+            if (maxLevel >= minLevel) {
+                let category = await Category.findByPk(req.params.id)
 
-        await category.save();
+                category.name = name;
+                category.minLevel = minLevel;
+                category.maxLevel = maxLevel;
 
-        sendRes(res,category,null,"Category updated successfully")
+                await category.save();
+
+                sendRes(res,{category},null,"Category updated successfully")
+            }
+            
+            else {
+                sendError(res,400,"Error: The minimum level must be either less than or equal to the maximum level set")
+            }
+
+        }
+
+        else {
+            sendError(res,400)
+        }
 
     } catch (error) {
         console.error(error)
