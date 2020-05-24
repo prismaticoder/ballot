@@ -10,6 +10,7 @@ import Accreditation from '../views/Accreditation.vue'
 import SingleCandidate from '../views/SingleCandidate.vue'
 import AdminLogin from '../views/AdminLogin.vue'
 import AdminCandidates from '../views/admin/Candidates.vue'
+import AdminAccreditation from '../views/admin/Accreditation.vue'
 import Settings from '../views/admin/Settings.vue'
 import PageNotFound from '../views/PageNotFound.vue'
 import store from '../store'
@@ -57,12 +58,12 @@ const routes = [
     component: Accreditation
   },
   {
-    path: '/admin/login',
+    path: '/ecom/login',
     name: 'admin-login',
     component: AdminLogin,
   },
   {
-    path: '/admin',
+    path: '/ecom',
     name: 'admin-home',
     component: AdminHome,
     meta: {
@@ -70,7 +71,7 @@ const routes = [
     }
   },
   {
-    path: '/admin/voters',
+    path: '/ecom/voters',
     name: 'voters',
     component: Voters,
     meta: {
@@ -78,7 +79,7 @@ const routes = [
     }
   },
   {
-    path: '/admin/candidates',
+    path: '/ecom/candidates',
     name: 'candidates',
     component: AdminCandidates,
     meta: {
@@ -86,7 +87,7 @@ const routes = [
     }
   },
   {
-    path: '/admin/candidates/:id',
+    path: '/ecom/candidates/:id',
     name: 'candidates-single',
     component: SingleCandidate,
     meta: {
@@ -94,9 +95,17 @@ const routes = [
     }
   },
   {
-    path: '/admin/settings',
+    path: '/ecom/settings',
     name: 'settings',
     component: Settings,
+    meta: {
+      requireAuth: true
+    }
+  },
+  {
+    path: '/ecom/accreditation',
+    name: 'admin-accreditation',
+    component: AdminAccreditation,
     meta: {
       requireAuth: true
     }
