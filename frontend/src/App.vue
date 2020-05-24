@@ -77,6 +77,26 @@ export default {
             color: floralwhite;
             font-size:x-large
         }
+        .required .control-label:after {
+          content:"*";
+          color:red;
+        }
+        .font-button {
+          color: rgba(0,0,0,.095)
+        }
+        .font-button:hover {
+          color: #162059;
+          cursor: pointer;
+          font-size: 33px;
+        }
+        .header {
+          color: #020824;
+          text-decoration: underline;
+          font-weight: bold;
+          font-size: larger;
+          display: block;
+          margin-bottom: 10px;
+        }
         .main-logo:hover {
             text-decoration: none;
         }
@@ -114,13 +134,14 @@ export default {
             color: #BF1111;
             text-decoration: underline;
         }
+        .btn-fix:focus::before { opacity: 0 !important; }
         li.nav-item {
             font-size: larger;
-            padding: 4px;
+            /* padding: 4px; */
             /* margin-left: 5px; */
         }
         li.nav-item>a:hover, li.active>a{
-            border-bottom:solid #162059 2px;
+            border-bottom:solid #162059 1.7px;
         }
         .blueColor {
         color : #162059;

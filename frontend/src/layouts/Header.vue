@@ -10,7 +10,7 @@
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse class="col-md-2 mx-auto justify-content-center" id="nav-collapse" is-nav>
-            <ul v-if="!(path.includes('admin')) || path == '/admin/login'" class="navbar-nav">
+            <ul v-if="!(path.includes('ecom')) || path == '/ecom/login'" class="navbar-nav">
                  <router-link to="/" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
                  </router-link>
@@ -24,17 +24,20 @@
                  </b-nav-item-dropdown>
             </ul>
             <ul v-else class="navbar-nav">
-                 <router-link to="/admin" exact tag="li" class="nav-item" active-class="active">
+                 <router-link to="/ecom" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
                  </router-link>
-                  <router-link to="/admin/voters" tag="li" class="nav-item" active-class="active">
+                  <router-link to="/ecom/voters" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">VOTERS</a>
                  </router-link>
-                  <router-link to="/admin/candidates" tag="li" class="nav-item" active-class="active">
+                  <router-link to="/ecom/candidates" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">CANDIDATES</a>
                  </router-link>
-                  <router-link to="/admin/settings" tag="li" class="nav-item" active-class="active">
+                  <router-link to="/ecom/settings" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">SETTINGS</a>
+                 </router-link>
+                 <router-link to="/ecom/accreditation" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">ACCREDITATION</a>
                  </router-link>
             </ul>
 
