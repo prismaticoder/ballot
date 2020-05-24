@@ -17,14 +17,22 @@
 
             <b-form class="col-md-6 mx-auto text-left" @submit.prevent="attemptSubmit()">
 
-                <b-form-group label="Category" label-for="category">
+                <span class="text-danger">*</span> - Required Field
+
+                <b-form-group class="mt-3" label-for="category">
+                    <template v-slot:label>
+                        Category <span class="text-danger">*</span>
+                    </template>
                     <b-form-select :disabled="showFullForm" id="category" v-model="category" required>
                         <b-form-select-option :value="''">Please select a category</b-form-select-option>
                         <b-form-select-option :value="category.id" v-for="category in categories" :key="category.id">{{category.name}}</b-form-select-option>
                     </b-form-select>
                 </b-form-group>
 
-                <b-form-group label="Matric. Number" label-for="matric">
+                <b-form-group label-for="matric">
+                    <template v-slot:label>
+                        Matric. Number <span class="text-danger">*</span>
+                    </template>
                     <b-form-input :disabled="showFullForm" id="matric" v-model="matric" minlength="6" maxlength="6" pattern="\d*" title="This field must contain numbers only" required placeholder="Enter your matric number here..."></b-form-input>
                 </b-form-group>
 
@@ -53,14 +61,17 @@
                 </v-dialog>
                 <div v-if="showFullForm">
                     <div class="form-group">
-                        <label for="name">Name</label>
+                        <label for="name">Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" readonly :value="voter.fullName">
                     </div>
                     <b-form-group label="Alias" label-for="alias" description="Fill in this field if you have an alias you would like to be recognized with for the election">
                         <b-form-input id="alias" v-model="alias" type="text" placeholder="Enter alias here..."></b-form-input>
                     </b-form-group>
 
-                    <b-form-group label="Phone Number" label-for="phoneNumber">
+                    <b-form-group label-for="phoneNumber">
+                        <template v-slot:label>
+                            Phone Number <span class="text-danger">*</span>
+                        </template>
                         <b-form-input required id="phoneNumber" v-model="phoneNumber" type="text" minlength="11" maxlength="11" pattern="\d*" title="This field must contain numbers only" placeholder="E.g 08012345678"></b-form-input>
                     </b-form-group>
 
@@ -72,11 +83,17 @@
                         <b-form-input id="instagram" pattern="http://(www\.)?instagram\.com\/(\w+)|https://(www\.)?instagram\.com\/(\w+)" title="This field must contain a valid instagram url"  v-model="instagram" type="url" placeholder="E.g https://instagram.com/myusername"></b-form-input>
                     </b-form-group>
 
-                    <b-form-group label="Briefly state your plans as a candidate (<100 words)" label-for="manifesto">
+                    <b-form-group label-for="manifesto">
+                        <template v-slot:label>
+                            Briefly state your plans as a candidate (100 words or less) <span class="text-danger">*</span>
+                        </template>
                         <b-form-textarea v-model="manifesto" required placeholder="Enter not more than 100 words" rows="8"></b-form-textarea>
                     </b-form-group>
 
-                    <b-form-group label="Official Image of yourself (Must be less than 1MB)" label-for="image">
+                    <b-form-group label-for="image">
+                        <template v-slot:label>
+                            Official Image of yourself (1MB or less) <span class="text-danger">*</span>
+                        </template>
                         <b-form-file v-model="image" required ref="file" accept="image/jpeg, image/png, image/gif" id="image" placeholder="Choose an image"></b-form-file>
                     </b-form-group>
 
