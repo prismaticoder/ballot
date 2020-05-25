@@ -84,45 +84,38 @@ router.get('/checkIfQualify', async (req, res) => {
 //Candidate Applying For A Position
 router.post('/apply', onlyPreVoting, async (req, res) => {
     try {
+        var { firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
 
-        if (res.locals.state == "prevoting") {
-            var { firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
+        var category = await Category.findByPk(categoryId);
 
-            var category = await Category.findByPk(categoryId);
+        if (category) {
+            let check = await Candidate.count({
+                where: {
+                    matric,
+                    [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+                }
+            })
+            let nanoid = customAlphabet('123456789abcdefghjklmnpqrstuvwxyz', 6)
 
-            if (category) {
-                let check = await Candidate.count({
-                    where: {
-                        matric,
-                        [Op.or]: [{status: "confirmed"}, {status: "pending"}]
-                    }
+            let statusCode = nanoid()
+
+            if (!check) {
+                let candidate = await category.createCandidate({
+                    firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
+                    statusCode,
+                    status: "pending"
                 })
-                let nanoid = customAlphabet('123456789abcdefghjklmnpqrstuvwxyz', 6)
 
-                let statusCode = nanoid()
-
-                if (!check) {
-                    let candidate = await category.createCandidate({
-                        firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
-                        statusCode,
-                        status: "pending"
-                    })
-
-                    sendRes(res,{candidate},201)
-                }
-
-                else {
-                    sendError(res,401,"You have an existing application already!")
-                }
+                sendRes(res,{candidate},201)
             }
 
             else {
-                sendError(res,400,"The category selected does not exist")
+                sendError(res,401,"You have an existing application already!")
             }
         }
 
         else {
-            sendError(res,401,"Applications are only allowed in the pre-election phase")
+            sendError(res,400,"The category selected does not exist")
         }
 
     } catch (error) {

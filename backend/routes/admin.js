@@ -332,7 +332,13 @@ router.post('/categories', onlyPreVoting, async (req, res) => {
         if (name && minLevel && maxLevel) {
             if (maxLevel >= minLevel) {
 
-                if (res.locals.state == "prevoting") {
+                let check = await Category.findOne({
+                    where: {
+                        name
+                    }
+                })
+
+                if (!check) {
                     let category = await Category.create({
                         name,
                         minLevel,
@@ -343,7 +349,7 @@ router.post('/categories', onlyPreVoting, async (req, res) => {
                 }
 
                 else {
-                    sendError(res,401,"Error: cannot only add new category in pre-election phase")
+                    sendError(res,400,"A Category with this name already exists!")
                 }
 
             }
@@ -374,15 +380,29 @@ router.put('/categories/:id', async (req, res) => {
         if (name && minLevel && maxLevel) {
 
             if (maxLevel >= minLevel) {
-                let category = await Category.findByPk(req.params.id)
 
-                category.name = name;
-                category.minLevel = minLevel;
-                category.maxLevel = maxLevel;
+                //check if the category already exists
+                let check = await Category.findOne({
+                    where: {
+                        name
+                    }
+                })
 
-                await category.save();
+                if (!check) {
+                    let category = await Category.findByPk(req.params.id)
 
-                sendRes(res,{category},null,"Category updated successfully")
+                    category.name = name;
+                    category.minLevel = minLevel;
+                    category.maxLevel = maxLevel;
+
+                    await category.save();
+
+                    sendRes(res,{category},null,"Category updated successfully")
+                }
+
+                else {
+                    sendError(res,400,"A Category with this name already exists!")
+                }
             }
             
             else {
@@ -403,14 +423,25 @@ router.put('/categories/:id', async (req, res) => {
 
 
 //Delete a category
-router.delete('/categories/:id', async (req, res) => {
+router.delete('/categories/:id', onlyPreVoting, async (req, res) => {
 
     try {
-        //Get the category from the db
 
-        await Category.destroy(req.params.id)
+        //check if category exists
 
-        sendRes(res,{},null,"Category successfully removed")
+        let category = await Category.findByPk(req.params.id);
+
+        if (category) {
+            //Get the category from the db
+
+            await category.destroy()
+
+            sendRes(res,{message: "Category successfully removed"})
+        }
+
+        else {
+            sendError(res,404,"Category does not exist")
+        }
 
     } catch (error) {
         console.error(error)
