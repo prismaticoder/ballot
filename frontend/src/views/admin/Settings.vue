@@ -3,13 +3,22 @@
       <h3 class="main-header" style="text-align: center;">Election Settings And Configuration</h3>
       <hr>
 
+      <div>
+          <h4 class="mt-4">DATE AND TIME</h4>
+            <hr>
+
+            
+          
+
+      </div>
+
         
         <h4 class="mt-5 text-center">ALL CATEGORIES (POSTS)</h4>
 
-        <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-if="!showAddForm" title="Add new category" style="color: floralwhite" @click="showAddForm = true">
+        <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-if="!showAddForm" title="Add new category" style="color: floralwhite" @click.prevent="showAddForm = true">
             <v-icon>mdi-plus</v-icon>
         </v-btn>
-        <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-else title="Close form" style="color: floralwhite" @click="showAddForm = false">
+        <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-else title="Close form" style="color: floralwhite" @click.prevent="showAddForm = false">
             <v-icon>mdi-close</v-icon>
         </v-btn>
       <hr>
