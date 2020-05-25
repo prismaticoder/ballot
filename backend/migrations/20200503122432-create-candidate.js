@@ -48,7 +48,8 @@ module.exports = {
       },
       categoryId: {
         type: Sequelize.INTEGER,
-        references: { model: 'categories', key: 'id' }
+        references: { model: 'categories', key: 'id' },
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,

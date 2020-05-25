@@ -63,7 +63,8 @@ module.exports = (sequelize, DataTypes) => {
     })
     Candidate.belongsTo(models.Category, {
       foreignKey: 'categoryId',
-      as: 'category'
+      as: 'category',
+      onDelete: 'CASCADE'
     })
   };
   return Candidate;
