@@ -137,7 +137,7 @@ export default {
         .btn-fix:focus::before { opacity: 0 !important; }
         li.nav-item {
             font-size: larger;
-            /* padding: 4px; */
+            padding: 3px;
             /* margin-left: 5px; */
         }
         li.nav-item>a:hover, li.active>a{
