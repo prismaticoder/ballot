@@ -171,7 +171,9 @@ router.post('/admin/login', async (req, res) => {
 router.get('/categories', async (req, res) => {
 
   try {
-      let categories = await Category.findAll();
+      let categories = await Category.findAll({
+        attributes: ["name"]
+      });
 
       sendRes(res,{categories})
 
