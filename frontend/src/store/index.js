@@ -8,7 +8,7 @@ export default new Vuex.Store({
   state: {
     election: "",
     token: localStorage.getItem('userToken') || '',
-    user: ""
+    user: localStorage.getItem('username') || ""
   },
   getters: {
     isLoggedIn: state => !!state.token,
@@ -18,9 +18,9 @@ export default new Vuex.Store({
     CHANGE_ELECTION_STATE(state, newState) {
       state.election = newState;
     },
-    USER_LOGIN(state, token, user) {
-      state.token = token,
-      state.user = user
+    USER_LOGIN(state, data) {
+      state.token = data.token,
+      state.user = data.username
     },
     USER_LOGOUT(state) {
       state.token = "",
@@ -48,9 +48,18 @@ export default new Vuex.Store({
     },
     logout({commit}) {
       return new Promise((resolve) => {
-        commit('USER_LOGOUT')
         localStorage.removeItem('userToken')
+        localStorage.removeItem('username')
         delete axios.defaults.headers.common['Authorization']
+        commit('USER_LOGOUT')
+        resolve()
+      })
+    },
+    loginUser({commit}, data) {
+      return new Promise((resolve) => {
+        localStorage.setItem('userToken', data.token)
+        localStorage.setItem('username', data.username)
+        commit('USER_LOGIN', data)
         resolve()
       })
     }

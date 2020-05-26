@@ -11,12 +11,22 @@ import vuetify from './plugins/vuetify';
 
 Vue.use(VModal)
 
-const token = localStorage.getItem('userToken')
+
 Vue.prototype.$http = axios;
 
-if (token) {
-  Vue.prototype.$http.defaults.headers.common['Authorization'] = `Bearer ${token}`
-}
+
+Vue.prototype.$http.interceptors.request.use (
+  function (config) {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  function (error) {
+    return Promise.reject (error);
+  }
+);
 
 Vue.config.productionTip = false
 

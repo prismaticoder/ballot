@@ -25,6 +25,8 @@
 
 import Header from './layouts/Header.vue';
 import Footer from './layouts/Footer.vue';
+import router from './router'
+import store from './store'
 
 export default {
   components: {
@@ -44,18 +46,28 @@ export default {
       this.error = true
       console.log(`${err}`)})
   },
-  created: function () {
-    this.$http.interceptors.response.use(undefined, function (err) {
-      return new Promise(function (resolve, reject) {
-        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-          this.$store.dispatch('logout')
-          resolve()
-        }
-        reject(err);
-      });
-    });
-  }
 
+  created() {
+    this.$http.interceptors.response.use(undefined, function (err) {
+    let originalRequest = err.config
+    
+    if (err.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      store.dispatch('logout')
+      .then(() => {
+        router.push({ name: 'admin-login'})
+      })
+      .catch(() => {
+        console.log("Error logging user out")
+      })
+    }
+
+    else {
+      throw err
+    }
+  
+});
+  }
 }
 </script>
 
