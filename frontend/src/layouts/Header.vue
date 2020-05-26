@@ -9,8 +9,8 @@
         </a>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-        <b-collapse class="col-md-2 mx-auto justify-content-center" id="nav-collapse" is-nav>
-            <ul v-if="!(path.includes('ecom')) || path == '/ecom/login'" class="navbar-nav">
+        <b-collapse class="col-md-6 mx-auto justify-content-center" id="nav-collapse" is-nav>
+            <ul v-if="!isLoggedIn" class="navbar-nav">
                  <router-link to="/" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
                  </router-link>
@@ -39,6 +39,9 @@
                  <router-link to="/ecom/accreditation" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">ACCREDITATION</a>
                  </router-link>
+                 <li class="nav-item" style="cursor: pointer">
+                    <a class="nav-link" @click.prevent="logout()">LOGOUT (<strong>{{username}}</strong>)</a>
+                 </li>
             </ul>
 
             <!-- <form class="form-inline my-2 my-lg-0">
@@ -62,11 +65,26 @@ export default {
     methods: {
         goTo(route) {
             this.$router.push({name: route})
+        },
+        logout() {
+            this.$store.dispatch('logout')
+            .then(() => {
+                this.$router.push({ name: 'admin-login'})
+            })
+            .catch(() => {
+                console.log("Logout error")
+            })
         }
     },
     computed: {
         routeName() {
             return this.$route.name
+        },
+        isLoggedIn() {
+            return this.$store.getters.isLoggedIn
+        },
+        username() {
+            return this.$store.state.user
         }
     }
 }
