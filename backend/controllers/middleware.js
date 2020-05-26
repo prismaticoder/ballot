@@ -104,7 +104,7 @@ exports.onlyPreVoting = async (req, res, next) => {
             }
 
             else {
-                sendError(res,401,"Error: This action can only be performed in the pre-election phase")
+                sendError(res,403,"Error: This action can only be performed in the pre-election phase")
             }
         }
 
@@ -138,12 +138,12 @@ exports.onlyVoting = async (req, res, next) => {
             }
 
             else {
-                sendError(res,401,"Error: This action can only be performed when voting is ongoing")
+                sendError(res,403,"Error: This action can only be performed when voting is ongoing")
             }
         }
 
         else {
-            sendError(res,401,"Action cannot be performed because election parameters have not been set")
+            sendError(res,422,"Action cannot be performed because election parameters have not been set")
         }
 
 
@@ -172,12 +172,12 @@ exports.onlyPostVoting = async (req, res, next) => {
             }
 
             else {
-                sendError(res,401,"Error: This action can only be performed in the post-election phase")
+                sendError(res,403,"Error: This action can only be performed in the post-election phase")
             }
         }
 
         else {
-            sendError(res,401,"Action cannot be performed because election parameters have not been set")
+            sendError(res,422,"Action cannot be performed because election parameters have not been set")
         }
 
 
@@ -204,7 +204,7 @@ exports.validateAdminToken = async (req, res, next) => {
             })
         }
         else {
-            sendError(res,400,"Invalid Request: No Token sent")
+            sendError(res,401,"Invalid Request: No Token sent")
         }
 
     } catch (error) {

@@ -100,12 +100,12 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
               }
 
               else {
-                sendError(res,401,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
+                sendError(res,422,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
               }
             }
 
             else {
-              sendError(res,401,"You have already been accredited and given a voter's number")
+              sendError(res,422,"You have already been accredited and given a voter's number")
             }
           }
         }
@@ -119,7 +119,7 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
     }
 
     else {
-      sendError(res,401,"Accreditation cannot be performed except outside election hours")
+      sendError(res,403,"Accreditation cannot be performed except outside election hours")
     }
 
   } catch (error) {

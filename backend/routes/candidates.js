@@ -55,7 +55,7 @@ router.get('/checkIfQualify', async (req, res) => {
                     })
 
                     if (check) {
-                        sendError(res, 401, "You currently have an existing candidate application")
+                        sendError(res, 403, "You currently have an existing candidate application")
                     }
 
                     else {
@@ -64,11 +64,11 @@ router.get('/checkIfQualify', async (req, res) => {
                 }
 
                 else {
-                    sendError(res,401,`Your current level (${voter.level}) does not fall within the category of levels required to run for this post`)
+                    sendError(res,403,`Your current level (${voter.level}) does not fall within the category of levels required to run for this post`)
                 }
             }
             else {
-                sendError(res,401,`You have to be accredited as a voter to be able to apply for candidacy`)
+                sendError(res,403,`You have to be accredited as a voter to be able to apply for candidacy`)
             }
         }
         else {
@@ -110,7 +110,7 @@ router.post('/apply', onlyPreVoting, async (req, res) => {
             }
 
             else {
-                sendError(res,401,"You have an existing application already!")
+                sendError(res,403,"You have an existing application already!")
             }
         }
 
@@ -223,13 +223,13 @@ router.delete('/:id', async (req, res) => {
                     }
 
                     else {
-                        sendError(res,401,"Sorry, only candidates who are on a pending status can make a request to cancel an application")
+                        sendError(res,403,"Sorry, only candidates who are on a pending status can make a request to cancel an application")
                     }
                     
                 }
     
                 else {
-                    sendError(res,401,"You are unauthorized to make this request")
+                    sendError(res,403,"You are unauthorized to make this request")
                 }
             }
     
@@ -264,7 +264,7 @@ router.put('/:id', async (req, res) => {
 
         if (candidate) {
             if (candidate.status != "pending") {
-                sendError(res,401,"Details can only be updated for candidates with a pending status")
+                sendError(res,403,"Details can only be updated for candidates with a pending status")
             }
 
             else {

@@ -250,7 +250,7 @@ router.post('/settings', async (req, res) => {
         }
 
         else {
-            sendError(res,401,"Election end date must be greater than the start date")
+            sendError(res,400,"Election end date must be greater than the start date")
         }
 
     } catch (error) {
@@ -280,7 +280,7 @@ router.put('/settings', async (req, res) => {
         }
 
         else {
-            sendError(res,401,"Election end date must be greater than the start date")
+            sendError(res,400,"Election end date must be greater than the start date")
         }
 
         
@@ -384,7 +384,10 @@ router.put('/categories/:id', async (req, res) => {
                 //check if the category already exists
                 let check = await Category.findOne({
                     where: {
-                        name
+                        name,
+                        id : {
+                            [Op.ne] : req.params.id
+                        }
                     }
                 })
 
