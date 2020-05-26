@@ -7,7 +7,7 @@
           <h4 class="mt-4">DATE AND TIME</h4>
             <hr>
 
-            
+
           
 
       </div>
@@ -113,7 +113,7 @@ export default {
                 }
             })
             .catch(err => {
-                console.log(err)
+                console.log(err.response)
             })
         },
         updateCategory(index,category) {

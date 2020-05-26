@@ -13,7 +13,6 @@ import AdminCandidates from '../views/admin/Candidates.vue'
 import AdminAccreditation from '../views/admin/Accreditation.vue'
 import Settings from '../views/admin/Settings.vue'
 import PageNotFound from '../views/PageNotFound.vue'
-import store from '../store'
 
 
 Vue.use(VueRouter)
@@ -96,7 +95,7 @@ const routes = [
   },
   {
     path: '/ecom/settings',
-    name: 'settings',
+    name: 'admin-settings',
     component: Settings,
     meta: {
       requireAuth: true
@@ -137,13 +136,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   
-  if(to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters.isLoggedIn) {
-      next()
-      return
+  if(to.matched.some(record => record.meta.requireAuth)) {
+    let token = localStorage.getItem('userToken');
+    if (token) {
+      return next()
     }
     next({
-      path: '/admin/login',
+      path: '/ecom/login',
       nextUrl: to.fullPath
     }) 
   } else {

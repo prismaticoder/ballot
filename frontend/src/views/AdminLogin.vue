@@ -58,20 +58,20 @@ export default {
                 password
             })
             .then(res => {
-                if (res.data.success) {
-                    let { username, token } = res.data;
-                    localStorage.setItem('userToken', token)
-                    this.$store.commit('USER_LOGIN', token, username)
-                    this.$router.push('/admin/')
-                }
-                else {
-                    this.showAlert = true
-                    this.errorMsg = res.data.error;
-                }
+                let { username, token } = res.data;
+                let data = {username, token}
+                this.$store.dispatch('loginUser', data)
+                .then(()=> {
+                    this.$router.push({ name: 'admin-settings'})
+                })
+                .catch(() => {
+                    console.log("Login error")
+                })
+                
             })
             .catch(err => {
                 this.showAlert = true
-                this.errorMsg = err.response ? err.response.data.error : "Internal Server Error"
+                this.errorMsg = err.response ? err.response.data.error : "Error processing your request, please try again"
                 this.loading = false
             })
         }
