@@ -297,7 +297,7 @@ router.get('/settings', async (req, res) => {
         let [setting] = await Config.findAll();
 
         if (setting) {
-            sendRes(res,setting)    
+            sendRes(res,{setting})    
         }
         
         sendError(res,404)

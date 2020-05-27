@@ -7,12 +7,62 @@
           <h4 class="mt-4">DATE AND TIME</h4>
             <hr>
 
+                <div class="row justify-content-center">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4 border-right">
+                        <span class="tag">START</span>
+                        {{formatDate(setting.startDate)}}
+                    </div>
+                    <div class="col-md-4">
+                        <span class="tag">END</span> 
+                        {{formatDate(setting.endDate)}}
+                    </div>
+                    <div class="col-md-2"></div>
+                    
+                </div>
 
-          
+                <div class="mt-5 col-md-6 mx-auto border rounded">
+                    <h5>Change Date And Time Settings</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+                                <template v-slot:activator="{ on }">
+                                    <v-text-field solo readonly v-model="startDay" label="Date" persistent-hint v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker :color="btnColor" :min="today"  v-model="startDay" no-title @input="menu1 = false"></v-date-picker>
+                            </v-menu>
+                        </div>
+                        <div class="col-4">
+                                <v-select :items="items" v-model="startTime" solo></v-select>
+                        </div>
+                        <div class="col-4">
+                            <v-select :items="types" v-model="startPeriod" solo></v-select>
+                        </div>
 
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <v-menu ref="menu3" v-model="menu3" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+                                <template v-slot:activator="{ on }">
+                                    <v-text-field solo readonly v-model="endDay" label="Date" persistent-hint v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker :color="btnColor" :min="today" v-model="endDay" no-title @input="menu3 = false"></v-date-picker>
+                            </v-menu>
+                        </div>
+                        <div class="col-4">
+                                <v-select :items="items" v-model="endTime" solo></v-select>
+                        </div>
+                        <div class="col-4">
+                            <v-select solo :items="types" v-model="endPeriod"></v-select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <v-btn :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-4" @click="updateSetting()">CHANGE</v-btn>
+                    </div>
+                </div>
       </div>
-
-        
+      <hr>
         <h4 class="mt-5 text-center">ALL CATEGORIES (POSTS)</h4>
 
         <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-if="!showAddForm" title="Add new category" style="color: floralwhite" @click.prevent="showAddForm = true">
@@ -86,8 +136,21 @@ export default {
     data() {
         return {
             date: "",
+            menu1: false,
+            menu3: false,
+            otherColor: "white",
+            setting: null,
             categories: null,
             levels: [],
+            showStart: false,
+            showEnd: false,
+            startDay: null,
+            startTime: "",
+            endDay: null,
+            endTime: "",
+            endPeriod: "",
+            startPeriod: "",
+            today: new Date().toISOString().substr(0, 10),
             name: "",
             minLevel: ((process.env.VUE_APP_HIGHEST_LEVEL)/(process.env.VUE_APP_HIGHEST_LEVEL)) * 100,
             maxLevel: process.env.VUE_APP_HIGHEST_LEVEL,
@@ -96,6 +159,8 @@ export default {
             loading: false,
             showAlert: false,
             errorMsg: "",
+            types: ["AM","PM"],
+            items: ['12:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00']
         }
     },
     mounted() {
@@ -111,6 +176,37 @@ export default {
                 for (let i = 100; i <= highestLevel; i+=100) {
                     this.levels.push(i)
                 }
+
+                return this.$http.get(`${process.env.VUE_APP_URL}/admin/settings`)
+                .then(res => {
+                    this.setting = res.data.setting;
+                    
+                    let endTime = parseInt(new Date(res.data.setting.endDate).toISOString().substr(11,2))
+                    let startTime = parseInt(new Date(res.data.setting.startDate).toISOString().substr(11,2))
+
+                    this.startTime = startTime > 12 ? `${startTime - 12}:00` : (startTime == 0 ? `${startTime + 12}:00` : `${startTime}:00`) 
+                    this.startPeriod = startTime > 12 ? "PM" : "AM"
+
+                    this.endTime = endTime > 12 ? `${endTime - 12}:00` : (endTime == 0 ? `${endTime + 12}:00` : `${endTime}:00`) 
+                    this.endPeriod = endTime > 12 ? "PM" : "AM"
+
+                    console.log(this.endTime)
+
+
+                    this.startDay = new Date(res.data.setting.startDate).toISOString().substr(0, 10)
+                    this.endDay = new Date(res.data.setting.endDate).toISOString().substr(0, 10)
+                    
+
+                })
+                .catch(err => {
+                    if (err.status === 404) {
+                        this.setting = null
+                    }
+
+                    else {
+                        console.log(err)
+                    }
+                })
             })
             .catch(err => {
                 console.log(err.response)
@@ -164,7 +260,28 @@ export default {
                 })
             }
 
+        },
+        formatDate(dateString) {
+            const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
+            return new Date(dateString).toLocaleDateString(undefined, options)
+        },
+        setDate(dateString) {
+            return new Date(dateString).toISOString().substr(0, 10)
+        },
+        changeDate(type) {
+            if (type == 'start') {
+                this.showStart = true;
+                this.showEnd = false
+            }
+            
+            else {
+                this.showStart = false;
+                this.showEnd = true
+            }
         }
+    },
+    computed: {
+        
     }
 }
 </script>
