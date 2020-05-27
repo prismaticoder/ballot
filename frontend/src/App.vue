@@ -25,7 +25,7 @@
 
 import Header from './layouts/Header.vue';
 import Footer from './layouts/Footer.vue';
-import router from './router'
+// import router from './router'
 import store from './store'
 
 export default {
@@ -55,7 +55,7 @@ export default {
       originalRequest._retry = true
       store.dispatch('logout')
       .then(() => {
-        router.push({ name: 'admin-login'})
+        window.location.href = "/command/login"
       })
       .catch(() => {
         console.log("Error logging user out")
