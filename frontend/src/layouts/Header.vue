@@ -24,19 +24,19 @@
                  </b-nav-item-dropdown>
             </ul>
             <ul v-else class="navbar-nav">
-                 <router-link to="/ecom" exact tag="li" class="nav-item" active-class="active">
+                 <router-link to="/command" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
                  </router-link>
-                  <router-link to="/ecom/voters" tag="li" class="nav-item" active-class="active">
-                    <a class="nav-link">VOTERS</a>
-                 </router-link>
-                  <router-link to="/ecom/candidates" tag="li" class="nav-item" active-class="active">
-                    <a class="nav-link">CANDIDATES</a>
-                 </router-link>
-                  <router-link to="/ecom/settings" tag="li" class="nav-item" active-class="active">
+                 <router-link to="/command/settings" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">SETTINGS</a>
                  </router-link>
-                 <router-link to="/ecom/accreditation" tag="li" class="nav-item" active-class="active">
+                  <router-link to="/command/voters" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">VOTERS</a>
+                 </router-link>
+                  <router-link to="/command/candidates" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">CANDIDATES</a>
+                 </router-link>
+                 <router-link to="/command/accreditation" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">ACCREDITATION</a>
                  </router-link>
                  <li class="nav-item" style="cursor: pointer">
@@ -69,7 +69,7 @@ export default {
         logout() {
             this.$store.dispatch('logout')
             .then(() => {
-                this.$router.push({ name: 'admin-login'})
+                window.location.href = "/command/login"
             })
             .catch(() => {
                 console.log("Logout error")
