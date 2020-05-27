@@ -265,8 +265,32 @@ export default {
             const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
             return new Date(dateString).toLocaleDateString(undefined, options)
         },
-        setDate(dateString) {
-            return new Date(dateString).toISOString().substr(0, 10)
+        updateSetting() {
+            let { startDay, startTime, startPeriod, endDay, endTime, endPeriod } = this;
+            
+            startTime = (startPeriod == "AM") ? (startTime == "12:00" ? "00:00" : startTime) : (startTime == "12:00" ? "12:00" : `${parseInt(startTime) + 12}:00`) 
+            endTime = (endPeriod == "AM") ? (endTime == "12:00" ? "00:00" : endTime) : (endTime == "12:00" ? "12:00" : `${parseInt(endTime) + 12}:00`) 
+
+            let startDate = new Date(`${startDay} ${startTime}`)
+            let endDate = new Date(`${endDay} ${endTime}`)
+
+            if (startDate > endDate) {
+                console.log("error in date format")
+            }
+
+            else {
+                this.$http.put(`${process.env.VUE_APP_URL}/admin/settings`, {
+                    startDate,endDate
+                })
+                .then(res => {
+                    console.log(res.data.setting)
+                    alert("done")
+                })
+                .catch(err => {
+                    err.response ? console.log(err.response.data.error) : console.log(err)
+                })
+            }
+
         },
         changeDate(type) {
             if (type == 'start') {
