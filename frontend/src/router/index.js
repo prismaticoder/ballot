@@ -57,12 +57,12 @@ const routes = [
     component: Accreditation
   },
   {
-    path: '/ecom/login',
+    path: '/command/login',
     name: 'admin-login',
     component: AdminLogin,
   },
   {
-    path: '/ecom',
+    path: '/command',
     name: 'admin-home',
     component: AdminHome,
     meta: {
@@ -70,7 +70,7 @@ const routes = [
     }
   },
   {
-    path: '/ecom/voters',
+    path: '/command/voters',
     name: 'voters',
     component: Voters,
     meta: {
@@ -78,7 +78,7 @@ const routes = [
     }
   },
   {
-    path: '/ecom/candidates',
+    path: '/command/candidates',
     name: 'candidates',
     component: AdminCandidates,
     meta: {
@@ -86,7 +86,7 @@ const routes = [
     }
   },
   {
-    path: '/ecom/candidates/:id',
+    path: '/command/candidates/:id',
     name: 'candidates-single',
     component: SingleCandidate,
     meta: {
@@ -94,7 +94,7 @@ const routes = [
     }
   },
   {
-    path: '/ecom/settings',
+    path: '/command/settings',
     name: 'admin-settings',
     component: Settings,
     meta: {
@@ -102,7 +102,7 @@ const routes = [
     }
   },
   {
-    path: '/ecom/accreditation',
+    path: '/command/accreditation',
     name: 'admin-accreditation',
     component: AdminAccreditation,
     meta: {
@@ -141,8 +141,9 @@ router.beforeEach((to, from, next) => {
     if (token) {
       return next()
     }
+    console.log(to)
     next({
-      path: '/ecom/login',
+      path: '/command/login',
       nextUrl: to.fullPath
     }) 
   } else {

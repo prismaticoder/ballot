@@ -149,7 +149,7 @@ router.post('/admin/login', async (req, res) => {
       let valid = await bcrypt.compare(password, admin.password);
 
       if (!valid) {
-        sendError(res,404,"Incorrect username or password")
+        return sendError(res,404,"Incorrect username or password")
       } 
 
       let token = jwt.sign(
