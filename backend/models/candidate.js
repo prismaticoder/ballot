@@ -35,12 +35,18 @@ module.exports = (sequelize, DataTypes) => {
     fullName: {
       type: DataTypes.VIRTUAL,
       get() {
-        if (this.alias !== null) {
-          return `${this.firstName} "${this.alias}" ${this.lastName}`
-        }
-        else {
-          return `${this.firstName} ${this.lastName}`
-        }
+        let lastname = this.lastName.split('-');
+        let firstname = this.firstName.split('-');
+        lastname.forEach((name,index) => {
+          lastname.splice(index,1,name[0].toUpperCase() + name.slice(1).toLowerCase())
+        })
+        firstname.forEach((name,index) => {
+          firstname.splice(index,1,name[0].toUpperCase() + name.slice(1).toLowerCase())
+        })
+        lastname = lastname.join('-');
+        firstname = firstname.join('-')
+
+        return `${firstname} ${lastname}`
       }
     },
     refinedLink: {
