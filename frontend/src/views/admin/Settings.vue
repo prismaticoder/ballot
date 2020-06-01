@@ -5,67 +5,26 @@
 
       <div>
           <h4 class="mt-4">DATE AND TIME</h4>
-            <hr>
-
-                <div class="row justify-content-center">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-4 border-right">
-                        <span class="tag">START</span>
-                        {{formatDate(setting.startDate)}}
-                    </div>
-                    <div class="col-md-4">
-                        <span class="tag">END</span> 
-                        {{formatDate(setting.endDate)}}
-                    </div>
-                    <div class="col-md-2"></div>
-                    
-                </div>
-
-                <div class="mt-5 col-md-6 mx-auto border rounded">
-                    <h5>Change Date And Time Settings</h5>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
-                                <template v-slot:activator="{ on }">
-                                    <v-text-field solo readonly v-model="startDay" label="Date" persistent-hint v-on="on"></v-text-field>
-                                </template>
-                                <v-date-picker :color="btnColor" :min="today"  v-model="startDay" no-title @input="menu1 = false"></v-date-picker>
-                            </v-menu>
-                        </div>
-                        <div class="col-4">
-                                <v-select :items="items" v-model="startTime" solo></v-select>
-                        </div>
-                        <div class="col-4">
-                            <v-select :items="types" v-model="startPeriod" solo></v-select>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <v-menu ref="menu3" v-model="menu3" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
-                                <template v-slot:activator="{ on }">
-                                    <v-text-field solo readonly v-model="endDay" label="Date" persistent-hint v-on="on"></v-text-field>
-                                </template>
-                                <v-date-picker :color="btnColor" :min="today" v-model="endDay" no-title @input="menu3 = false"></v-date-picker>
-                            </v-menu>
-                        </div>
-                        <div class="col-4">
-                                <v-select :items="items" v-model="endTime" solo></v-select>
-                        </div>
-                        <div class="col-4">
-                            <v-select solo :items="types" v-model="endPeriod"></v-select>
-                        </div>
-                    </div>
-
-                    <div class="col-12 mt-2">
-                        <v-btn :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-4" @click="updateSetting()">CHANGE</v-btn>
-                    </div>
-                </div>
+          <DateTime v-if="isLoaded" :setting="setting" :types="types" :items="items" :btnColor="btnColor" :today="today" v-on:updateSetting="updateSetting"/>
+          <div v-else>
+              <div class="row">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-4 border-right">
+                      <v-skeleton-loader type="heading" width="15rem"></v-skeleton-loader>
+                      <v-skeleton-loader type="text" class="mt-3" width="18rem"></v-skeleton-loader>
+                  </div>
+                  <div class="col-md-2"></div>
+                  <div class="col-md-4">
+                      <v-skeleton-loader type="heading" width="15rem"></v-skeleton-loader>
+                      <v-skeleton-loader type="text" class="mt-3" width="18rem"></v-skeleton-loader>
+                  </div>
+              </div>
+          </div>
       </div>
-      <hr>
+      
         <h4 class="mt-5 text-center">ALL CATEGORIES (POSTS)</h4>
 
-        <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-if="!showAddForm" title="Add new category" style="color: floralwhite" @click.prevent="showAddForm = true">
+        <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-show="isLoaded" v-if="!showAddForm" title="Add new category" style="color: floralwhite" @click.prevent="showAddForm = true">
             <v-icon>mdi-plus</v-icon>
         </v-btn>
         <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-else title="Close form" style="color: floralwhite" @click.prevent="showAddForm = false">
@@ -111,51 +70,99 @@
         <hr>
     </div>
 
-      <div class="row" v-if="categories">
+      <div class="row justify-content-center" v-if="isLoaded && categories">
           <div class="col-lg-4" v-for="(category,index) in categories" :key="category.id">
               <SingleCategory :category="category" :levels="levels" :index="index" v-on:updateCategory="updateCategory" v-on:deleteCategory="deleteCategory"/>
           </div>
       </div>
-      <div v-else>
+      <div v-else-if="isLoaded && !categories">
           <p class="text-center">
               No categories have been created at this time.
           </p>
+      </div>
+      <div v-else class="row">
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
       </div>
   </div>
 </template>
 
 <script>
 
-import SingleCategory from '../../components/admin/SingleCategory'
+import SingleCategory from '../../components/admin/SingleCategory';
+import DateTime from '../../components/admin/DateTime'
 
 export default {
     name: "Settings",
     components: {
-        SingleCategory
+        SingleCategory,
+        DateTime
     },
     data() {
         return {
-            date: "",
-            menu1: false,
-            menu3: false,
             otherColor: "white",
-            setting: null,
+            setting: {},
             categories: null,
             levels: [],
-            showStart: false,
-            showEnd: false,
-            startDay: null,
-            startTime: "",
-            endDay: null,
-            endTime: "",
-            endPeriod: "",
-            startPeriod: "",
             today: new Date().toISOString().substr(0, 10),
             name: "",
             minLevel: ((process.env.VUE_APP_HIGHEST_LEVEL)/(process.env.VUE_APP_HIGHEST_LEVEL)) * 100,
             maxLevel: process.env.VUE_APP_HIGHEST_LEVEL,
             showAddForm: false,
             btnColor: "#162059",
+            isLoaded: false,
             loading: false,
             showAlert: false,
             errorMsg: "",
@@ -180,29 +187,13 @@ export default {
                 return this.$http.get(`${process.env.VUE_APP_URL}/admin/settings`)
                 .then(res => {
                     this.setting = res.data.setting;
-                    
-                    let endTime = parseInt(new Date(res.data.setting.endDate).toISOString().substr(11,2))
-                    let startTime = parseInt(new Date(res.data.setting.startDate).toISOString().substr(11,2))
-
-                    this.startTime = startTime > 12 ? `${startTime - 12}:00` : (startTime == 0 ? `${startTime + 12}:00` : `${startTime}:00`) 
-                    this.startPeriod = startTime > 12 ? "PM" : "AM"
-
-                    this.endTime = endTime > 12 ? `${endTime - 12}:00` : (endTime == 0 ? `${endTime + 12}:00` : `${endTime}:00`) 
-                    this.endPeriod = endTime > 12 ? "PM" : "AM"
-
-                    console.log(this.endTime)
-
-
-                    this.startDay = new Date(res.data.setting.startDate).toISOString().substr(0, 10)
-                    this.endDay = new Date(res.data.setting.endDate).toISOString().substr(0, 10)
-                    
-
+                    this.isLoaded = true
                 })
                 .catch(err => {
                     if (err.status === 404) {
                         this.setting = null
+                        this.isLoaded = true
                     }
-
                     else {
                         console.log(err)
                     }
@@ -261,47 +252,16 @@ export default {
             }
 
         },
-        formatDate(dateString) {
-            const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
-            return new Date(dateString).toLocaleDateString(undefined, options)
+        //Automatically set the end date to the start date on change
+        setEndDate() {
+            if (this.endDay < this.startDay) {
+                console.log("end")
+                this.endDay = this.startDay
+            }
         },
-        updateSetting() {
-            let { startDay, startTime, startPeriod, endDay, endTime, endPeriod } = this;
-            
-            startTime = (startPeriod == "AM") ? (startTime == "12:00" ? "00:00" : startTime) : (startTime == "12:00" ? "12:00" : `${parseInt(startTime) + 12}:00`) 
-            endTime = (endPeriod == "AM") ? (endTime == "12:00" ? "00:00" : endTime) : (endTime == "12:00" ? "12:00" : `${parseInt(endTime) + 12}:00`) 
 
-            let startDate = new Date(`${startDay} ${startTime}`)
-            let endDate = new Date(`${endDay} ${endTime}`)
-
-            if (startDate > endDate) {
-                console.log("error in date format")
-            }
-
-            else {
-                this.$http.put(`${process.env.VUE_APP_URL}/admin/settings`, {
-                    startDate,endDate
-                })
-                .then(res => {
-                    console.log(res.data.setting)
-                    alert("done")
-                })
-                .catch(err => {
-                    err.response ? console.log(err.response.data.error) : console.log(err)
-                })
-            }
-
-        },
-        changeDate(type) {
-            if (type == 'start') {
-                this.showStart = true;
-                this.showEnd = false
-            }
-            
-            else {
-                this.showStart = false;
-                this.showEnd = true
-            }
+        updateSetting(setting) {
+            this.setting = setting;
         }
     },
     computed: {
