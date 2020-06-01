@@ -5,7 +5,7 @@
 
       <div>
           <h4 class="mt-4">DATE AND TIME</h4>
-          <DateTime v-if="isLoaded" :setting="setting" :types="types" :items="items" :btnColor="btnColor" :today="today" v-on:updateSetting="updateSetting" v-on:createSetting="createSetting"/>
+          <DateTime class="mt-4" v-if="isLoaded" :setting="setting" :types="types" :items="items" :btnColor="btnColor" :today="today" v-on:updateSetting="updateSetting" v-on:createSetting="createSetting"/>
           <div v-else>
               <div class="row">
                   <div class="col-md-2"></div>
