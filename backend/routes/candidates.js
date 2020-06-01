@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
         let categories = await Category.findAll({
             include: {
                 model: Candidate,
+                required: false,
                 as: "candidates",
                 where: {
                     status: "confirmed"
