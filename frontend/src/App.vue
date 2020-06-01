@@ -6,7 +6,7 @@
       <div v-else>
         <div class="container mt-5">
           <h1 class="text-center mt-5">
-              500 | Internal Server Error
+              503 | Service Unavailable
           </h1>
 
           <p class="text-center mt-3">
