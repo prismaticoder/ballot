@@ -172,7 +172,7 @@ router.get('/categories', async (req, res) => {
 
   try {
       let categories = await Category.findAll({
-        attributes: ["name"]
+        attributes: ["id","name"]
       });
 
       sendRes(res,{categories})
