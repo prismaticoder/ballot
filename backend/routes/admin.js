@@ -183,10 +183,10 @@ router.get('/candidates/:id/confirm', async (req, res) => {
                 candidate.status = "confirmed";
 
                 await candidate.save();
-                sendRes(res,{candidate},null,"Candidate approval successful!")
+                return sendRes(res,{candidate},null,"Candidate approval successful!")
             }
             
-            sendRes(res,{candidate},null,"This candidate has already been approved")
+            return sendRes(res,{candidate},null,"This candidate has already been approved")
         }
 
         sendError(res,404)
@@ -218,10 +218,10 @@ router.get('/candidates/:id/deny', async (req, res) => {
 
                 await candidate.save();
                 
-                sendRes(res,{candidate},null,"You have successfully denied this candidate's participation in the upcoming election")
+                return sendRes(res,{candidate},null,"You have successfully denied this candidate's participation in the upcoming election")
             }
 
-            sendRes(res,{},null,"Candidate already denied participation")
+            return sendRes(res,{},null,"Candidate already denied participation")
             
         }
 
@@ -273,7 +273,7 @@ router.put('/settings', async (req, res) => {
     
                 await setting.save();
                 
-                sendRes(res,setting)
+                return sendRes(res,{setting})
             }
     
             sendError(res,404)
@@ -297,7 +297,7 @@ router.get('/settings', async (req, res) => {
         let [setting] = await Config.findAll();
 
         if (setting) {
-            sendRes(res,{setting})    
+            return sendRes(res,{setting})    
         }
         
         sendError(res,404)
