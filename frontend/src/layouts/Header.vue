@@ -9,7 +9,7 @@
         </a>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-        <b-collapse class="col-md-6 mx-auto justify-content-center" id="nav-collapse" is-nav>
+        <b-collapse class="col-md-7 mx-auto justify-content-center" id="nav-collapse" is-nav>
             <ul v-if="!isLoggedIn" class="navbar-nav">
                  <router-link to="/" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
