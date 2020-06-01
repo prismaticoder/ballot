@@ -124,7 +124,19 @@ router.get('/candidates', async (req, res) => {
                     as: "category"
                 }
             });
-        }    
+        }
+        
+        candidates = candidates.sort((a,b) => {
+            if (a.firstName < b.firstName) {
+                return -1
+            }
+            else if (a.firstName > b.firstName) {
+                return 1
+            }
+            else {
+                return 0
+            }
+        })
 
         sendRes(res, {candidates})
 
@@ -240,17 +252,28 @@ router.post('/settings', async (req, res) => {
     try {
         let { startDate,endDate } = req.body;
 
+        let today = new Date()
+
         if (endDate > startDate) {
-            let settings = await Config.create({
-                startDate,
-                endDate
-            })
-            
-            sendRes(res,settings,201)
+
+            if (new Date(startDate) < today) {
+                sendError(res,422,"Election has to be set to a future date")
+            }
+
+            else {
+                let setting = await Config.create({
+                    startDate,
+                    endDate
+                })
+                
+                sendRes(res,{setting},201)
+            }
+
+
         }
 
         else {
-            sendError(res,400,"Election end date must be greater than the start date")
+            sendError(res,422,"Election end date must be greater than the start date")
         }
 
     } catch (error) {
@@ -265,22 +288,30 @@ router.put('/settings', async (req, res) => {
     try {
         let { startDate,endDate } = req.body
         , [setting] = await Config.findAll()
+        , today = new Date();
 
         if (endDate > startDate) {
             if (setting) {
-                setting.startDate = startDate;
-                setting.endDate = endDate;
-    
-                await setting.save();
-                
-                return sendRes(res,{setting})
+
+                if (new Date(startDate) < today) {
+                    sendError(res,422,"Election has to be set to a future date")
+                }
+
+                else {
+                    setting.startDate = startDate;
+                    setting.endDate = endDate;
+        
+                    await setting.save();
+                    
+                    return sendRes(res,{setting})
+                }
             }
     
             sendError(res,404)
         }
 
         else {
-            sendError(res,400,"Election end date must be greater than the start date")
+            sendError(res,422,"Election end date must be greater than the start date")
         }
 
         
