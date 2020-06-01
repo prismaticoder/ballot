@@ -1,87 +1,156 @@
 <template>
-    <div class="container mt-4">
-        <h4 class="text-center mt-5"><span class="redColor text-uppercase">ALL</span> CANDIDATES</h4>
-
-        <div class="col-md-2 mt-4 mb-5 mx-auto form-group">
-            <form action="" class="candidateForm">
+    <div class="container">
+        <h3 class="main-header" style="text-align: center;">Candidate Applications</h3>
+        <hr>
 
 
-                <label for="status">Filter Candidates</label>
+        <div class="mt-2 form-group col-md-12">
+            <v-btn v-show="candidates.length !== allCandidates.length" fab top left absolute :color="btnColor" style="color: #162059" title="Back" class="mt-4 btn-fix" @click.prevent="candidates = [...allCandidates]; statusFilter=''; postFilter=''">
+                <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+            <div class="col-md-8 mx-auto mt-2">
+                 <form class="candidateForm mx-auto" @submit.prevent="filterCandidates()">
+                <div class="row text-left">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-4">
+                        <label for="status">Status</label>
+                        <b-form-select :disabled="!hasLoaded" id="status" v-model="statusFilter">
+                            <b-form-select-option :value="''">All</b-form-select-option>
+                            <b-form-select-option value="confirmed">Confirmed</b-form-select-option>
+                            <b-form-select-option value="pending">Pending</b-form-select-option>
+                        </b-form-select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="post">Post</label>
+                        <b-form-select :disabled="!hasLoaded" id="post" v-model="postFilter">
+                            <b-form-select-option :value="''">All</b-form-select-option>
+                            <b-form-select-option :value="category.name" v-for="category in categories" :key="category.id">{{category.name}}</b-form-select-option>
+                        </b-form-select>
+                    </div>
+                </div>
 
-                <select @change="filterCandidates(value)" v-model="value" class="form-control">
-                    <option selected value="">All</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                </select>
-                
-                
+                 <div class="col-12 mt-2">
+                    <v-btn :disabled="!hasLoaded" :color="otherColor" type="submit" style="color: floralwhite" class="btn btn-block myBtn col-4 text-capitalize">Filter</v-btn>
+                </div>
+
             </form>
+            </div>
+           
         </div>
 
-        <table class="table table-sm table-bordered mt-1">
-            <thead class="blueColor">
-            <tr>
-                <th class="text-center">S/N</th>
-                <th class="text-center">Matric</th>
-                <th class="text-center">Name</th>
-                <!-- <th class="text-center">Category</th> -->
-                <th class="text-center">Level</th>
-                <th class="text-center">Status</th>
-                <th class="text-center" colspan="2">Confirm/Reject</th>
-                <th class="text-center">-</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-bind:key="candidate.id" v-for="(candidate, index) in candidates">
-                <td>{{index+1}}</td>
-                <td>{{candidate.matric}}</td>
-                <td class="text-capitalize fullName">{{candidate.fullName}}</td>
-                <td>{{candidate.level}}</td>
-                <td class="text-capitalize">{{candidate.status}}</td>
-                <td v-if="candidate.status == 'confirmed'" class="text-center" title="This candidate is already confirmed">-</td>
-                <td v-else class="text-center editor confirmBtn" @click="acceptCandidate(candidate.id)" title="Accept Candidate Application"><i class="fa fa-1x fa-check blueColor"></i></td>
-                <td class="text-center editor denyBtn" @click="rejectCandidate(candidate.id)" title="Reject/Overturn Candidate Application"><i class="fa fa-1x fa-close redColor"></i></td>
-                <td><a class="specColor" href="">See Full Details</a></td>
-                <!-- <singleCandidateRow v-bind:candidate="candidate" v-on:rejectCandidate="rejectCandidate" v-on:acceptCandidate="acceptCandidate"/> -->
-            </tr>
-        </tbody>
-        </table>
+        <div class="row justify-content-center" v-if="hasLoaded && candidates.length > 0">
+            <div class="col-md-4" v-for="candidate in candidates" :key="candidate.id">
+                <singleCandidateRow :candidate="candidate" :btnColor="btnColor"/>
+            </div>
+        </div>
+        <div v-else-if="hasLoaded && candidates.length == 0">
+            <p class="text-center">
+                There are no candidates in this category
+            </p>
+        </div>
+        <div v-else class="row justify-content-center">
+            <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
+              <div class="row mx-auto">
+                  <div class="col-2"></div>
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+                  <!-- <div class="col-md-2"></div> -->
+                  <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
+              </div>
+          </div>
+        </div>
     </div>
 </template>
 
 <script>
 
-// import singleCandidateRow from './singleCandidateRow.vue';
-import axios from 'axios'
+import singleCandidateRow from '../../components/singleCandidateRow';
 
 
 export default {
     name: 'Candidates',
     components: {
-        // singleCandidateRow
+        singleCandidateRow
     },
     data() {
         return {
             candidates: [],
-            value: ''
+            hasLoaded: false,
+            allCandidates: [],
+            categories: [],
+            statusFilter: '',
+            postFilter: '',
+            btnColor: "#fff",
+            otherColor: '#162059'
         }
-        // candidates: undefined
     },
     methods: {
         init() {
-            axios.get("http://localhost:4010/law/admin/candidates")
+            this.$http.get(`${process.env.VUE_APP_URL}/admin/candidates`)
             .then(res => {
-                if (res.data.ok) {
-                    this.candidates = res.data.candidates
-                }
+                this.candidates = res.data.candidates
+                this.allCandidates = res.data.candidates
+
+                return this.$http.get(`${process.env.VUE_APP_URL}/admin/categories`)
+                .then (res => {
+                    this.categories = res.data.categories
+                    this.hasLoaded = true
+                })
+                .catch (err => {
+                    console.log(err)
+                })
             })
             .catch(err => {
                 console.log(err)
-                alert("Sorry, there was an error connecting to the server. Please check your internet connection and try again")
                 })
         },
         acceptCandidate(id) {
-            axios.post(`http://localhost:4010/law/admin/candidates/${id}/confirm`)
+            this.$http.post(`http://localhost:4010/admin/candidates/${id}/confirm`)
             .then(res => {
                 if (res.data.ok) {
                     console.log(res)
@@ -98,7 +167,7 @@ export default {
             .catch(err => console.log(err))
         },
         rejectCandidate(id) {
-            axios.post(`http://localhost:4010/law/admin/candidates/${id}/deny`)
+            this.$http.post(`http://localhost:4010/law/admin/candidates/${id}/deny`)
             .then(res => {
                 if (res.data.ok) {
                     this.candidates = this.candidates.filter(candidate => candidate.id !== id)
@@ -109,14 +178,23 @@ export default {
                 })
             .catch(err => console.log(err))
         },
-        filterCandidates(value) {
-            axios.get(`http://localhost:4010/law/admin/candidates?status=${value}`)
-            .then(res => {
-                if (res.data.ok) {
-                    this.candidates = res.data.candidates
+        filterCandidates() {
+            let { statusFilter, postFilter } = this;
+
+            if (statusFilter && postFilter) {
+                this.candidates = this.allCandidates.filter(candidate => candidate.status == statusFilter && candidate.category.name == postFilter);
+            }
+            else if (statusFilter || postFilter) {
+                if (statusFilter) {
+                    this.candidates = this.allCandidates.filter(candidate => candidate.status == statusFilter)
                 }
-            })
-            .catch(err => console.log(err))
+                else {
+                    this.candidates = this.allCandidates.filter(candidate => candidate.category.name == postFilter)
+                }
+            }
+            else {
+                this.candidates = [...this.allCandidates]
+            }
         }
     },
     created() {
