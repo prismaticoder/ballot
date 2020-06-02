@@ -96,7 +96,7 @@ router.post('/apply', onlyPreVoting, async (req, res) => {
                     [Op.or]: [{status: "confirmed"}, {status: "pending"}]
                 }
             })
-            let nanoid = customAlphabet('123456789abcdefghjklmnpqrstuvwxyz', 6)
+            let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
 
             let statusCode = nanoid()
 
