@@ -1,5 +1,5 @@
 <template>
-<div class="row" v-if="category.candidates">
+<div class="row" v-if="category.candidates.length > 0">
     <div class="col-md-4" v-for="candidate in category.candidates" :key="candidate.id">
         <SingleCandidate :candidate="candidate"> </SingleCandidate>
     </div>

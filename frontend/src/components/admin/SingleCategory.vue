@@ -26,7 +26,7 @@
       <!-- Confirmation Dialog -->
         <v-dialog v-model="dialog" persistent max-width="350">
             <v-card>
-                <v-card-title class="headline">Cancel Application?</v-card-title>
+                <v-card-title class="headline">Remove Category?</v-card-title>
                 <v-card-text>
                 Are you sure you want to delete this category: <strong>{{category.name}}</strong>?
                 Deleting this would also mean you are automatically cancelling the application of every candidate associated with this position.
