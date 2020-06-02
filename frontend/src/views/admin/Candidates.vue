@@ -8,7 +8,8 @@
             <v-btn v-show="candidates.length !== allCandidates.length" fab top left absolute :color="btnColor" style="color: #162059" title="Back" class="mt-4 btn-fix" @click.prevent="candidates = [...allCandidates]; statusFilter=''; postFilter=''">
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
-            <div class="col-md-8 mx-auto mt-2">
+            <div class="col-md-8 mx-auto mt-2 border">
+                <h4>Filter Candidate List</h4>
                  <form class="candidateForm mx-auto" @submit.prevent="filterCandidates()">
                 <div class="row text-left">
                     <div class="col-md-2"></div>
@@ -30,7 +31,7 @@
                 </div>
 
                  <div class="col-12 mt-2">
-                    <v-btn :disabled="!hasLoaded" :color="otherColor" type="submit" style="color: floralwhite" class="btn btn-block myBtn col-4 text-capitalize">Filter</v-btn>
+                    <v-btn :disabled="!hasLoaded" :color="otherColor" type="submit" style="color: floralwhite" class="btn btn-block myBtn col-4 text-capitalize">Apply Filter</v-btn>
                 </div>
 
             </form>
@@ -40,7 +41,7 @@
 
         <div class="row justify-content-center" v-if="hasLoaded && candidates.length > 0">
             <div class="col-md-4" v-for="candidate in candidates" :key="candidate.id">
-                <singleCandidateRow :candidate="candidate" :btnColor="btnColor"/>
+                <singleCandidateRow v-on:approveCandidate="approveCandidate" v-on:rejectCandidate="rejectCandidate" :candidate="candidate" :btnColor="btnColor"/>
             </div>
         </div>
         <div v-else-if="hasLoaded && candidates.length == 0">
@@ -149,34 +150,17 @@ export default {
                 console.log(err)
                 })
         },
-        acceptCandidate(id) {
-            this.$http.post(`http://localhost:4010/admin/candidates/${id}/confirm`)
-            .then(res => {
-                if (res.data.ok) {
-                    console.log(res)
-                    this.candidates.forEach(candidate => {
-                        if (candidate.id == id) {
-                            candidate.status = "confirmed"
-                        }
-                    })
-                }
-                else {
-                    alert(res.data.message)
-                }
-                this.init()})
-            .catch(err => console.log(err))
-        },
         rejectCandidate(id) {
-            this.$http.post(`http://localhost:4010/law/admin/candidates/${id}/deny`)
-            .then(res => {
-                if (res.data.ok) {
-                    this.candidates = this.candidates.filter(candidate => candidate.id !== id)
+            this.candidates = this.candidates.filter(candidate => candidate.id !== id)
+            this.allCandidates = this.allCandidates.filter(candidate => candidate.id !== id)    
+        },
+        approveCandidate(id) {
+            for (let i = 0; i < this.allCandidates.length; i++) {
+                if (this.allCandidates[i] === id) {
+                    this.allCandidates[i].status = 'confirmed'
+                    break;
                 }
-                else {
-                    alert (res.data.message)
-                }
-                })
-            .catch(err => console.log(err))
+            }
         },
         filterCandidates() {
             let { statusFilter, postFilter } = this;
