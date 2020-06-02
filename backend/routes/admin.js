@@ -185,7 +185,10 @@ router.get('/candidates/:id/confirm', async (req, res) => {
         //Array destructuring to retrieve the candidate
         var candidate = await Candidate.findOne({
             where: {
-                id: req.params.id
+                id: req.params.id,
+                status: {
+                    [Op.ne] : 'denied'
+                }
             }
         })
 
@@ -198,10 +201,10 @@ router.get('/candidates/:id/confirm', async (req, res) => {
                 return sendRes(res,{candidate},null,"Candidate approval successful!")
             }
             
-            return sendRes(res,{candidate},null,"This candidate has already been approved")
+            return sendError(res,422,"This candidate has already been approved")
         }
 
-        sendError(res,404)
+        sendError(res,404,"Candidate not found")
         
     } catch (error) {
         console.error(error)
@@ -233,11 +236,11 @@ router.get('/candidates/:id/deny', async (req, res) => {
                 return sendRes(res,{candidate},null,"You have successfully denied this candidate's participation in the upcoming election")
             }
 
-            return sendRes(res,{},null,"Candidate already denied participation")
+            return sendError(res,422,"This candidate's application has already been denied")
             
         }
 
-        sendError(res,404)
+        sendError(res,404,"Candidate Not Found")
         
     } catch (error) {
         console.error(error)
