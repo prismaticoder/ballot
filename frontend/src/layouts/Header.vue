@@ -31,7 +31,7 @@
                     <a class="nav-link">SETTINGS</a>
                  </router-link>
                   <router-link to="/command/voters" tag="li" class="nav-item" active-class="active">
-                    <a class="nav-link">VOTERS</a>
+                    <a class="nav-link">VOTER LIST</a>
                  </router-link>
                   <router-link to="/command/candidates" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">CANDIDATES</a>
