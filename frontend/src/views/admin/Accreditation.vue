@@ -16,11 +16,11 @@
       <form class="" action="" @submit.prevent="checkVoter()">
         <div class="form-group">
           <label for="surname">Surname</label>
-          <input required type="text" id="surname" v-model="lastName" class="form-control" placeholder="Enter your surname here...">
+          <input required type="text" id="surname" v-model="lastName" class="form-control" placeholder="Enter the surname here...">
         </div>
         <div class="form-group">
           <label for="matric">Matric. Number</label>
-          <input required type="text" id="matric" minlength="6" maxlength="6" v-model="matric" class="form-control" placeholder="Enter your matric number here...">
+          <input required type="text" id="matric" minlength="6" maxlength="6" v-model="matric" class="form-control" placeholder="Enter the matric number here...">
         </div>
         <div class="form-group">
           <label for="mail">Personal Email Address</label>
@@ -34,14 +34,14 @@
 
     <div class="mt-5 text-left" v-else>
       <p>
-          An email has been sent to the email address provided(<strong>{{mail}}</strong>). The student should ensure to follow the steps contained in the mail to formally be confirmed as a voter in the upcoming elections.<br><br>
-        </p>
+        An email has been sent to the email address provided(<strong>{{mail}}</strong>). The student should ensure to follow the steps contained in the mail to formally be confirmed as a voter in the upcoming elections.<br><br>
+      </p>
 
-        <hr>
+      <hr>
 
-        <div class="text-center mt-5">
-          <v-btn rounded :color="btnColor" dark @click.prevent="goBack()">Go Back</v-btn>
-        </div>
+      <div class="text-center mt-5">
+        <v-btn rounded :color="btnColor" dark @click.prevent="goBack()">Go Back</v-btn>
+      </div>
     </div>
       
   </div>

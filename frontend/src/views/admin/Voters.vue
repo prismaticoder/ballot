@@ -5,8 +5,8 @@
 
     <div class="container mt-5">
         <ul class="text-left list-group-flush">
-            <a href="#" class="list-group-item mt-1 blueColor" @click.prevent="downloadAll()">All Eligible Voters (PDF) <v-icon>mdi-download</v-icon> </a>
-            <a href="#" class="list-group-item mt-1 blueColor" @click.prevent="downloadAccredited()">All Accredited Voters (PDF) <v-icon>mdi-download</v-icon> </a>
+            <a href="#downloadList" class="list-group-item mt-1 blueColor" @click.prevent="downloadAll()">All Eligible Voters (PDF) <v-icon>mdi-download</v-icon> </a>
+            <a href="#downloadVoters" class="list-group-item mt-1 blueColor" @click.prevent="downloadAccredited()">All Accredited Voters (PDF) <v-icon>mdi-download</v-icon> </a>
         </ul>
     </div>
 </div>
