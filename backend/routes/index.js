@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var { customAlphabet } = require('nanoid')
 var models = require('../models');
 var Config = models.Setting;
 var { Admin,Category,Candidate,Voter } = models
@@ -86,11 +87,9 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
               if (!student.voterCode) {
 
                 //generate the voter code
-                let firstString = Math.floor(1000 + Math.random() * 9000);
-                let firstAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
-                let secondAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+                let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
 
-                let voterCode = `${firstString}${firstAlphabet}${secondAlphabet}`
+                let voterCode = nanoid()
 
                 console.log(voterCode)
                 //This is where a mail is sent to the student

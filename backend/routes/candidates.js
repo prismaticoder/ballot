@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var { customAlphabet } = require('nanoid')
 var models = require('../models'); // loads index.js
 var { Candidate,Category,Voter } = models;
 var { sendRes,sendError } = require('../controllers/res')
@@ -96,9 +95,12 @@ router.post('/apply', onlyPreVoting, async (req, res) => {
                     [Op.or]: [{status: "confirmed"}, {status: "pending"}]
                 }
             })
-            let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
 
-            let statusCode = nanoid()
+            let firstString = Math.floor(1000 + Math.random() * 9000);
+            let firstAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+            let secondAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+
+            let statusCode = `${firstString}${firstAlphabet}${secondAlphabet}`
 
             if (!check) {
                 let candidate = await category.createCandidate({
