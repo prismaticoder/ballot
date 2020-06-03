@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var { customAlphabet } = require('nanoid')
 var models = require('../models');
 var { Category,Candidate,Voter } = models;
 var Config = models.Setting
@@ -220,7 +221,7 @@ router.get('/candidates/:id', async (req, res) => {
 })
 
 //Confirm a candidate
-router.get('/candidates/:id/confirm', async (req, res) => {
+router.get('/candidates/:id/confirm', onlyPreVoting, async (req, res) => {
 
     try {
         //Array destructuring to retrieve the candidate
@@ -255,7 +256,7 @@ router.get('/candidates/:id/confirm', async (req, res) => {
 
 
 //Deny a candidate
-router.get('/candidates/:id/deny', async (req, res) => {
+router.get('/candidates/:id/deny', onlyPreVoting, async (req, res) => {
 
     try {
         //Array destructuring to retrieve the candidate
@@ -526,6 +527,75 @@ router.delete('/categories/:id', onlyPreVoting, async (req, res) => {
         sendError(res,500)
     }
 })
+
+
+router.post('/accredit', onlyPreVoting, async (req, res) => {
+    try {
+
+        let { matric, lastName, mail } = req.body;
+  
+        if (matric && lastName && mail) {
+          let student = await Voter.findOne({
+            where: {
+              matric
+            }
+          })
+      
+          if (!student) {
+            sendError(res,404,"Student not found")
+          }
+          
+          else {
+
+            if (student.lastName.toLowerCase() != lastName.toLowerCase()) {
+              sendError(res,404,"Error: Credentials do not match")
+            }
+  
+            else {
+  
+              if (!student.accreditedAt) {
+                  //Here, we want to generate the voter code, send a mail to the personal email address of the student and also to the student email address to confirm if he/she did approve it
+                  //Link sent to student mail should include a link to invalidate the code generated if not.
+
+                  //generate the voter code
+                  let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
+  
+                  let voterCode = nanoid()
+  
+                  console.log(voterCode)
+                  //This is where a mail is sent to the student and then to the email address that will be provided
+                //   if (student.voterCode) {
+                    //...
+                    //if the student already has a voterCode, store the voter code in the payload of the confirm to be sent to his student mail so he can restore it if it was wrongly changed
+                //   }
+
+                //   else {
+                    //...
+                //   }
+                  //await sendMail(mail)
+                  //await sendMail(student.prospectiveMail)
+  
+                  sendRes(res,{student})
+                }
+  
+              else {
+                sendError(res,422,"This student has already confirmed accreditation and has been given a voter's number")
+              }
+
+            }
+          }
+
+        }
+  
+        else {
+            sendError(res,422,"All fields are required")
+        }
+  
+    } catch (error) {
+      console.error(error)
+      sendError(res,500)
+    }
+  })
 
 
 
