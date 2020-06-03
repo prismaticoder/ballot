@@ -156,7 +156,7 @@ export default {
     },
     methods: {
         init() {
-            this.$http.get(`${process.env.VUE_APP_URL}/categories`)
+            this.$http.get(`categories`)
             .then(res => {
                 this.categories = res.data.categories
             })
@@ -201,7 +201,7 @@ export default {
                         let imageUrl = res.data.secure_url;
                         let { delete_token } = res.data;
 
-                        return this.$http.post(`${process.env.VUE_APP_URL}/candidates/apply`, {
+                        return this.$http.post(`candidates/apply`, {
                             instagram, twitter, phoneNumber, alias, manifesto,firstName,lastName,level,imageUrl,categoryId,matric
                         })
                         .then(res => {
@@ -245,7 +245,7 @@ export default {
 
             }
             else {
-                this.$http.get(`${process.env.VUE_APP_URL}/candidates/checkIfQualify?matric=${matric}&categoryId=${categoryId}`)
+                this.$http.get(`candidates/checkIfQualify?matric=${matric}&categoryId=${categoryId}`)
                 .then(res => {
                     this.showAlert = false
                     this.loading = false

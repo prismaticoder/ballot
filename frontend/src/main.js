@@ -11,9 +11,9 @@ import vuetify from './plugins/vuetify';
 
 Vue.use(VModal)
 
-
 Vue.prototype.$http = axios;
 
+Vue.prototype.$http.defaults.baseURL = process.env.VUE_APP_URL
 
 Vue.prototype.$http.interceptors.request.use (
   function (config) {

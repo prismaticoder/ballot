@@ -105,7 +105,7 @@ export default {
             }
 
             else {
-                this.$http.put(`${process.env.VUE_APP_URL}/admin/categories/${id}`, {
+                this.$http.put(`admin/categories/${id}`, {
                 name,minLevel,maxLevel
                 })
                 .then(res => {

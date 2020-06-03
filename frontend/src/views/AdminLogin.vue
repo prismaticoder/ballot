@@ -53,7 +53,7 @@ export default {
             let password = this.password;
             this.loading = true
 
-            this.$http.post(`${process.env.VUE_APP_URL}/admin/login`, {
+             this.$http.post(`admin/login`, {
                 username,
                 password
             })

@@ -80,7 +80,7 @@ export default {
     },
     methods: {
         init() {
-            this.$http.get(`${process.env.VUE_APP_URL}/candidates/${this.$route.params.id.split('-')[2]}`)
+            this.$http.get(`candidates/${this.$route.params.id.split('-')[2]}`)
             .then(res => {
                 if (res.data.candidate.refinedLink == this.$route.params.id) {
                     this.isLoaded = true

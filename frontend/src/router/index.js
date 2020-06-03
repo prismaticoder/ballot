@@ -141,7 +141,6 @@ router.beforeEach((to, from, next) => {
     if (token) {
       return next()
     }
-    console.log(to)
     next({
       path: '/command/login',
       nextUrl: to.fullPath

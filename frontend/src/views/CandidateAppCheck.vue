@@ -151,7 +151,7 @@ export default {
 
         this.loading = true 
 
-        this.$http.get(`${process.env.VUE_APP_URL}/candidates/checkStatus?statusCode=${statusCode}&matric=${matric}`)
+        this.$http.get(`candidates/checkStatus?statusCode=${statusCode}&matric=${matric}`)
         .then(res => {
           this.loading = false
           this.showAlert = false
@@ -178,7 +178,7 @@ export default {
         else {
           this.loading = true
 
-          this.$http.put(`${process.env.VUE_APP_URL}/candidates/${id}`, {
+          this.$http.put(`candidates/${id}`, {
             alias,twitter,instagram,manifesto,phoneNumber
           })
           .then(res => {
@@ -199,7 +199,7 @@ export default {
       cancelApplication(id) {
         this.dialogLoad = true;
 
-        this.$http.delete(`${process.env.VUE_APP_URL}/candidates/${id}?statusCode=${this.statusCode}`)
+        this.$http.delete(`candidates/${id}?statusCode=${this.statusCode}`)
         .then(res => {
           this.dialog = false;
           alert(res.data.message)

@@ -175,7 +175,7 @@ export default {
     },
     methods: {
         init() {
-            this.$http.get(`${process.env.VUE_APP_URL}/admin/categories`)
+            this.$http.get(`admin/categories`)
             .then(res => {
                 this.categories = res.data.categories;
                 let highestLevel = process.env.VUE_APP_HIGHEST_LEVEL;
@@ -184,7 +184,7 @@ export default {
                     this.levels.push(i)
                 }
 
-                return this.$http.get(`${process.env.VUE_APP_URL}/admin/settings`)
+                return this.$http.get(`admin/settings`)
                 .then(res => {
                     this.setting = res.data.setting;
                     this.isLoaded = true
@@ -207,7 +207,7 @@ export default {
             this.categories.splice(index,1,category)
         },
         deleteCategory(id) {
-            this.$http.delete(`${process.env.VUE_APP_URL}/admin/categories/${id}`)
+            this.$http.delete(`admin/categories/${id}`)
             .then(res => {
                 setTimeout(alert(res.data.message), 2500)
 
@@ -233,7 +233,7 @@ export default {
             }
 
             else {
-                this.$http.post(`${process.env.VUE_APP_URL}/admin/categories`, {
+                 this.$http.post(`admin/categories`, {
                     name,minLevel,maxLevel
                 })
                 .then(res => {

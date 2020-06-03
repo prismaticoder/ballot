@@ -187,7 +187,7 @@ export default {
           else {
             this.loading = true;
 
-            this.$http.put(`${process.env.VUE_APP_URL}/admin/settings`, {
+            this.$http.put(`admin/settings`, {
               startDate,endDate
             })
             .then(res => {
@@ -249,7 +249,7 @@ export default {
           else {
             this.loading = true;
 
-            this.$http.post(`${process.env.VUE_APP_URL}/admin/settings`, {
+             this.$http.post(`admin/settings`, {
               startDate,endDate
             })
             .then(res => {

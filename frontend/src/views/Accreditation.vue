@@ -94,7 +94,7 @@ export default {
 
         this.dialog = true;
 
-        this.$http.post(`${process.env.VUE_APP_URL}/accredit`, {
+        this.$http.post(`accredit`, {
           matric,lastName
         })
         .then(res => {

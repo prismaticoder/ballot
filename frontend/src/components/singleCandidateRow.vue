@@ -63,7 +63,7 @@ export default {
     },
     methods: {
         approveCandidate() {
-            this.$http.get(`${process.env.VUE_APP_URL}/admin/candidates/${this.candidate.id}/confirm`)
+            this.$http.get(`admin/candidates/${this.candidate.id}/confirm`)
             .then(() => {
                 this.dialog = false;
                 this.type = ''
@@ -78,7 +78,7 @@ export default {
             })
         },
         rejectCandidate() {
-            this.$http.get(`${process.env.VUE_APP_URL}/admin/candidates/${this.candidate.id}/deny`)
+            this.$http.get(`admin/candidates/${this.candidate.id}/deny`)
             .then(() => {
                 this.dialog = false;
                 this.type = ''

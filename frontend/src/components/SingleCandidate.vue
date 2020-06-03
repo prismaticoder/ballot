@@ -1,7 +1,7 @@
 <template>
   <v-card style="text-decoration:none" class="mx-auto mb-5" width="25rem" hover :shaped="true">
 
-    <v-img class="img-fluid" :src="candidate.imageUrl" :lazy-src="defaultImg" @click="goToCandidate()"></v-img>
+    <v-img class="img-fluid" :src="candidate.imageUrl" :lazy-src="require('../assets/image.png')" @click="goToCandidate()"></v-img>
 
     <v-card-title>{{candidate.fullName}}</v-card-title>
 
