@@ -22,6 +22,7 @@
           </div>
       </div>
       
+      
         <h4 class="mt-5 text-center">ALL CATEGORIES (POSTS)</h4>
 
         <v-btn :color="btnColor" fab class="mt-2 btn-fix float-md-right" v-show="isLoaded" v-if="!showAddForm" title="Add new category" style="color: floralwhite" @click.prevent="showAddForm = true">
@@ -69,6 +70,13 @@
         </b-form>
         <hr>
     </div>
+
+        <v-snackbar v-model="snackbar">
+            {{ text }}
+            <v-btn color="pink" text @click="snackbar = false">
+                Close
+            </v-btn>
+        </v-snackbar> 
 
       <div class="row justify-content-center" v-if="isLoaded && categories">
           <div class="col-lg-4" v-for="(category,index) in categories" :key="category.id">
@@ -164,6 +172,8 @@ export default {
             btnColor: "#162059",
             isLoaded: false,
             loading: false,
+            snackbar: false,
+            text: "",
             showAlert: false,
             errorMsg: "",
             types: ["AM","PM"],
@@ -209,8 +219,8 @@ export default {
         deleteCategory(id) {
             this.$http.delete(`admin/categories/${id}`)
             .then(res => {
-                setTimeout(alert(res.data.message), 2500)
-
+                this.snackbar = true;
+                this.text = res.data.message
                 this.categories = this.categories.filter(category => category.id !== id)
             })
             .catch(err => {
@@ -238,7 +248,8 @@ export default {
                 })
                 .then(res => {
                     this.loading = false;
-                    alert(res.data.message)
+                    this.snackbar = true;
+                    this.text = res.data.message
                     this.categories.push(res.data.category)
                     this.name = "";
                     this.minLevel = ((process.env.VUE_APP_HIGHEST_LEVEL)/(process.env.VUE_APP_HIGHEST_LEVEL)) * 100
