@@ -9,22 +9,63 @@ var { sendError, sendRes } = require('../controllers/res')
 
 //Login middleware needed to access this section
 
-//Admin Viewing all voters
-router.get('/voters', async (req, res) => {
 
-    let { type } = req.app.locals;
-    let perPage = (req.query.perPage)?req.query.perPage:15
-    let page = (req.query.page)?req.query.page:1
-
+router.get('/mainPage', async (req, res) => {
     try {
-
-        let voters = await Voter.findAll({
+        let [ setting ] = await Config.findAll();
+        let categoryCount = await Category.count();
+        let pendingCount = await Candidate.count({
+            where: {
+                status: 'pending'
+            }
+        })
+        let confirmedCount = await Candidate.count({
+            where: {
+                status: 'confirmed'
+            }
+        })
+        let voterCount = await Voter.count();
+        let accreditedVoterCount = await Voter.count({
             where: {
                 accreditedAt: {
-                    [Op.not] : null
+                    [Op.ne]: null
                 }
             }
         })
+        
+        sendRes(res,{setting, categoryCount, pendingCount, confirmedCount, voterCount, accreditedVoterCount})
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
+
+//Admin Viewing all voters
+router.get('/voters', async (req, res) => {
+
+    let { type } = req.query;
+    // let perPage = (req.query.perPage)?req.query.perPage:15
+    // let page = (req.query.page)?req.query.page:1
+
+    try {
+
+        let voters;
+
+        if (type && type == 'accredited') {
+            voters = await Voter.findAll({
+                where: {
+                    accreditedAt: {
+                        [Op.not] : null
+                    }
+                }
+            })
+        }
+        
+        else {
+            voters = await Voter.findAll()
+        }
 
         voters = voters.sort((a,b) => {
             if (a.firstName < b.firstName) {
@@ -39,20 +80,20 @@ router.get('/voters', async (req, res) => {
         })
 
         //Implement Pagination
-        let count = voters.length;
+        // let count = voters.length;
 
-        let totalPages = Math.ceil(count/perPage), nextPage;
+        // let totalPages = Math.ceil(count/perPage), nextPage;
 
-        if (page !== totalPages) {
-            voters = voters.slice((page * perPage) - perPage , (page * perPage));
-            nextPage = page+1;
-        }
-        else {
-            voters = voters.slice((page * perPage) - perPage);
-            nextPage = null;
-        }
+        // if (page !== totalPages) {
+        //     voters = voters.slice((page * perPage) - perPage , (page * perPage));
+        //     nextPage = page+1;
+        // }
+        // else {
+        //     voters = voters.slice((page * perPage) - perPage);
+        //     nextPage = null;
+        // }
 
-        sendRes(res,{totalPages, nextPage, currentPage: page, voters})
+        sendRes(res,{voters})
         
     } catch (error) {
         console.error(error);
