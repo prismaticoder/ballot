@@ -39,6 +39,13 @@
            
         </div>
 
+        <v-snackbar v-model="snackbar">
+            {{ text }}
+            <v-btn color="pink" text @click="snackbar = false">
+                Close
+            </v-btn>
+        </v-snackbar>        
+
         <div class="row justify-content-center" v-if="hasLoaded && candidates.length > 0">
             <div class="col-md-4" v-for="candidate in candidates" :key="candidate.id">
                 <singleCandidateRow v-on:approveCandidate="approveCandidate" v-on:rejectCandidate="rejectCandidate" :candidate="candidate" :btnColor="btnColor"/>
@@ -127,17 +134,19 @@ export default {
             statusFilter: '',
             postFilter: '',
             btnColor: "#fff",
-            otherColor: '#162059'
+            otherColor: '#162059',
+            snackbar: false,
+            text: ""
         }
     },
     methods: {
         init() {
-            this.$http.get(`${process.env.VUE_APP_URL}/admin/candidates`)
+            this.$http.get(`admin/candidates`)
             .then(res => {
                 this.candidates = res.data.candidates
                 this.allCandidates = res.data.candidates
 
-                return this.$http.get(`${process.env.VUE_APP_URL}/admin/categories`)
+                return this.$http.get(`admin/categories`)
                 .then (res => {
                     this.categories = res.data.categories
                     this.hasLoaded = true
@@ -152,7 +161,9 @@ export default {
         },
         rejectCandidate(id) {
             this.candidates = this.candidates.filter(candidate => candidate.id !== id)
-            this.allCandidates = this.allCandidates.filter(candidate => candidate.id !== id)    
+            this.allCandidates = this.allCandidates.filter(candidate => candidate.id !== id)
+            this.snackbar = true;
+            this.text = "Candidate application denied successfully"     
         },
         approveCandidate(id) {
             for (let i = 0; i < this.allCandidates.length; i++) {
