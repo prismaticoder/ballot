@@ -1,17 +1,44 @@
 <template>
   <div>
       <div class="row justify-content-center" v-if="setting">
+        <v-dialog v-model="dialog" persistent max-width="350">
+            <v-card>
+                <v-card-title class="headline">End Election?</v-card-title>
+                <v-card-text>
+                Are you sure you want to put a stop to this election?
+                Doing so would mean all voting would come to an end and results will be collated immediately.
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
+                    <v-btn color="green darken-1" text @click="endElection()">Yes</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
           <div class="col-md-2"></div>
           <div class="col-md-4 border-right">
-              <span class="tag">START</span>
+              <span class="tag" v-if="state !== 'voting'">START</span>
+              <span v-else class="tag">STARTED</span>
               {{formatDate(setting.startDate)}}
           </div>
           <div class="col-md-4">
-              <span class="tag">END</span> 
+              <span class="tag" v-if="state !== 'voting'">END</span>
+              <span v-else class="tag">ENDING</span> 
               {{formatDate(setting.endDate)}}
           </div>
           <div class="col-md-2"></div>
-          <a class="mt-3" v-show="!changeDateForm" href="#" @click.prevent="changeDateForm = true">Change</a>
+          <v-btn rounded v-if="state !== 'voting'" v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-2">
+            CHANGE
+          </v-btn>
+          <div v-else class="row justify-content-center mx-auto">
+            <v-btn rounded :color="btnColor" class="mt-3 text-white col-md-2" @click="dialog = true">
+              END ELECTION
+            </v-btn>
+            <div class="col-md-1"></div>
+            <v-btn rounded v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-2">
+              ELONGATE ELECTION
+            </v-btn>
+          </div>
       </div>
 
       <div v-else class="mt-5 col-md-6 mx-auto">
@@ -64,10 +91,10 @@
           <b-alert class="col-md-10 mx-auto" v-model="showAlert" variant="warning" dismissible>
               <strong>{{errorMsg}}</strong>
           </b-alert>
-          <div class="row">
-              <v-btn :color="btnColor" top right absolute fab title="Close" style="color: floralwhite" @click.prevent="closeDateForm()">
-                  <v-icon>mdi-close</v-icon>
-              </v-btn>
+          <v-btn :color="btnColor" top right absolute fab title="Close" style="color: floralwhite" @click.prevent="closeDateForm()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <div class="row" v-show="state !== 'voting'">
               <div class="col-md-4">
                   <v-menu ref="startMenu" v-model="startMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                       <template v-slot:activator="{ on }">
@@ -102,7 +129,7 @@
           </div>
 
           <div class="col-12 mt-2">
-              <v-btn :loading="loading" :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-4" @click="updateSetting()">CHANGE</v-btn>
+              <v-btn :loading="loading" :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-7" @click="updateSetting()"><span v-if="state !== 'voting'">CHANGE</span><span v-else>ELONGATE</span></v-btn>
           </div>
       </div>
   </div>
@@ -114,12 +141,14 @@ export default {
     props: ["setting","btnColor","types","items","today"],
     data() {
       return {
+        state: this.$store.getters.state,
         changeDateForm: false,
         startMenu: false,
         endMenu: false,
         showAlert: false,
         errorMsg: "",
         startDay: null,
+        dialog: false,
         startTime: "",
         endDay: null,
         endTime: "",
@@ -161,34 +190,25 @@ export default {
       updateSetting() {
         let { startDay, startTime, startPeriod, endDay, endTime, endPeriod } = this;
 
-        if (!startDay || !startTime || !startPeriod || !endDay || !endTime || !endPeriod) {
-          this.errorMsg = "All Fields are required"
-          this.showAlert = true;
-        }
+        if (this.state == 'voting') {
+          endTime = (endPeriod == "AM") ? (endTime == "12:00" ? "00:00" : endTime) : (endTime == "12:00" ? "12:00" : `${parseInt(endTime) + 12}:00`)
+          let newDate = new Date(`${endDay} ${endTime}`)
+          let now = new Date()
 
-        else {
-          startTime = (startPeriod == "AM") ? (startTime == "12:00" ? "00:00" : startTime) : (startTime == "12:00" ? "12:00" : `${parseInt(startTime) + 12}:00`) 
-          endTime = (endPeriod == "AM") ? (endTime == "12:00" ? "00:00" : endTime) : (endTime == "12:00" ? "12:00" : `${parseInt(endTime) + 12}:00`) 
-
-          let startDate = new Date(`${startDay} ${startTime}`)
-          let endDate = new Date(`${endDay} ${endTime}`)
-          let now = new Date();
-
-          if (startDate > endDate) {
-            this.errorMsg = "Error: start date should be less than end date"
-            this.showAlert = true
+          if (newDate <= now) {
+            this.errorMsg = "You can only elongate the election to a future date"
+            this.showAlert = true;
           }
 
-          else if (startDate < now) {
-            this.errorMsg = "Error: election date should be a future date"
-            this.showAlert = true
+          else if (new Date(newDate).getTime() == new Date(this.setting.endDate).getTime()) {
+            this.changeDateForm = false
           }
 
           else {
             this.loading = true;
 
-            this.$http.put(`admin/settings`, {
-              startDate,endDate
+            this.$http.patch('admin/settings?type=elongate', {
+              newDate
             })
             .then(res => {
               this.$emit('updateSetting',res.data.setting)
@@ -200,6 +220,57 @@ export default {
               this.errorMsg = err.response ? err.response.data.error : "Error processing request, please try again"
               this.showAlert = true;
             })
+
+          }
+            
+        }
+
+        else {
+          if (!startDay || !startTime || !startPeriod || !endDay || !endTime || !endPeriod) {
+            this.errorMsg = "All Fields are required"
+            this.showAlert = true;
+          }
+
+          else {
+            startTime = (startPeriod == "AM") ? (startTime == "12:00" ? "00:00" : startTime) : (startTime == "12:00" ? "12:00" : `${parseInt(startTime) + 12}:00`) 
+            endTime = (endPeriod == "AM") ? (endTime == "12:00" ? "00:00" : endTime) : (endTime == "12:00" ? "12:00" : `${parseInt(endTime) + 12}:00`) 
+
+            let startDate = new Date(`${startDay} ${startTime}`)
+            let endDate = new Date(`${endDay} ${endTime}`)
+
+            let now = new Date();
+
+            if (startDate > endDate) {
+              this.errorMsg = "Error: start date should be less than end date"
+              this.showAlert = true
+            }
+
+            else if (startDate < now) {
+              this.errorMsg = "Error: election date should be a future date"
+              this.showAlert = true
+            }
+
+            else if (new Date(startDate).getTime() == new Date(this.setting.startDate).getTime() && new Date(endDate).getTime() == new Date(this.setting.endDate).getTime()) {
+              this.changeDateForm = false
+            }
+
+            else {
+              this.loading = true;
+
+              this.$http.put(`admin/settings`, {
+                startDate,endDate
+              })
+              .then(res => {
+                this.$emit('updateSetting',res.data.setting)
+                this.loading = false
+                this.changeDateForm = false
+              })
+              .catch(err => {
+                this.loading = false
+                this.errorMsg = err.response ? err.response.data.error : "Error processing request, please try again"
+                this.showAlert = true;
+              })
+            }
           }
         }
       },
@@ -264,6 +335,22 @@ export default {
           }
         }
       },
+      endElection() {
+        this.$http.patch('admin/settings?type=end')
+        .then(res => {
+          this.$emit('updateSetting', res.data.setting)
+          this.dialog = false;
+            return this.$store.dispatch('setState')
+                  .then(res => {
+                    this.state = res
+                  })
+                  .catch(err => console.log(err))
+        })
+        .catch(err => {
+          this.dialog = false;
+          err.response ? alert(err.response.data.error) : alert("Error processing request, please try again")
+        })
+      }
     }
 }
 </script>

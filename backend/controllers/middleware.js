@@ -187,6 +187,39 @@ exports.onlyPostVoting = async (req, res, next) => {
     }
 }
 
+//Action that can only be performed outside voting
+exports.exceptVoting = async (req, res, next) => {
+    try {
+        
+
+        let [ config ] = await Setting.findAll();
+
+        if (config) {
+
+            var currentTime = new Date()
+            , hasStarted = currentTime >= config.startDate
+            , hasEnded = currentTime >= config.endDate
+      
+            if (!(hasStarted && !hasEnded)) {  
+                next()
+            }
+
+            else {
+                sendError(res,403,"Error: This action can not be performed when voting is ongoing")
+            }
+        }
+
+        else {
+            sendError(res,422,"Action cannot be performed because election parameters have not been set")
+        }
+
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+}
+
 exports.validateAdminToken = async (req, res, next) => {
 
     try {

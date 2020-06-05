@@ -5,7 +5,7 @@ var models = require('../models');
 var { Category,Candidate,Voter } = models;
 var Config = models.Setting
 var { Op } = require('sequelize');
-var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting } = require('../controllers/middleware')
+var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,exceptVoting } = require('../controllers/middleware')
 var { sendError, sendRes } = require('../controllers/res')
 
 //Login middleware needed to access this section
@@ -306,12 +306,22 @@ router.post('/settings', async (req, res) => {
             }
 
             else {
-                let setting = await Config.create({
-                    startDate,
-                    endDate
-                })
+                let [config] = await Config.findAll();
+
+                if (config) {
+                    //if there is already a setting
+                    return sendError(res, 403, "Election configuration has already been set")
+                }
                 
-                sendRes(res,{setting},201)
+                else {
+                    let setting = await Config.create({
+                        startDate,
+                        endDate
+                    })
+                    
+                    sendRes(res,{setting},201)                    
+                }
+
             }
 
 
@@ -327,8 +337,10 @@ router.post('/settings', async (req, res) => {
     }
 })
 
+router.get('/endElection')
+
 //Update settings for a region
-router.put('/settings', async (req, res) => {
+router.put('/settings', exceptVoting, async (req, res) => {
 
     try {
         let { startDate,endDate } = req.body
@@ -359,6 +371,71 @@ router.put('/settings', async (req, res) => {
             sendError(res,422,"Election end date must be greater than the start date")
         }
 
+        
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
+router.patch('/settings', onlyVoting, async (req, res) => {
+    try {
+        let { type } = req.query
+
+        if (type && ['end','elongate'].includes(type)) {
+            let now = new Date();
+
+            if (type == 'elongate') {
+                let { newDate } = req.body;
+                if (newDate) {
+
+                    let newDateTime = new Date(newDate);
+
+                    if (newDateTime <= now) {
+                        sendError(res, 403, "You can only elongate the election to a future date")
+                    }
+
+                    else {
+                        let [ setting ] = await Config.findAll()
+
+                        if (setting) {
+                            setting.endDate = newDate;
+                            await setting.save()
+
+                            sendRes(res,{setting})
+                        }
+                        else {
+                            sendError(res,404,"There is currently no configuration for this election")
+                        }
+                    }
+
+
+                }
+
+                else {
+                    sendError(res,400)
+                }
+            }
+
+            else {
+                let [ setting ] = await Config.findAll()
+
+                if (setting) {
+                    setting.endDate = now;
+                    await setting.save()
+
+                    sendRes(res,{setting},null,"Election ended successfully")
+                }
+                else {
+                    sendError(res,404,"There is currently no configuration for this election")
+                }
+            }
+
+        }
+
+        else {
+            sendError(res,400)
+        }
         
     } catch (error) {
         console.error(error)

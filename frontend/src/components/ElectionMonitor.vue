@@ -68,6 +68,10 @@
                 <div class="col-4">Second(s)</div>
             </div>
         </div>
+
+        <v-btn to="/command/settings" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+                END/ELONGATE ELECTION
+        </v-btn>
     </div>
 </template>
 
