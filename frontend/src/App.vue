@@ -74,7 +74,7 @@ export default {
 <style>
 
 @import "https://fonts.googleapis.com/css2?family=Lato&family=PT+Sans&display=swap";
-/* @import "https://fonts.googleapis.com/css?family=Abel|Roboto|Ubuntu&display=swap"; */
+@import "https://fonts.googleapis.com/css2?family=Arvo:wght@700&display=swap";
 @import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
 
 @import "./assets/sticky-footer.css";
@@ -161,6 +161,10 @@ export default {
        .redColor {
         color: #BF1111;
        }
+       .timer {
+          font-family: 'Arvo', serif;
+          font-size: x-large;
+      }
        .editor {
            cursor:pointer
        }
