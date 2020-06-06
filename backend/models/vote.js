@@ -4,7 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     voterId: DataTypes.INTEGER,
     level: DataTypes.INTEGER,
     facDept: DataTypes.STRING,
-    candidateId: DataTypes.INTEGER
+    candidateId: DataTypes.INTEGER,
+    categoryId: DataTypes.INTEGER
   }, {});
   Vote.associate = function(models) {
     Vote.belongsTo(models.Voter, {
