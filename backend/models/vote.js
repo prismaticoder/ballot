@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     Vote.belongsTo(models.Voter, {
       foreignKey: 'voterId',
   })
+  Vote.belongsTo(models.Category, {
+    foreignKey: 'categoryId',
+  })
     // associations can be defined here
   };
   return Vote;

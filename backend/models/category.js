@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'categoryId',
       as: 'candidates',
       onDelete: 'CASCADE'
-  })
+    })
+    Category.hasMany(models.Vote, {
+      foreignKey: 'categoryId',
+    })
   };
 
   return Category;
