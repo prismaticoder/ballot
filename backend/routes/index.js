@@ -183,6 +183,58 @@ router.get('/categories', async (req, res) => {
   }
 })
 
+//Now for voting
+
+router.post('/voter/verify', onlyVoting, async (req, res) => {
+  let { matric, voterCode } = req.body;
+
+  if (matric && voterCode) {
+    try {
+      let voter = await Voter.findOne({
+        where: {
+          matric
+        },
+      })
+
+      if (voter) {
+        if (voter.accreditedAt) {
+          if (voter.voterCode == voterCode) {
+            let token = jwt.sign(
+              {voterCode: voter.voterCode},
+              process.env.TOKEN_SECRET_KEY,
+              {expiresIn: '1h'}
+              )
+  
+            sendRes(res,{voter, voteToken: token})
+          }
+  
+          else {
+            sendError(res,403,"Incorrect credentials")
+          }
+        }
+
+        else {
+          sendError(res,403,"You are yet to confirm accreditation for this election")
+        }
+        
+
+      }
+
+      else {
+        sendError(res,404,"Student not found")
+      }
+
+    } catch (error) {
+      console.error(error)
+      sendError(res,500)
+    }
+  }
+
+  else {
+    sendError(res,400)
+  }
+})
+
 
 // router.get('/voter/:matric', async (req, res) => {
 //   let { matric } = req.params
