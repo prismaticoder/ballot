@@ -14,8 +14,14 @@
                  <router-link to="/" exact tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">HOME</a>
                  </router-link>
-                  <router-link to="/accreditation" tag="li" class="nav-item" active-class="active">
+                  <router-link v-if="state == 'prevoting'" to="/accreditation" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">ACCREDITATION</a>
+                 </router-link>
+                 <router-link v-else-if="state == 'voting'" to="/vote" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">VOTE</a>
+                 </router-link>
+                 <router-link v-else to="/results" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">RESULTS</a>
                  </router-link>
                  <b-nav-item-dropdown text="CANDIDATES" v-bind:class="{'active':(routeName.includes('candidate'))}">
                     <b-dropdown-item href="/candidates" @click.prevent="goTo('all-candidates')">View all candidates</b-dropdown-item>
@@ -85,6 +91,9 @@ export default {
         },
         username() {
             return this.$store.state.user
+        },
+        state() {
+            return this.$store.getters.state
         }
     }
 }

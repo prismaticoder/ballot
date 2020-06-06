@@ -7,12 +7,15 @@ import Candidates from '../views/Candidates.vue'
 import CandidateApply from '../views/CandidateApply.vue'
 import CandidateAppCheck from '../views/CandidateAppCheck.vue'
 import Accreditation from '../views/Accreditation.vue'
+import Vote from '../views/Vote.vue'
 import SingleCandidate from '../views/SingleCandidate.vue'
 import AdminLogin from '../views/AdminLogin.vue'
 import AdminCandidates from '../views/admin/Candidates.vue'
 import AdminAccreditation from '../views/admin/Accreditation.vue'
+import AdminResult from '../views/admin/Result.vue'
 import Settings from '../views/admin/Settings.vue'
 import PageNotFound from '../views/PageNotFound.vue'
+import store from '../store';
 
 
 Vue.use(VueRouter)
@@ -39,7 +42,10 @@ const routes = [
   {
     path: '/candidates/apply',
     name: 'candidate-apply',
-    component: CandidateApply
+    component: CandidateApply,
+    meta: {
+      requiresCheck: true
+    }
   },
   {
     path: '/candidates/application-check',
@@ -54,7 +60,18 @@ const routes = [
   {
     path: '/accreditation',
     name: 'accreditation',
-    component: Accreditation
+    component: Accreditation,
+    meta: {
+      requiresCheck: true
+    }
+  },
+  {
+    path: '/vote',
+    name: 'vote',
+    component: Vote,
+    meta: {
+      requiresCheck: true
+    }
   },
   {
     path: '/command/login',
@@ -66,7 +83,8 @@ const routes = [
     name: 'admin-home',
     component: AdminHome,
     meta: {
-      requireAuth: true
+      requireAuth: true,
+      requiresCheck: true
     }
   },
   {
@@ -98,7 +116,8 @@ const routes = [
     name: 'admin-settings',
     component: Settings,
     meta: {
-      requireAuth: true
+      requireAuth: true,
+      requiresCheck: true
     }
   },
   {
@@ -106,7 +125,17 @@ const routes = [
     name: 'admin-accreditation',
     component: AdminAccreditation,
     meta: {
-      requireAuth: true
+      requireAuth: true,
+      requiresCheck: true
+    }
+  },
+  {
+    path: '/command/results',
+    name: 'admin-results',
+    component: AdminResult,
+    meta: {
+      requireAuth: true,
+      requiresCheck: true
     }
   },
   {
@@ -135,7 +164,11 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  
+  if(to.matched.some(record => record.meta.requiresCheck)) {
+    store.dispatch('setState')
+    .catch(err => console.log(err))
+  }
+
   if(to.matched.some(record => record.meta.requireAuth)) {
     let token = localStorage.getItem('userToken');
     if (token) {
@@ -145,7 +178,9 @@ router.beforeEach((to, from, next) => {
       path: '/command/login',
       nextUrl: to.fullPath
     }) 
-  } else {
+  } 
+  
+  else {
     next() 
   }
 })

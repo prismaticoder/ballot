@@ -32,13 +32,8 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         axios.get(`checkappstate`)
         .then(res => {
-          if (res.data.success) {
             commit('CHANGE_ELECTION_STATE', res.data.state)
-            resolve("app state set");
-          }
-          else {
-            reject(res.error)
-          }
+            resolve(res.data.state);
         })
         .catch(err => {
           reject(err)
