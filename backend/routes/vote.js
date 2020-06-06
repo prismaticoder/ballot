@@ -2,15 +2,52 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 var Config = models.Setting;
-var { Admin,Category,Candidate,Voter } = models
+var { Admin,Category,Candidate,Voter,Vote } = models
 var { sendRes,sendError } = require('../controllers/res')
 
+
+router.get('/categories', async (req, res) => {
+    try {
+          
+      let categories = await Category.findAll({
+          include: {
+              model: Candidate,
+              required: false,
+              as: "candidates",
+              where: {
+                  status: "confirmed"
+              }
+          }
+      })
+
+      //Only reproduce the categories that the voter has not yet voted for
+
+      let votedCategories = await Vote.findAll({
+        where: {
+          voterId: res.locals.voterId
+        }
+      })
+
+      if (votedCategories.length > 0) {
+        let idArray = votedCategories.map(vote => vote.categoryId);
+
+        categories = categories.filter(category => !(idArray.includes(category.id)))
+      }
+       
+
+      sendRes(res,{categories})
+      
+  } catch (error) {
+      console.error(error);
+      sendError(res,500)
+  }
+})
 
 router.post('/:candidateId', async (req, res) => {
     try {
         let { candidateId } = req.params;
-        let { crossCode, id } = req.body;
-        let voterCode = res.locals.voterCode
+        let { crossCode } = req.body;
+        let { voterCode, voterId } = res.locals
 
         if (candidateId && crossCode && voterCode) {
             let candidate = await Candidate.findOne({
@@ -27,7 +64,7 @@ router.post('/:candidateId', async (req, res) => {
 
             if (candidate) {
                 if (candidate.statusCode == crossCode) {
-                    let voter = await Voter.findByPk(id)
+                    let voter = await Voter.findByPk(voterId)
 
                     if (voter && voter.voterCode == voterCode) {
                         let check = await voter.getVotes({
@@ -80,6 +117,29 @@ router.post('/:candidateId', async (req, res) => {
         console.error(error)
         sendError(res,500)
     }
+})
+
+router.get('/categories', async (req, res) => {
+
+    try {
+        
+        let categories = await Category.findAll({
+            include: {
+                model: Candidate,
+                required: false,
+                as: "candidates",
+                where: {
+                    status: "confirmed"
+                }
+            }
+        })
+        sendRes(res,{categories})
+        
+    } catch (error) {
+        console.error(error);
+        sendError(res,500)
+    }
+    
 })
 
 module.exports = router

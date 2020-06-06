@@ -249,9 +249,9 @@ exports.validateAdminToken = async (req, res, next) => {
 
 exports.validateVoterToken = async (req, res, next) => {
     try {
-
-        if (req.body.token) {
-            let { token } = req.body
+        
+        if (req.headers["x-auth-user"]) {
+            let token = req.headers["x-auth-user"].split(' ')[1]
 
             jwt.verify(token,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
                 if (err) {
@@ -259,6 +259,7 @@ exports.validateVoterToken = async (req, res, next) => {
                 }
                 else {
                     res.locals.voterCode = decoded.voterCode
+                    res.locals.voterId = decoded.voterId
                     next()
                 }
             })

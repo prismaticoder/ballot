@@ -200,12 +200,12 @@ router.post('/voter/verify', onlyVoting, async (req, res) => {
         if (voter.accreditedAt) {
           if (voter.voterCode == voterCode) {
             let token = jwt.sign(
-              {voterCode: voter.voterCode},
+              {voterCode: voter.voterCode, voterId: voter.id},
               process.env.TOKEN_SECRET_KEY,
               {expiresIn: '1h'}
               )
   
-            sendRes(res,{voter, voteToken: token})
+            sendRes(res,{name: voter.fullName, voteToken: token})
           }
   
           else {
