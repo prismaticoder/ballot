@@ -246,3 +246,30 @@ exports.validateAdminToken = async (req, res, next) => {
     }
 
 }
+
+exports.validateVoterToken = async (req, res, next) => {
+    try {
+
+        if (req.body.token) {
+            let { token } = req.body
+
+            jwt.verify(token,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+                if (err) {
+                    sendError(res,401,err)
+                }
+                else {
+                    res.locals.voterCode = decoded.voterCode
+                    console.log(decoded.voterCode)
+                    next()
+                }
+            })
+        }
+        else {
+            sendError(res,401,"Invalid Request: No Token sent")
+        }
+
+    } catch (error) {
+        console.error(error);
+        sendError(res,500,error)
+    }
+}
