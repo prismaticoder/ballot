@@ -16,8 +16,9 @@ var usersRouter = require('./routes/users');
 var regionRouter = require('./routes/region');
 var candidateRouter = require('./routes/candidates')
 var adminRouter = require('./routes/admin');
+var votingRoutes = require('./routes/vote');
 
-var { validateAdminToken } = require('./controllers/middleware'); 
+var { validateAdminToken,onlyVoting,validateVoterToken } = require('./controllers/middleware'); 
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 app.use('/candidates', candidateRouter);
 app.use('/admin', validateAdminToken , adminRouter);
+app.use('/vote', onlyVoting, validateVoterToken, votingRoutes)
 
 
 // catch 404 and forward to error handler

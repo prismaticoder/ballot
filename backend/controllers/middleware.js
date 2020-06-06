@@ -259,7 +259,6 @@ exports.validateVoterToken = async (req, res, next) => {
                 }
                 else {
                     res.locals.voterCode = decoded.voterCode
-                    console.log(decoded.voterCode)
                     next()
                 }
             })
