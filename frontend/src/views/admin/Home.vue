@@ -45,23 +45,16 @@ export default {
     },
     methods: {
         checkMonitor() {
-            this.$store.dispatch('setState')
-            .then(() => {
-                return this.$http.get(`admin/mainPage`)
-                        .then(res => {
-                            this.setting = res.data.setting
-                            this.pending = res.data.pendingCount;
-                            this.confirmed = res.data.confirmedCount;
-                            this.voterCount = res.data.voterCount;
-                            this.accreditedVoterCount = res.data.accreditedVoterCount
-                            this.isLoaded = true;
-                        })
-                        .catch(err => console.log(err))    
+            this.$http.get(`admin/mainPage`)
+            .then(res => {
+                this.setting = res.data.setting
+                this.pending = res.data.pendingCount;
+                this.confirmed = res.data.confirmedCount;
+                this.voterCount = res.data.voterCount;
+                this.accreditedVoterCount = res.data.accreditedVoterCount
+                this.isLoaded = true;
             })
-            .catch(err => {
-                console.log(err)
-            })
-            
+            .catch(err => console.log(err))                
         },
     },
     mounted() {

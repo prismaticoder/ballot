@@ -73,6 +73,15 @@
                 END/ELONGATE ELECTION
         </v-btn>
     </div>
+    <div v-else>
+        <h5>RESULTS</h5>
+        <hr>
+
+        Approve and View Official Election Results
+        <v-btn to="/command/results" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+            VIEW ELECTION RESULTS
+        </v-btn>
+    </div>
 </template>
 
 <script>
