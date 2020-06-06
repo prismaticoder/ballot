@@ -18,9 +18,15 @@ Vue.prototype.$http.defaults.baseURL = process.env.VUE_APP_URL
 Vue.prototype.$http.interceptors.request.use (
   function (config) {
     const token = localStorage.getItem('userToken');
+    const bToken = localStorage.getItem('bToken')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    if (bToken) {
+      config.headers["X-Auth-User"] = `Bearer ${bToken}`
+    }
+
     return config;
   },
   function (error) {

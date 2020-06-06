@@ -52,14 +52,20 @@ export default {
     let originalRequest = err.config
     
     if (err.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-      store.dispatch('logout')
-      .then(() => {
-        window.location.href = "/command/login"
-      })
-      .catch(() => {
-        console.log("Error logging user out")
-      })
+      if (window.location.pathname.includes('command')) {
+        originalRequest._retry = true
+        store.dispatch('logout')
+        .then(() => {
+          window.location.href = "/command/login"
+        })
+        .catch(() => {
+          console.log("Error logging user out")
+        })
+      }
+      else {
+        localStorage.removeItem('bToken')
+        // window.location.reload()
+      }
     }
 
     else {
