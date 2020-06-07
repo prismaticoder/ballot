@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require('../models');
 var Config = models.Setting;
 var { Admin,Category,Candidate,Voter,Vote } = models
+var { Op } = require('sequelize');
 var { sendRes,sendError } = require('../controllers/res')
 
 
@@ -19,21 +20,6 @@ router.get('/categories', async (req, res) => {
           }
       })
 
-      //Only reproduce the categories that the voter has not yet voted for
-
-      let votedCategories = await Vote.findAll({
-        where: {
-          voterId: res.locals.voterId
-        }
-      })
-
-      if (votedCategories.length > 0) {
-        let idArray = votedCategories.map(vote => vote.categoryId);
-
-        categories = categories.filter(category => !(idArray.includes(category.id)))
-      }
-       
-
       sendRes(res,{categories})
       
   } catch (error) {
@@ -42,69 +28,46 @@ router.get('/categories', async (req, res) => {
   }
 })
 
-router.post('/:candidateId', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        let { candidateId } = req.params;
-        let { crossCode } = req.body;
+        let { votes } = req.body;
+        votes = JSON.parse(votes)
+
         let { voterCode, voterId } = res.locals
+        votes = votes.map(vote => {
+            return {voterId, ...vote}
+        })
 
-        if (candidateId && crossCode && voterCode) {
-            let candidate = await Candidate.findOne({
+        votes = votes.filter(vote => vote.candidateId !== null)
+        
+        let [ setting ] = await Config.findAll()
+        let { startDate, endDate } = setting
+
+        if (voterId && voterCode) {
+            //first check if the person has voted in this election
+            let vote = await Vote.findOne({
                 where: {
-                    id: candidateId,
-                    status: "confirmed"
-                },
-                include: {
-                    attributes: ['id','name'],
-                    model: Category,
-                    as: "category"
-                }
-            });
-
-            if (candidate) {
-                if (candidate.statusCode == crossCode) {
-                    let voter = await Voter.findByPk(voterId)
-
-                    if (voter && voter.voterCode == voterCode) {
-                        let check = await voter.getVotes({
-                            where: {
-                                categoryId: candidate.category.id
-                            }
-                        })
-
-                        if (check.length > 0) {
-                            sendError(res,422,"You have already voted for a candidate for this category")
-                        }
-
-                        else {
-                            let type = process.env.APP_TYPE.toLowerCase()
-
-                            let facDept = (type == 'hall') ? voter.faculty : voter.department
-
-                            await voter.createVote({
-                                candidateId,
-                                categoryId: candidate.category.id,
-                                level: voter.level,
-                                facDept
-                            })
-
-                            sendRes(res,{message: "Vote cast successfully"})
-                        }
-                    }
-
-                    else {
-                        sendError(res,422,"Voter not found")
+                    voterId,
+                    updatedAt: {
+                        [Op.gte] : startDate,
+                        [Op.lte] : endDate
                     }
                 }
+            })
 
-                else {
-                    sendError(res, 422, "Candidate not found")
-                }
-
-
+            if (vote) {
+                return sendError(res,403,"You have already voted in this election")
             }
+
             else {
-                sendError(res,403,"Candidate not found")
+                let insert = await Vote.bulkCreate(votes)
+
+                if (insert) {
+                    sendRes(res,{message: "You have successfully cast your vote in this election. Do check back when the election is over for the election results :)"},201)
+                }
+                else {
+                    sendError(res,422,"Sorry, there was an error processing your request")
+                }
             }
         }
 
@@ -116,29 +79,6 @@ router.post('/:candidateId', async (req, res) => {
         console.error(error)
         sendError(res,500)
     }
-})
-
-router.get('/categories', async (req, res) => {
-
-    try {
-        
-        let categories = await Category.findAll({
-            include: {
-                model: Candidate,
-                required: false,
-                as: "candidates",
-                where: {
-                    status: "confirmed"
-                }
-            }
-        })
-        sendRes(res,{categories})
-        
-    } catch (error) {
-        console.error(error);
-        sendError(res,500)
-    }
-    
 })
 
 module.exports = router
