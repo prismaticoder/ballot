@@ -62,7 +62,7 @@ export default {
                 let data = {username, token}
                 this.$store.dispatch('loginUser', data)
                 .then(()=> {
-                    this.$router.push({ name: 'admin-settings'})
+                    this.$router.push({ name: 'admin-home'})
                 })
                 .catch(() => {
                     console.log("Login error")
