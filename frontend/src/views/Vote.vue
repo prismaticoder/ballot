@@ -3,8 +3,8 @@
       <h3 class="main-header" style="text-align: center;">Vote Your Candidates | Ballot</h3>
       <hr>
       <p class="mt-2 text-left">
-          <span class="header">VOTING INSTRUCTIONS</span>
-          Select the candidate you wish to vote for, then scroll to the bottom of the page and click the "Vote" button to cast your vote. If you are undecided, you could click either of the arrow buttons to go to the next category.
+          <span class="header">INSTRUCTIONS</span>
+          Select the candidate you wish to vote for in that category, click the next/previous button to go to the next category. For an undecided vote, do not select any candidate. 
       </p>
       <hr>
         <div class="mt-4" v-if="isLoaded">
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <hr>
-            <VoteSingleCategory :category="currentCategory" />
+            <VoteSingleCategory :categories="categories" :category="currentCategory" @storeVote="storeVote" :currentIndex="currentIndex" />
         </div>
         <div class="mt-4" v-else>
             <v-skeleton-loader class="mx-auto" type="heading"></v-skeleton-loader>
@@ -58,20 +58,37 @@ export default {
             categories: null,
             currentCategory: null,
             currentIndex: 0,
-            isLoaded: false
+            isLoaded: false,
+            votes: JSON.parse(localStorage.getItem('votes-stored')) || []
         }
     },
     methods: {
         updateToken() {
             window.location.reload()
         },
-        goToNext() {
-            this.currentIndex += 1;
-            this.currentCategory = this.categories[this.currentIndex]
-        },
-        goToPrevious() {
-            this.currentIndex -= 1;
-            this.currentCategory = this.categories[this.currentIndex]
+        storeVote(type, categoryId, candidateId) {
+            this.votes = this.votes.filter(vote => vote.categoryId !== categoryId)
+            this.votes.push({categoryId, candidateId})
+            localStorage.setItem('votes-stored', JSON.stringify(this.votes))
+
+            if (type == 'next') {
+                this.currentIndex += 1;
+                this.currentCategory = this.categories[this.currentIndex]
+            }
+
+            else if (type == 'previous') {
+                this.currentIndex -= 1;
+                this.currentCategory = this.categories[this.currentIndex]
+            }
+            
+            else {
+                this.isLoaded = false
+            }
+
+            let selectedArray = this.votes.filter(vote => vote.categoryId == this.currentCategory.id)
+            let selectedCandidate = selectedArray.length > 0 ? selectedArray[0].candidateId : null
+
+            this.currentCategory.selectedCandidate = selectedCandidate;
         },
         init() {
             if (this.token) {
@@ -79,6 +96,14 @@ export default {
                 .then(res => {
                     this.categories = res.data.categories
                     this.currentCategory = res.data.categories[0]
+
+                    if (this.votes.length > 0) {
+                        let selectedArray = this.votes.filter(vote => vote.categoryId == this.currentCategory.id)
+                        let selectedCandidate = selectedArray.length > 0 ? selectedArray[0].candidateId : null
+
+                        this.currentCategory.selectedCandidate = selectedCandidate;
+                    }
+
                     this.isLoaded = true
                 })
                 .catch(err => console.log(err.response.data.error)) 

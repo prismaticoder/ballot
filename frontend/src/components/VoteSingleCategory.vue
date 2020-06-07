@@ -5,9 +5,22 @@
             <VoteSingleCandidate :candidate="candidate" :selectedCandidate="selectedCandidate" v-on:selectCandidate="selectCandidate"/>
         </div>
     </div>
-    <v-btn :disabled="!selectedCandidate" rounded :color="btnColor" class="mt-5 text-white col-md-4 col-6">
-        VOTE
-    </v-btn>
+    <div class="row justify-content-center">
+            <v-btn tile v-show="currentIndex !== 0"  :color="btnColor" class="mt-5 text-white p-3 col-md-2 col-5" @click="$emit('storeVote', 'previous', category.id, selectedCandidate)">
+                <v-icon small>
+                    mdi-arrow-left
+                </v-icon>
+               &nbsp; PREV
+            </v-btn>
+        <div class="col-2"></div>
+            <v-btn tile :color="btnColor" v-show="currentIndex !== this.categories.length - 1" class="mt-5 text-white p-3 col-md-2 col-5" @click="$emit('storeVote', 'next', category.id, selectedCandidate)">
+                NEXT &nbsp;
+                <v-icon small>
+                    mdi-arrow-right
+                </v-icon>
+            </v-btn>
+    </div>
+    
 </div>
 
 <div class="row" v-else>
@@ -30,10 +43,10 @@ export default {
     data() {
         return {
             btnColor: "#162059",
-            selectedCandidate: null
+            selectedCandidate: this.category.selectedCandidate || null
         }
     },
-    props: ["category"],
+    props: ["category","currentIndex","categories"],
     methods: {
         selectCandidate(id) {
             this.selectedCandidate = id
@@ -41,8 +54,7 @@ export default {
     },
     watch: {
         'category.id'() {
-            console.log("check")
-            this.selectedCandidate = null
+            this.selectedCandidate = this.category.selectedCandidate
         }
                 
     }
