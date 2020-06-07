@@ -148,7 +148,7 @@ export default {
                 localStorage.removeItem('votes-stored')
                 this.successDialog = true;
                 this.successText = res.data.message
-                setTimeout(function() {window.location.reload()}, 3500)
+                setTimeout(function() {window.location.reload()}, 5000)
             })
             .catch(err => {
                 this.dialog = false;

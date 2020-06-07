@@ -23,6 +23,9 @@
                  <router-link v-else to="/results" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">RESULTS</a>
                  </router-link>
+                 <router-link v-if="state == 'voting'" to="/stats" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">STATS</a>
+                 </router-link>
                  <b-nav-item-dropdown text="CANDIDATES" v-bind:class="{'active':(routeName.includes('candidate'))}">
                     <b-dropdown-item href="/candidates" @click.prevent="goTo('all-candidates')">View all candidates</b-dropdown-item>
                     <b-dropdown-item href="/candidates/apply" @click.prevent="goTo('candidate-apply')">Apply for candidacy</b-dropdown-item>

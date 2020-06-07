@@ -7,6 +7,7 @@ import Candidates from '../views/Candidates.vue'
 import CandidateApply from '../views/CandidateApply.vue'
 import CandidateAppCheck from '../views/CandidateAppCheck.vue'
 import Accreditation from '../views/Accreditation.vue'
+import Stats from '../views/Stats.vue'
 import Vote from '../views/Vote.vue'
 import SingleCandidate from '../views/SingleCandidate.vue'
 import AdminLogin from '../views/AdminLogin.vue'
@@ -61,6 +62,14 @@ const routes = [
     path: '/accreditation',
     name: 'accreditation',
     component: Accreditation,
+    meta: {
+      requiresCheck: true
+    }
+  },
+  {
+    path: '/stats',
+    name: 'stats',
+    component: Stats,
     meta: {
       requiresCheck: true
     }

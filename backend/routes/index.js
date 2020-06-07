@@ -3,7 +3,8 @@ var router = express.Router();
 var { customAlphabet } = require('nanoid')
 var models = require('../models');
 var Config = models.Setting;
-var { Admin,Category,Candidate,Voter } = models
+var { Admin,Category,Candidate,Voter,Vote } = models
+var { Op } = require('sequelize');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var { sendRes,sendError } = require('../controllers/res')
@@ -16,6 +17,12 @@ router.get('/', function(req, res, next) {
   res.status(200).json({success: true, message: "Welcome to the Ballot API 😁"});
 });
 
+router.get('/cv', async (req, res) => {
+  let candidate = await Candidate.findByPk(52)
+  let voters = await candidate.countVoters()
+  
+  res.json(voters)
+})
 
 //Check the state of the application
 router.get('/checkappstate', async (req, res) => {
@@ -199,13 +206,35 @@ router.post('/voter/verify', onlyVoting, async (req, res) => {
       if (voter) {
         if (voter.accreditedAt) {
           if (voter.voterCode == voterCode) {
-            let token = jwt.sign(
-              {voterCode: voter.voterCode, voterId: voter.id},
-              process.env.TOKEN_SECRET_KEY,
-              {expiresIn: '1h'}
-              )
-  
-            sendRes(res,{name: voter.fullName, voteToken: token})
+
+            //Now check if the person has voted
+            let [ setting ] = await Config.findAll()
+            let { startDate, endDate } = setting
+
+            let vote = await Vote.findOne({
+              where: {
+                  voterId: voter.id,
+                  updatedAt: {
+                      [Op.gte] : startDate,
+                      [Op.lte] : endDate
+                  }
+              }
+            })
+
+            if (vote) {
+              return sendError(res,403,"You have already voted in this election")
+            }
+
+            else {
+              let token = jwt.sign(
+                {voterCode: voter.voterCode, voterId: voter.id},
+                process.env.TOKEN_SECRET_KEY,
+                {expiresIn: '1h'}
+                )
+    
+              sendRes(res,{name: voter.fullName, voteToken: token})
+            }
+            
           }
   
           else {
@@ -233,6 +262,45 @@ router.post('/voter/verify', onlyVoting, async (req, res) => {
   else {
     sendError(res,400)
   }
+})
+
+router.get('/stats', onlyVoting, async (req, res) => {
+
+  let maxLevel = process.env.HIGHEST_LEVEL;
+  let levels = []
+
+  try {
+    
+    for (let i = 100; i <= maxLevel; i+=100) {
+      levels.push(i)
+    }
+  
+    let voters = await Voter.findAll({
+      include: {
+        model: Vote,
+        as: "votes",
+        required: true
+      }
+    })
+  
+    let resultArray = [];
+  
+    levels.forEach(level => {
+      let count = voters.filter(voter => voter.level == level).length
+      resultArray.push({level,count})
+    })
+
+    sendRes(res,{stats: resultArray})
+
+  } catch (error) {
+    console.error(error)
+    sendError(res,500)
+  }
+
+  
+
+
+
 })
 
 
