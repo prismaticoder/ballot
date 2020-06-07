@@ -2,8 +2,6 @@
 module.exports = (sequelize, DataTypes) => {
   const Vote = sequelize.define('Vote', {
     voterId: DataTypes.INTEGER,
-    level: DataTypes.INTEGER,
-    facDept: DataTypes.STRING,
     candidateId: DataTypes.INTEGER,
     categoryId: DataTypes.INTEGER
   }, {});

@@ -12,12 +12,6 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: 'voters', key: 'id' }
       },
-      level: {
-        type: Sequelize.INTEGER
-      },
-      facDept: {
-        type: Sequelize.STRING
-      },
       candidateId: {
         type: Sequelize.INTEGER,
         references: { model: 'candidates', key: 'id' }
