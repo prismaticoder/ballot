@@ -2,25 +2,61 @@
   <div class="container" v-if="token">
       <h3 class="main-header" style="text-align: center;">Vote Your Candidates | Ballot</h3>
       <hr>
-      <p class="mt-2 text-left">
-          <span class="header">INSTRUCTIONS</span>
-          Select the candidate you wish to vote for in that category, click the next/previous button to go to the next category. For an undecided vote, do not select any candidate. 
-      </p>
-      <hr>
-        <div class="mt-4" v-if="isLoaded">
-            <div class="row">
-                <div class="col-2">
-                    <v-icon v-show="currentIndex !== 0" class="icon" @click="goToPrevious()" large title="Previous Category">mdi-arrow-left</v-icon>
-                </div>
-                <div class="col-8">
-                    <h4 class="text-capitalize">Category: {{currentCategory.name.toLowerCase()}}</h4>
-                </div>
-                <div class="col-2">
-                    <v-icon v-show="currentIndex !== this.categories.length - 1" @click="goToNext()" class="icon" title="Next Category" large>mdi-arrow-right</v-icon>
-                </div>
-            </div>
+
+        <div class="mt-4" v-if="isLoaded && !submitPage">
+            <p class="mt-2 text-left">
+                <span class="header">INSTRUCTIONS</span>
+                Select the candidate you wish to vote for in that category, click the next/previous button to go to the next category. For an undecided vote, do not select any candidate. 
+            </p>
+            <hr>
+
+            <h4 class="text-capitalize">Category: {{currentCategory.name.toLowerCase()}}</h4>
+
             <hr>
             <VoteSingleCategory :categories="categories" :category="currentCategory" @storeVote="storeVote" :currentIndex="currentIndex" />
+        </div>
+        <div class="mt-4" v-else-if="isLoaded && submitPage">
+            <p class="mt-2 text-left">
+                <span class="header">CAST VOTE</span>
+                Please confirm your candidate selections and click the "Cast Vote" button to cast your vote 
+            </p>
+            <hr>
+            <v-dialog v-model="dialog" persistent max-width="350">
+                <v-card>
+                    <v-card-title class="headline">Confirmation</v-card-title>
+                    <v-card-text>
+                    Please confirm that you have selected your preferred candidates and want to proceed to cast your vote.
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
+                        <v-btn color="green darken-1" text @click="castVote()">Yes</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+            <div class="row">
+                <EachSubmission :category="category" :votes="votes" v-for="category in categories" :key="category.id" />
+            </div>
+
+            <v-dialog v-model="successDialog" persistent max-width="350">
+                <v-card>
+                    <v-card-title class="headline">Vote Cast Successfully</v-card-title>
+                    <v-card-text>
+                    {{successText}}
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="green darken-1" text @click="reloadPage()">OK</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+            
+            <v-btn tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3 col-md-2 col-5">
+                CAST VOTE &nbsp;
+                <v-icon small>
+                    mdi-check
+                </v-icon>
+            </v-btn>
         </div>
         <div class="mt-4" v-else>
             <v-skeleton-loader class="mx-auto" type="heading"></v-skeleton-loader>
@@ -45,20 +81,27 @@
 
 import VoterLogin from './VoterLogin'
 import VoteSingleCategory from '../components/VoteSingleCategory'
+import EachSubmission from '../components/EachSubmission'
 
 export default {
     name: "Vote",
     components: {
         VoterLogin,
-        VoteSingleCategory
+        VoteSingleCategory,
+        EachSubmission
     },
     data() {
         return {
             token: localStorage.getItem('bToken') || null,
+            dialog: true,
             categories: null,
             currentCategory: null,
+            successDialog: false,
+            successText: null,
             currentIndex: 0,
+            btnColor: "#162059",
             isLoaded: false,
+            submitPage: false,
             votes: JSON.parse(localStorage.getItem('votes-stored')) || []
         }
     },
@@ -71,24 +114,52 @@ export default {
             this.votes.push({categoryId, candidateId})
             localStorage.setItem('votes-stored', JSON.stringify(this.votes))
 
-            if (type == 'next') {
-                this.currentIndex += 1;
-                this.currentCategory = this.categories[this.currentIndex]
-            }
+            if (['next','previous'].includes(type)) {
 
-            else if (type == 'previous') {
-                this.currentIndex -= 1;
-                this.currentCategory = this.categories[this.currentIndex]
+                 if (type == 'next') {
+                    this.currentIndex += 1;
+                    this.currentCategory = this.categories[this.currentIndex]
+                }
+
+                else {
+                    this.currentIndex -= 1;
+                    this.currentCategory = this.categories[this.currentIndex]
+                }
+
+                let selectedArray = this.votes.filter(vote => vote.categoryId == this.currentCategory.id)
+                let selectedCandidate = selectedArray.length > 0 ? selectedArray[0].candidateId : null
+
+                this.currentCategory.selectedCandidate = selectedCandidate;
             }
             
             else {
-                this.isLoaded = false
+                this.dialog = false
+                this.submitPage = true
             }
+        },
+        reloadPage() {
+            window.location.reload()
+        },
+        castVote() {
+            this.$http.post('vote', {votes: JSON.stringify(this.votes)})
+            .then(res => {
+                this.dialog = false;
+                localStorage.removeItem('bToken')
+                localStorage.removeItem('votes-stored')
+                this.successDialog = true;
+                this.successText = res.data.message
+                setTimeout(function() {window.location.reload()}, 3500)
+            })
+            .catch(err => {
+                this.dialog = false;
+                alert(err.response ? err.response.data.error : "There was an error processing your request, please reload the page and try again")
 
-            let selectedArray = this.votes.filter(vote => vote.categoryId == this.currentCategory.id)
-            let selectedCandidate = selectedArray.length > 0 ? selectedArray[0].candidateId : null
-
-            this.currentCategory.selectedCandidate = selectedCandidate;
+                if (err.status == 403) {
+                    localStorage.removeItem('bToken')
+                    localStorage.removeItem('votes-stored')
+                    window.location.reload()
+                }
+            })
         },
         init() {
             if (this.token) {
