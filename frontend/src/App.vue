@@ -64,7 +64,8 @@ export default {
       }
       else {
         localStorage.removeItem('bToken')
-        // window.location.reload()
+        localStorage.removeItem('votes-stored')
+        window.location.reload()
       }
     }
 
