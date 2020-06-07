@@ -24,15 +24,6 @@
         
         
     </v-card-text>
-
-
-    <v-card-actions class="justify-content-center">
-
-        <v-btn color="orange" rounded>
-        Vote
-      </v-btn>
-
-    </v-card-actions>
   </v-card>
 
 </template>

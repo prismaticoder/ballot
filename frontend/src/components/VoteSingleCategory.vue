@@ -13,10 +13,16 @@
                &nbsp; PREV
             </v-btn>
         <div class="col-2"></div>
-            <v-btn tile :color="btnColor" v-show="currentIndex !== this.categories.length - 1" class="mt-5 text-white p-3 col-md-2 col-5" @click="$emit('storeVote', 'next', category.id, selectedCandidate)">
+            <v-btn tile :color="btnColor" v-if="currentIndex !== this.categories.length - 1" class="mt-5 text-white p-3 col-md-2 col-5" @click="$emit('storeVote', 'next', category.id, selectedCandidate)">
                 NEXT &nbsp;
                 <v-icon small>
                     mdi-arrow-right
+                </v-icon>
+            </v-btn>
+            <v-btn tile :color="btnColor" v-else class="mt-5 text-white p-3 col-md-2 col-5" @click="$emit('storeVote', 'finish', category.id, selectedCandidate)">
+                FINISH &nbsp;
+                <v-icon small>
+                    mdi-check
                 </v-icon>
             </v-btn>
     </div>
