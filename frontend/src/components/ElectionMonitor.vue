@@ -79,7 +79,7 @@
 
         Approve and View Official Election Results
         <v-btn to="/command/results" rounded :color="btnColor" class="mt-4 text-white col-md-7">
-            VIEW ELECTION RESULTS
+            GO TO RESULTS
         </v-btn>
     </div>
 </template>
