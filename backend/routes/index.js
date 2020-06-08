@@ -303,7 +303,7 @@ router.get('/stats', onlyVoting, async (req, res) => {
 })
 
 
-router.get('/results', onlyVoting, async (req, res) => {
+router.get('/results', onlyPostVoting, async (req, res) => {
   try {
     
     let categories = await Category.findAll({
@@ -318,13 +318,28 @@ router.get('/results', onlyVoting, async (req, res) => {
         },
         include: [{
           model: Vote,
+          where: {
+            updatedAt: {
+              [Op.gte] : res.locals.startDate,
+              [Op.lte] : res.locals.endDate
+            }
+          },
+          required: false,
           attributes: []
         }],
       },
-      group: ['candidates.id']
+      group: ['candidates.id'],
+      order: [['id','asc']]
     })
 
-  return sendRes(res,{categories})
+    let totalVotes = await Vote.aggregate('voterId','count', { distinct: true, where: {
+      updatedAt: {
+        [Op.gte] : res.locals.startDate,
+        [Op.lte] : res.locals.endDate
+      }
+    } })
+
+  return sendRes(res,{categories, totalVotes})
 
   } catch (error) {
     console.error(error)

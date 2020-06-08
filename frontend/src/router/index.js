@@ -9,6 +9,7 @@ import CandidateAppCheck from '../views/CandidateAppCheck.vue'
 import Accreditation from '../views/Accreditation.vue'
 import Stats from '../views/Stats.vue'
 import Vote from '../views/Vote.vue'
+import Result from '../views/Result.vue'
 import SingleCandidate from '../views/SingleCandidate.vue'
 import AdminLogin from '../views/AdminLogin.vue'
 import AdminCandidates from '../views/admin/Candidates.vue'
@@ -63,7 +64,8 @@ const routes = [
     name: 'accreditation',
     component: Accreditation,
     meta: {
-      requiresCheck: true
+      requiresCheck: true,
+      onlyState: 'prevoting'
     }
   },
   {
@@ -71,7 +73,8 @@ const routes = [
     name: 'stats',
     component: Stats,
     meta: {
-      requiresCheck: true
+      requiresCheck: true,
+      onlyState: 'voting'
     }
   },
   {
@@ -79,7 +82,17 @@ const routes = [
     name: 'vote',
     component: Vote,
     meta: {
-      requiresCheck: true
+      requiresCheck: true,
+      onlyState: 'voting'
+    }
+  },
+  {
+    path: '/results',
+    name: 'results',
+    component: Result,
+    meta: {
+      requiresCheck: true,
+      onlyState: 'postvoting'
     }
   },
   {
@@ -175,8 +188,17 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresCheck)) {
     store.dispatch('setState')
+    .then(res => {
+      if (to.matched.some(record => record.meta.onlyState && record.meta.onlyState !== res)) {
+        return next({
+          path: '/page-not-found'
+        })
+      }
+    })
     .catch(err => console.log(err))
   }
+
+
 
   if(to.matched.some(record => record.meta.requireAuth)) {
     let token = localStorage.getItem('userToken');
