@@ -6,7 +6,7 @@
     <div class="col-md-4">
         <v-card style="text-decoration:none" class="mx-auto" width="20rem" tile>
 
-            <v-card-title class="text-center">Undecided Voters</v-card-title>
+            <v-card-title class="text-center">Undecided/Void Votes</v-card-title>
 
             <v-card-text>
                 <div>
@@ -67,7 +67,7 @@ export default {
         },
         undecidedPercent() {
             let percent = (this.undecidedVoters / this.totalVotes) * 100;
-            return percent
+            return percent.toFixed(2)
         },
         highestVote() {
             if (this.undecidedVoters >= this.category.candidates[0].voteCount) {

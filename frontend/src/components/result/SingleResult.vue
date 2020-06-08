@@ -6,7 +6,7 @@
     <v-card-text>
         <div>
             <span class="tag mb-2">VOTES</span>
-            <span class="timer blueColor">{{candidate.voteCount}} <span v-if="candidate.voteCount == highestVote">- Winner</span></span>
+            <span class="timer redColor">{{candidate.voteCount}} <span v-if="candidate.voteCount == highestVote">- Winner</span></span>
 
             <span class="tag mt-4 mb-2">PERCENTAGE OF TOTAL</span>
             <span class="timer">{{votePercent}}%</span>
@@ -23,7 +23,7 @@ export default {
     computed: {
         votePercent() {
             let percent = (this.candidate.voteCount / this.totalVotes) * 100;
-            return percent
+            return percent.toFixed(2)
         }
     }
 }
