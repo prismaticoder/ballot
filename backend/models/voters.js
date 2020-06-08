@@ -47,6 +47,8 @@ module.exports = (sequelize, DataTypes) => {
   Voter.associate = function(models) {
     Voter.hasMany(models.Vote, {
       foreignKey: 'voterId',
+      as: 'votes',
+      onDelete: 'CASCADE'
   })
     // associations can be defined here
   };

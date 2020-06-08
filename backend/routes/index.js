@@ -4,11 +4,12 @@ var { customAlphabet } = require('nanoid')
 var models = require('../models');
 var Config = models.Setting;
 var { Admin,Category,Candidate,Voter,Vote } = models
-var { Op } = require('sequelize');
+const Sequelize = require('sequelize')
+var { Op } = Sequelize;
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var { sendRes,sendError } = require('../controllers/res')
-var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting } = require('../controllers/middleware')
+var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,datesNeeded } = require('../controllers/middleware')
 var dotenv = require('dotenv');
 dotenv.config();
 
@@ -208,15 +209,13 @@ router.post('/voter/verify', onlyVoting, async (req, res) => {
           if (voter.voterCode == voterCode) {
 
             //Now check if the person has voted
-            let [ setting ] = await Config.findAll()
-            let { startDate, endDate } = setting
 
             let vote = await Vote.findOne({
               where: {
                   voterId: voter.id,
                   updatedAt: {
-                      [Op.gte] : startDate,
-                      [Op.lte] : endDate
+                      [Op.gte] : res.locals.startDate,
+                      [Op.lte] : res.locals.endDate
                   }
               }
             })
@@ -279,7 +278,12 @@ router.get('/stats', onlyVoting, async (req, res) => {
       include: {
         model: Vote,
         as: "votes",
-        required: true
+        where: {
+          updatedAt: {
+            [Op.gte] : res.locals.startDate,
+            [Op.lte] : res.locals.endDate
+          }
+        }
       }
     })
   
@@ -296,23 +300,36 @@ router.get('/stats', onlyVoting, async (req, res) => {
     console.error(error)
     sendError(res,500)
   }
-
-  
-
-
-
 })
 
 
-// router.get('/voter/:matric', async (req, res) => {
-//   let { matric } = req.params
+router.get('/results', onlyVoting, async (req, res) => {
+  try {
+    
+    let categories = await Category.findAll({
+      include: {
+        model: Candidate,
+        as: "candidates",
+        where: {
+            status: "confirmed"
+        },
+        attributes: { 
+          include: [[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']]
+        },
+        include: [{
+          model: Vote,
+          attributes: []
+        }],
+      },
+      group: ['candidates.id']
+    })
 
-//   try {
-    
-//   } catch (error) {
-    
-//   }
-  
-// })
+  return sendRes(res,{categories})
+
+  } catch (error) {
+    console.error(error)
+    sendError(res,500)
+  }
+})
 
 module.exports = router;
