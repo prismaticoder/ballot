@@ -45,7 +45,10 @@
                   <router-link to="/command/candidates" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">CANDIDATES</a>
                  </router-link>
-                 <router-link to="/command/accreditation" tag="li" class="nav-item" active-class="active">
+                 <router-link v-if="state == 'postvoting'" to="/command/results" tag="li" class="nav-item" active-class="active">
+                    <a class="nav-link">RESULTS</a>
+                 </router-link>
+                 <router-link v-else-if="state == 'prevoting'" to="/command/accreditation" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">ACCREDITATION</a>
                  </router-link>
                  <li class="nav-item" style="cursor: pointer">
