@@ -39,9 +39,6 @@ router.post('/', async (req, res) => {
         })
 
         votes = votes.filter(vote => vote.candidateId !== null)
-        
-        let [ setting ] = await Config.findAll()
-        let { startDate, endDate } = setting
 
         if (voterId && voterCode) {
             //first check if the person has voted in this election
@@ -49,8 +46,8 @@ router.post('/', async (req, res) => {
                 where: {
                     voterId,
                     updatedAt: {
-                        [Op.gte] : startDate,
-                        [Op.lte] : endDate
+                        [Op.gte] : res.locals.startDate,
+                        [Op.lte] : res.locals.endDate
                     }
                 }
             })

@@ -1,6 +1,6 @@
 var { Op } = require('sequelize');
 var models = require('../models'); // loads index.js
-var { Category,Region, Setting} = models; 
+var { Category,Region, Setting, Vote} = models; 
 var { sendError } = require('./res')
 var jwt = require('jsonwebtoken');
 
@@ -100,6 +100,8 @@ exports.onlyPreVoting = async (req, res, next) => {
       
             if (!hasStarted && !hasEnded) {
                 res.locals.state = "prevoting"
+                res.locals.startDate = config.startDate
+                res.locals.endDate = config.endDate
                 next()
             }
 
@@ -134,6 +136,8 @@ exports.onlyVoting = async (req, res, next) => {
       
             if (hasStarted && !hasEnded) {
                 res.locals.state = "voting"
+                res.locals.startDate = config.startDate
+                res.locals.endDate = config.endDate
                 next()
             }
 
@@ -168,6 +172,8 @@ exports.onlyPostVoting = async (req, res, next) => {
       
             if (hasStarted && hasEnded) {
                 res.locals.state = "postvoting"
+                res.locals.startDate = config.startDate
+                res.locals.endDate = config.endDate
                 next()
             }
 
@@ -273,3 +279,36 @@ exports.validateVoterToken = async (req, res, next) => {
         sendError(res,500,error)
     }
 }
+
+
+// exports.checkIfVoted = async (req, res, next) => {
+
+//     try {
+        
+//         let 
+//         let [ setting ] = await Setting.findAll()
+//         let { startDate, endDate } = setting
+    
+//         let vote = await Vote.findOne({
+//             where: {
+//                 voterId,
+//                 updatedAt: {
+//                     [Op.gte] : startDate,
+//                     [Op.lte] : endDate
+//                 }
+//             }
+//         })
+
+//         if (!vote) {
+//             next()
+//         }
+//         else {
+//             return sendError(res,403,"You have already voted in this election")
+//         }
+
+//     } catch (error) {
+//         console.error(error)
+//         sendError(res,500)
+//     }
+
+// }
