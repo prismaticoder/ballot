@@ -14,7 +14,7 @@ module.exports = {
       endDate: {
         type: Sequelize.DATE
       },
-      isStarted: {
+      isApproved: {
         type: Sequelize.BOOLEAN,
         defaultValue: 0
       },
@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.DATE
       },
       updatedAt: {
-        allowNull: false,
+        allowNulsl: false,
         type: Sequelize.DATE
       }
     });

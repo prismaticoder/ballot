@@ -42,6 +42,25 @@ router.get('/mainPage', async (req, res) => {
     }
 })
 
+router.get('/approveResults', onlyPostVoting, async (req, res) => {
+    try {
+        let [ setting ] = await Config.findAll()
+
+        if (setting.isApproved) {
+            sendError(res,422,"The election results have already been approved")
+        }
+        else {
+            setting.isApproved = 1
+            await setting.save()
+            sendRes(res,{message: "Election results approved successfully"})
+        }
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
 
 //Admin Viewing all voters
 router.get('/voters', async (req, res) => {
