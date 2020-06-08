@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 var { customAlphabet } = require('nanoid')
 var models = require('../models');
-var { Category,Candidate,Voter } = models;
+var { Category,Candidate,Voter,Vote } = models;
 var Config = models.Setting
-var { Op } = require('sequelize');
+const Sequelize = require('sequelize')
+var { Op } = Sequelize;
 var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,exceptVoting } = require('../controllers/middleware')
 var { sendError, sendRes } = require('../controllers/res')
 
@@ -47,12 +48,12 @@ router.get('/approveResults', onlyPostVoting, async (req, res) => {
         let [ setting ] = await Config.findAll()
 
         if (setting.isApproved) {
-            sendError(res,422,"The election results have already been approved")
+            sendError(res,403,"The election results have already been approved")
         }
         else {
             setting.isApproved = 1
             await setting.save()
-            sendRes(res,{message: "Election results approved successfully"})
+            sendRes(res,{message: "Results approved successfully"})
         }
 
     } catch (error) {
@@ -262,7 +263,7 @@ router.get('/candidates/:id/confirm', onlyPreVoting, async (req, res) => {
                 return sendRes(res,{candidate},null,"Candidate approval successful!")
             }
             
-            return sendError(res,422,"This candidate has already been approved")
+            return sendError(res,403,"This candidate has already been approved")
         }
 
         sendError(res,404,"Candidate not found")
@@ -297,7 +298,7 @@ router.get('/candidates/:id/deny', onlyPreVoting, async (req, res) => {
                 return sendRes(res,{candidate},null,"You have successfully denied this candidate's participation in the upcoming election")
             }
 
-            return sendError(res,422,"This candidate's application has already been denied")
+            return sendError(res,403,"This candidate's application has already been denied")
             
         }
 
@@ -321,7 +322,7 @@ router.post('/settings', async (req, res) => {
         if (endDate > startDate) {
 
             if (new Date(startDate) < today) {
-                sendError(res,422,"Election has to be set to a future date")
+                sendError(res,403,"Election has to be set to a future date")
             }
 
             else {
@@ -347,7 +348,7 @@ router.post('/settings', async (req, res) => {
         }
 
         else {
-            sendError(res,422,"Election end date must be greater than the start date")
+            sendError(res,403,"Election end date must be greater than the start date")
         }
 
     } catch (error) {
@@ -370,7 +371,7 @@ router.put('/settings', exceptVoting, async (req, res) => {
             if (setting) {
 
                 if (new Date(startDate) < today) {
-                    sendError(res,422,"Election has to be set to a future date")
+                    sendError(res,403,"Election has to be set to a future date")
                 }
 
                 else {
@@ -387,7 +388,7 @@ router.put('/settings', exceptVoting, async (req, res) => {
         }
 
         else {
-            sendError(res,422,"Election end date must be greater than the start date")
+            sendError(res,403,"Election end date must be greater than the start date")
         }
 
         
@@ -675,7 +676,7 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
                 }
   
               else {
-                sendError(res,422,"This student has already confirmed accreditation and has been given a voter's number")
+                sendError(res,403,"This student has already confirmed accreditation and has been given a voter's number")
               }
 
             }
@@ -684,12 +685,57 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
         }
   
         else {
-            sendError(res,422,"All fields are required")
+            sendError(res,403,"All fields are required")
         }
   
     } catch (error) {
       console.error(error)
       sendError(res,500)
+    }
+  })
+
+  router.get('/results', onlyPostVoting, async (req, res) => {
+    try {
+
+        let categories = await Category.findAll({
+            include: {
+            model: Candidate,
+            as: "candidates",
+            where: {
+                status: "confirmed"
+            },
+            attributes: { 
+                include: [[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']]
+            },
+            include: [{
+                model: Vote,
+                where: {
+                updatedAt: {
+                    [Op.gte] : res.locals.startDate,
+                    [Op.lte] : res.locals.endDate
+                }
+                },
+                required: false,
+                attributes: []
+            }],
+            },
+            group: ['candidates.id'],
+            order: [['id','asc']]
+        })
+
+        let totalVotes = await Vote.aggregate('voterId','count', { distinct: true, where: {
+            updatedAt: {
+            [Op.gte] : res.locals.startDate,
+            [Op.lte] : res.locals.endDate
+            }
+        }  })
+
+        return sendRes(res,{categories, totalVotes, isApproved: res.locals.isApproved})
+        
+        
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
     }
   })
 
