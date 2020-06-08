@@ -107,12 +107,12 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
               }
 
               else {
-                sendError(res,422,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
+                sendError(res,403,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
               }
             }
 
             else {
-              sendError(res,422,"You have already been accredited and given a voter's number")
+              sendError(res,403,"You have already been accredited and given a voter's number")
             }
           }
         }
@@ -305,42 +305,50 @@ router.get('/stats', onlyVoting, async (req, res) => {
 
 router.get('/results', onlyPostVoting, async (req, res) => {
   try {
-    
-    let categories = await Category.findAll({
-      include: {
-        model: Candidate,
-        as: "candidates",
-        where: {
-            status: "confirmed"
-        },
-        attributes: { 
-          include: [[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']]
-        },
-        include: [{
-          model: Vote,
+
+    if (res.locals.isApproved) {
+      let categories = await Category.findAll({
+        include: {
+          model: Candidate,
+          as: "candidates",
           where: {
-            updatedAt: {
-              [Op.gte] : res.locals.startDate,
-              [Op.lte] : res.locals.endDate
-            }
+              status: "confirmed"
           },
-          required: false,
-          attributes: []
-        }],
-      },
-      group: ['candidates.id'],
-      order: [['id','asc']]
-    })
+          attributes: { 
+            include: [[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']]
+          },
+          include: [{
+            model: Vote,
+            where: {
+              updatedAt: {
+                [Op.gte] : res.locals.startDate,
+                [Op.lte] : res.locals.endDate
+              }
+            },
+            required: false,
+            attributes: []
+          }],
+        },
+        group: ['candidates.id'],
+        order: [['id','asc']]
+      })
+  
+      let totalVotes = await Vote.aggregate('voterId','count', { distinct: true, where: {
+        updatedAt: {
+          [Op.gte] : res.locals.startDate,
+          [Op.lte] : res.locals.endDate
+        }
+      }  })
+  
+      return sendRes(res,{categories, totalVotes})
+  
+    }
 
-    let totalVotes = await Vote.aggregate('voterId','count', { distinct: true, where: {
-      updatedAt: {
-        [Op.gte] : res.locals.startDate,
-        [Op.lte] : res.locals.endDate
-      }
-    } })
-
-  return sendRes(res,{categories, totalVotes})
-
+    else {
+      return sendError(res,403,`Please wait for the results to be approved by the ${process.env.APP_TYPE}'s electoral committee`)
+    }
+    
+    
   } catch (error) {
     console.error(error)
     sendError(res,500)

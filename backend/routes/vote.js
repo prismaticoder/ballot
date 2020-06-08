@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
                     sendRes(res,{message: "You have successfully cast your vote in this election. Do check back when the election is over for the election results :)"},201)
                 }
                 else {
-                    sendError(res,422,"Sorry, there was an error processing your request")
+                    sendError(res,500,"Sorry, there was an error processing your request")
                 }
             }
         }

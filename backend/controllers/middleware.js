@@ -147,7 +147,7 @@ exports.onlyVoting = async (req, res, next) => {
         }
 
         else {
-            sendError(res,422,"Action cannot be performed because election parameters have not been set")
+            sendError(res,403,"Action cannot be performed because election parameters have not been set")
         }
 
 
@@ -172,6 +172,7 @@ exports.onlyPostVoting = async (req, res, next) => {
       
             if (hasStarted && hasEnded) {
                 res.locals.state = "postvoting"
+                res.locals.isApproved = config.isApproved
                 res.locals.startDate = config.startDate
                 res.locals.endDate = config.endDate
                 next()
@@ -183,7 +184,7 @@ exports.onlyPostVoting = async (req, res, next) => {
         }
 
         else {
-            sendError(res,422,"Action cannot be performed because election parameters have not been set")
+            sendError(res,403,"Action cannot be performed because election parameters have not been set")
         }
 
 
@@ -216,7 +217,7 @@ exports.exceptVoting = async (req, res, next) => {
         }
 
         else {
-            sendError(res,422,"Action cannot be performed because election parameters have not been set")
+            sendError(res,403,"Action cannot be performed because election parameters have not been set")
         }
 
 
@@ -279,36 +280,3 @@ exports.validateVoterToken = async (req, res, next) => {
         sendError(res,500,error)
     }
 }
-
-
-// exports.checkIfVoted = async (req, res, next) => {
-
-//     try {
-        
-//         let 
-//         let [ setting ] = await Setting.findAll()
-//         let { startDate, endDate } = setting
-    
-//         let vote = await Vote.findOne({
-//             where: {
-//                 voterId,
-//                 updatedAt: {
-//                     [Op.gte] : startDate,
-//                     [Op.lte] : endDate
-//                 }
-//             }
-//         })
-
-//         if (!vote) {
-//             next()
-//         }
-//         else {
-//             return sendError(res,403,"You have already voted in this election")
-//         }
-
-//     } catch (error) {
-//         console.error(error)
-//         sendError(res,500)
-//     }
-
-// }
