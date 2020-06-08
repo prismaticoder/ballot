@@ -1,9 +1,10 @@
-{
+require('dotenv').config(); // this is important!
+module.exports = {
   "development": {
-    "username": "root",
+    "username": process.env.DB_USER,
     "password": null,
-    "database": "ballot",
-    "host": "127.0.0.1",
+    "database": process.env.DB_NAME,
+    "host": process.env.DB_HOST,
     "dialect": "mysql",
     "operatorsAliases": false
   },
