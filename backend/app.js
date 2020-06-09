@@ -34,12 +34,11 @@ app.use(cookieParser());
 // app.use(session({secret: process.env.SESSION_SECRET}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/v1', indexRouter);
 app.use('/api', apiRouter);
-app.use('/candidates', candidateRouter);
-app.use('/admin', validateAdminToken , adminRouter);
-app.use('/vote', onlyVoting, validateVoterToken, votingRoutes)
+app.use('/v1/candidates', candidateRouter);
+app.use('/v1/admin', validateAdminToken , adminRouter);
+app.use('/v1/vote', onlyVoting, validateVoterToken, votingRoutes)
 
 
 // catch 404 and forward to error handler
