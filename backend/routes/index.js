@@ -25,6 +25,25 @@ router.get('/cv', async (req, res) => {
   res.json(voters)
 })
 
+router.get('/ballotMainPage', async (req, res) => {
+  try {
+    
+    let [ setting ] = await Config.findAll({
+      attributes: ["startDate","endDate"]
+    });
+
+    let candidateCount = await Candidate.count({
+      where: {
+          status: 'confirmed'
+      }
+  })
+
+  } catch (error) {
+    console.error(error)
+    return sendError(res,500)
+  }
+})
+
 //Check the state of the application
 router.get('/checkappstate', async (req, res) => {
   try {
@@ -310,12 +329,10 @@ router.get('/results', onlyPostVoting, async (req, res) => {
       let categories = await Category.findAll({
         include: {
           model: Candidate,
+          attributes: ["id","firstName","lastName","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']],
           as: "candidates",
           where: {
               status: "confirmed"
-          },
-          attributes: { 
-            include: [[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']]
           },
           include: [{
             model: Vote,
