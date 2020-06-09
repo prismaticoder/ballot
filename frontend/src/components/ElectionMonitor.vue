@@ -9,8 +9,11 @@
                     <v-timeline-item :color="btnColor">Start: {{formatDate(setting.startDate)}}</v-timeline-item>
                     <v-timeline-item :color="btnColor" class="text-right mt-5">End: {{formatDate(setting.endDate)}}</v-timeline-item>
                 </v-timeline>
-                <v-btn to="/command/settings" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+                <v-btn to="/command/settings" v-if="pageType == 'admin'" rounded :color="btnColor" class="mt-4 text-white col-md-7">
                     Change dates
+                </v-btn>
+                <v-btn to="/accreditation" v-else rounded :color="btnColor" class="mt-4 text-white col-md-7">
+                    GET ACCREDITED
                 </v-btn>
             </div>
            
@@ -28,8 +31,11 @@
                     <div class="col-4">Second(s)</div>
                 </div>
 
-                <v-btn to="/command/settings" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+                <v-btn to="/command/settings" v-if="pageType == 'admin'" rounded :color="btnColor" class="mt-4 text-white col-md-7">
                     Change election time
+                </v-btn>
+                <v-btn to="/accreditation" v-else rounded :color="btnColor" class="mt-4 text-white col-md-7">
+                    GET ACCREDITED
                 </v-btn>
             </div>
         </div>
@@ -41,8 +47,11 @@
                 No date and time set yet
             </i>
 
-            <v-btn to="/command/settings" rounded text :color="btnColor" class="mt-4 col-md-7">
+            <v-btn to="/command/settings" v-if="pageType == 'admin'" rounded text :color="btnColor" class="mt-4 col-md-7">
                 Set Day and Time
+            </v-btn>
+            <v-btn to="/accreditation" v-else rounded :color="btnColor" class="mt-4 text-white col-md-7">
+                GET ACCREDITED
             </v-btn>
         </div>
         
@@ -69,16 +78,22 @@
             </div>
         </div>
 
-        <v-btn to="/command/settings" rounded :color="btnColor" class="mt-4 text-white col-md-7">
-                END/ELONGATE ELECTION
+        <v-btn to="/command/settings" v-if="pageType == 'admin'" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+            END/ELONGATE ELECTION
+        </v-btn>
+        <v-btn to="/vote" v-else rounded :color="btnColor" class="mt-4 text-white col-md-7">
+            VOTE
         </v-btn>
     </div>
     <div v-else>
         <h5>RESULTS</h5>
         <hr>
 
-        Approve and View Official Election Results
-        <v-btn to="/command/results" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+        <p v-if="pageType == 'admin'">Approve and View Official Election Results</p><p v-else>Results are out! View approved election results</p>
+        <v-btn to="/command/results" v-if="pageType == 'admin'" rounded :color="btnColor" class="mt-4 text-white col-md-7">
+            GO TO RESULTS
+        </v-btn>
+        <v-btn to="/results" v-else rounded :color="btnColor" class="mt-4 text-white col-md-7">
             GO TO RESULTS
         </v-btn>
     </div>
@@ -98,7 +113,7 @@ export default {
             x: null
         }
     },
-    props: ["setting","btnColor"],
+    props: ["setting","btnColor","pageType"],
     methods: {
         formatDate(dateString) {
         const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
