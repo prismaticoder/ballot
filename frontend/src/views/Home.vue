@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col-md-5">
           <img src="@/assets/ballot.svg" class="mt-n3" srcset="" width="60" height="60"> 
-          <h2 class="mt-4">BALLOT - <span>{{name}}</span></h2>
+          <h3 class="mt-4">BALLOT - <span>{{name}}</span></h3>
         </div>
         <div class="col-md-7 text-left">
           <blockquote class="blockquote">
@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="row mt-1 justify-content-center">
+    <div class="row mt-1 justify-content-center" v-if="isLoaded">
       <ElectionMonitor class="col-lg-6 mt-5" :pageType="pageType" :setting="setting" :btnColor="btnColor" />
       <div v-show="state == 'voting'" class="col-lg-6 mt-5">
         <h5>STATS</h5>
@@ -55,6 +55,33 @@
         </v-btn>
 
       </div>      
+    </div>
+
+    <div class="row mt-1 justify-content-center" v-else>
+      <div class="col-lg-6 mt-5 mx-auto">
+        <v-skeleton-loader class="mx-auto" width="35rem" type="heading"></v-skeleton-loader>
+        <hr>
+        <v-skeleton-loader class="mt-4" type="image"></v-skeleton-loader>
+        <v-skeleton-loader class="mt-4 mx-auto" width="4rem" type="button"></v-skeleton-loader>  
+      </div>
+      <div class="col-lg-6 mt-5 mx-auto">
+        <v-skeleton-loader class="mx-auto" width="35rem" type="heading"></v-skeleton-loader>
+        <hr>
+        <v-skeleton-loader class="mt-4" type="image"></v-skeleton-loader>
+        <v-skeleton-loader class="mt-4 mx-auto" width="4rem" type="button"></v-skeleton-loader>  
+      </div>
+      <div class="col-lg-6 mt-5 mx-auto mt-5">
+        <v-skeleton-loader class="mx-auto" width="35rem" type="heading"></v-skeleton-loader>
+        <hr>
+        <v-skeleton-loader class="mt-4" type="image"></v-skeleton-loader>
+        <v-skeleton-loader class="mt-4 mx-auto" width="4rem" type="button"></v-skeleton-loader>  
+      </div>
+      <div class="col-lg-6 mt-5 mx-auto mt-5">
+        <v-skeleton-loader class="mx-auto" width="35rem" type="heading"></v-skeleton-loader>
+        <hr>
+        <v-skeleton-loader class="mt-4" type="image"></v-skeleton-loader>
+        <v-skeleton-loader class="mt-4 mx-auto" width="4rem" type="button"></v-skeleton-loader>  
+      </div>
     </div>
     
   </div>

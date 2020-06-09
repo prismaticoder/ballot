@@ -9,7 +9,7 @@
                 <h5>{{stat.level}} LEVEL</h5>
             </div>
             <div class="col-12">
-                <span class="timer">{{stat.count}}</span>
+                <span class="voter">{{stat.count}}</span>
             </div>
         </div>
       </div>

@@ -36,9 +36,18 @@ export default {
                     })
 
                     var doc = new jsPDF();
+
+                    var header = function () {
+                        doc.setFontSize(15);
+                        doc.setFontStyle('normal');
+                        doc.text(`${process.env.VUE_APP_NAME.toUpperCase()} ELIGIBLE VOTERS LIST`, 55, 20);
+                    };
+
                     doc.autoTable({
                         head: [['S/N', 'MATRIC. NO', 'NAME', 'LEVEL', 'DEPARTMENT']],
                         body: voters,
+                        margin: {top: 30},
+                        didDrawPage: header
                     })
 
                     let name = this.name.toLowerCase().split(' ').join('-')
@@ -69,9 +78,17 @@ export default {
                     
                     var doc = new jsPDF();
 
+                    var header = function () {
+                        doc.setFontSize(15);
+                        doc.setFontStyle('normal');
+                        doc.text(`${process.env.VUE_APP_NAME.toUpperCase()} ACCREDITED VOTERS LIST`, 55, 20);
+                    };
+
                     doc.autoTable({
                         head: [['S/N', 'MATRIC. NO', 'NAME', 'LEVEL', 'DEPARTMENT']],
                         body: voters,
+                        margin: {top: 30},
+                        didDrawPage: header
                     })
 
                     let name = this.name.toLowerCase().split(' ').join('-')
