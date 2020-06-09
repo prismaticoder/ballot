@@ -332,8 +332,8 @@ router.get('/results', onlyPostVoting, async (req, res) => {
     if (res.locals.isApproved) {
 
       let levels = []
-      let attributeArray = ["id","firstName","lastName","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Voters.id')), 'voteCount']]
-      
+      let attributeArray = []
+
       for (let i = 100; i <= process.env.HIGHEST_LEVEL; i+=100) {
         levels.push(i)
       }
@@ -347,7 +347,7 @@ router.get('/results', onlyPostVoting, async (req, res) => {
         attributes: ["id","name"],
         include: {
           model: Candidate,
-          attributes: attributeArray,
+          attributes: ["id","firstName","lastName","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Voters.id')), 'voteCount']],
           as: "candidates",
           where: {
               status: "confirmed"
@@ -361,9 +361,11 @@ router.get('/results', onlyPostVoting, async (req, res) => {
                   [Op.lte] : res.locals.endDate
                 }
               },
+              attributes: [],
               required: false
             },
-            attributes: [],
+            as: "voters",
+            attributes: attributeArray,
             required: false
           }]
         },

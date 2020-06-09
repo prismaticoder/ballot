@@ -3,6 +3,7 @@
     <h3 class="main-header" style="text-align: center;">Approved Election Results</h3>
     <hr>
     <div v-if="isLoaded && !pageText">
+        <a href="#downloadResults" class="list-group-item mt-1 blueColor" @click.prevent="downloadResult()">Download in PDF Format<v-icon>mdi-download</v-icon> </a>
         <div class="mt-5 mx-auto" :id="category.id" v-for="category in categories" v-bind:key="category.id">
             <h4 class="text-center">CATEGORY: {{category.name.toUpperCase()}}</h4>
             <hr>
@@ -35,7 +36,8 @@
 <script>
 
 import CategoryResult from '@/components/result/CategoryResult';
-
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 export default {
     name: "Result",
@@ -47,7 +49,10 @@ export default {
             isLoaded: false,
             categories: null,
             totalVotes: null,
-            pageText: null
+            pageText: null,
+            name: process.env.VUE_APP_NAME,
+            maxLevel: process.env.VUE_APP_HIGHEST_LEVEL,
+            levels: []
         }
     },
     methods: {
@@ -56,12 +61,43 @@ export default {
             .then(res => {
                 this.categories = res.data.categories;
                 this.totalVotes = res.data.totalVotes;
+
+                for (let i = 100; i <= this.maxLevel; i+=100) {
+                    this.levels.push(`${i}L VOTES`)
+                }
+
                 this.isLoaded = true
             })
             .catch(err => {
                 this.pageText = err.response ? err.response.data.error : "Error processing request, please try again"
                 this.isLoaded = true;
             })
+        },
+        downloadResult() {
+            var doc = new jsPDF();
+            let name = this.name.toLowerCase().split(' ').join('-')
+            name = name + '-election-result.pdf'
+
+
+
+            var header = function () {
+                doc.setFontSize(15);
+                doc.setFontStyle('normal');
+                doc.text(`${process.env.VUE_APP_NAME.toUpperCase()} ELECTION RESULTS WITH ANALYSIS | BALLOT`, 25, 20);
+            };
+
+            this.categories.forEach(category => {
+                doc.autoTable({
+                    head: [['S/N', 'POST', 'CANDIDATE NAME', ...this.levels , 'TOTAL','STATUS']],
+                    body: category.candidates.map((candidate,index) => {
+                        return [index+1,category.name,candidate.fullName,...Object.values(candidate.voters[0]),candidate.voteCount,(index == 0 || candidate.voteCount == category.candidates[0].voteCount) ? 'WINNER' : '-']
+                    }),
+                    margin: {top: 30},
+                    didDrawPage: header
+                })
+            })
+
+            doc.save(name)
         }
     },
     mounted() {
