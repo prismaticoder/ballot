@@ -9,17 +9,29 @@
       <hr>
 
       <div class="row mt-5">
-          <div class="col-md-4 p-4 d-flex align-items-center rounded" style="background-color: rgba(0,0,0,.075)">
+          <div class="col-lg-4 p-4 d-flex align-items-center rounded">
 
               <v-img :src="candidate.imageUrl" class="img-fluid rounded-left"></v-img>
           </div>
-          <div class="col-md-8 border-left mt-3 pt-3 text-center">
+          <div class="col-lg-8 border-left mt-3 pt-3 text-center">
               <span class="tag">NAME</span> <span>{{candidate.fullName}}</span>
               <span class="tag mt-3">CURRENT LEVEL</span> <span>{{candidate.level}}</span>
               <span class="tag mt-3">I'M RUNNING FOR:</span> <span>{{candidate.category.name.toUpperCase()}}</span>
               <span class="tag mt-3">MY PLANS FOR THIS {{appType}}</span> <p>{{candidate.manifesto}}</p>
 
+                <v-avatar :color="twitterColor" v-if="candidate.twitter" class="m-3">
+                    <v-btn outlined :href="candidate.twitter" class="border-0" target="_blank" style="text-decoration: none">
+                        <v-icon style="color:floralwhite">mdi-twitter</v-icon>
+                    </v-btn>
+                </v-avatar>
+
+                <v-avatar :color="instagramColor" v-if="candidate.instagram" class="m-3">
+                    <v-btn outlined :href="candidate.instagram" class="border-0" target="_blank"  style="text-decoration: none">
+                        <v-icon style="color:floralwhite">mdi-instagram</v-icon>
+                    </v-btn>
+                </v-avatar>
           </div>
+
       </div>
   </div>
   <div class="container" v-else>
@@ -57,9 +69,11 @@ export default {
     name: 'SingleCandidate',
     data() {
         return {
-            appType: process.env.VUE_APP_TYPE,
+            appType: process.env.VUE_APP_TYPE.toUpperCase(),
             candidate : {},
             isLoaded: false,
+            twitterColor: "#0072b1",
+            instagramColor: "#7f1734",                
             items: [
             {
                 disabled: false,

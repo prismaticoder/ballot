@@ -5,7 +5,19 @@
       <hr>
 
       <div v-if="isLoaded">
+
+            <b-form-group class="mt-3 col-md-4 mx-auto" label-for="category">
+                <template v-slot:label>
+                    Go To Category
+                </template>
+                <b-form-select id="category" @change="goToCategory()" v-model="categoryName" required>
+                    <b-form-select-option :value="''">All</b-form-select-option>
+                    <b-form-select-option :value="formatName(category.name)" v-for="category in categories" :key="category.id">{{category.name}}</b-form-select-option>
+                </b-form-select>
+            </b-form-group>
+
           <div class="mt-5 mx-auto" v-for="category in categories" v-bind:key="category.id">
+            <span :id="formatName(category.name)" class="mt-n5">&nbsp;</span>
             <h4 class="text-center"><strong>CATEGORY: {{category.name.toUpperCase()}}</strong></h4>
             <SingleCategory class="justify-content-center" :category="category"></SingleCategory>
             <hr>
@@ -32,7 +44,7 @@
 
 <script>
 
-import SingleCategory from '../components/SingleCategory'
+import SingleCategory from '@/components/SingleCategory'
 
 export default {
     name: 'Candidates',
@@ -43,7 +55,8 @@ export default {
         return {
             appName: process.env.VUE_APP_NAME,
             categories : [],
-            isLoaded: false
+            isLoaded: false,
+            categoryName: null
         }
     },
     mounted() {
@@ -51,7 +64,7 @@ export default {
     },
     methods: {
         init() {
-            this.$http.get(`${process.env.VUE_APP_URL}/candidates`)
+            this.$http.get(`candidates`)
             .then(res => {
                 this.isLoaded = true
                 this.categories = res.data.categories
@@ -61,6 +74,13 @@ export default {
             })
 
         },
+        formatName(name) {
+            let newName = name.toLowerCase().split(' ').join('-')
+            return newName
+        },
+        goToCategory() {
+            window.location.hash = `#${this.categoryName}`
+        }
     },
 }
 </script>
