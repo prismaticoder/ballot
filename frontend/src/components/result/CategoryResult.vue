@@ -11,10 +11,10 @@
             <v-card-text>
                 <div>
                     <span class="tag mb-2">VOTES</span>
-                    <span class="timer blueColor">{{undecidedVoters}}</span>
+                    <span class="voter blueColor">{{undecidedVoters}}</span>
 
                     <span class="tag mt-4 mb-2">PERCENTAGE OF TOTAL</span>
-                    <span class="timer">{{undecidedPercent}}%</span>
+                    <span class="voter">{{undecidedPercent}}%</span>
 
                 </div>
             </v-card-text>

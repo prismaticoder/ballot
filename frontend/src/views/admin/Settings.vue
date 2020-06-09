@@ -149,8 +149,8 @@
 
 <script>
 
-import SingleCategory from '../../components/admin/SingleCategory';
-import DateTime from '../../components/admin/DateTime'
+import SingleCategory from '@/components/admin/SingleCategory';
+import DateTime from '@/components/admin/DateTime'
 
 export default {
     name: "Settings",

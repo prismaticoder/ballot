@@ -71,7 +71,7 @@
 
 <script>
 
-import CategoryResult from '../../components/admin/CategoryResult';
+import CategoryResult from '@/components/admin/CategoryResult';
 
 
 export default {

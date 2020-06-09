@@ -32,7 +32,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                    <v-btn color="green darken-1" text @click="$emit('rejectCandidate', candidate.id)">Yes</v-btn>
+                    <v-btn color="green darken-1" text @click.prevent="rejectCandidate()">Yes</v-btn>
                 </v-card-actions>
             </v-card>
             <v-card v-else>
@@ -79,10 +79,11 @@ export default {
         },
         rejectCandidate() {
             this.$http.get(`admin/candidates/${this.candidate.id}/deny`)
-            .then(() => {
+            .then(res => {
+                console.log(res.data)
                 this.dialog = false;
                 this.type = ''
-                this.$emit('rejectCandidate', this.candidate.id)    
+                this.$emit('rejectCandidate', this.candidate.id)   
             })
             .catch(err => {
                 err.response ? alert(err.response.data.error) : alert("Error processing request, please try again");

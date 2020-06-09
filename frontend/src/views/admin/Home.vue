@@ -19,9 +19,9 @@
 
 <script>
 
-import ElectionMonitor from "../../components/ElectionMonitor"
-import CandidateCounter from "../../components/CandidateCounter"
-import VoterCounter from "../../components/VoterCounter"
+import ElectionMonitor from "@/components/ElectionMonitor"
+import CandidateCounter from "@/components/CandidateCounter"
+import VoterCounter from "@/components/VoterCounter"
 
 export default {
     name: "Home",

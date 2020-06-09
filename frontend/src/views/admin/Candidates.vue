@@ -117,7 +117,7 @@
 
 <script>
 
-import singleCandidateRow from '../../components/singleCandidateRow';
+import singleCandidateRow from '@/components/singleCandidateRow';
 
 
 export default {

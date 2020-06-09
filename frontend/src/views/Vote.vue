@@ -80,8 +80,8 @@
 <script>
 
 import VoterLogin from './VoterLogin'
-import VoteSingleCategory from '../components/VoteSingleCategory'
-import EachSubmission from '../components/EachSubmission'
+import VoteSingleCategory from '@/components/VoteSingleCategory'
+import EachSubmission from '@/components/EachSubmission'
 
 export default {
     name: "Vote",
