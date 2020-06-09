@@ -36,7 +36,11 @@ router.get('/ballotMainPage', async (req, res) => {
       where: {
           status: 'confirmed'
       }
-  })
+    })
+
+    let categoryCount = await Category.count()
+
+    return sendRes(res,{setting, candidateCount, categoryCount})
 
   } catch (error) {
     console.error(error)
@@ -326,25 +330,42 @@ router.get('/results', onlyPostVoting, async (req, res) => {
   try {
 
     if (res.locals.isApproved) {
+
+      let levels = []
+      let attributeArray = ["id","firstName","lastName","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Voters.id')), 'voteCount']]
+      
+      for (let i = 100; i <= process.env.HIGHEST_LEVEL; i+=100) {
+        levels.push(i)
+      }
+
+      levels.forEach((level,index) => {
+        attributeArray.push([Sequelize.fn('SUM', Sequelize.where(Sequelize.col('candidates.Voters.level') , level)), `voteCount${index + 1}`])
+      })
+
+
       let categories = await Category.findAll({
+        attributes: ["id","name"],
         include: {
           model: Candidate,
-          attributes: ["id","firstName","lastName","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']],
+          attributes: attributeArray,
           as: "candidates",
           where: {
               status: "confirmed"
           },
           include: [{
-            model: Vote,
-            where: {
-              updatedAt: {
-                [Op.gte] : res.locals.startDate,
-                [Op.lte] : res.locals.endDate
-              }
+            model: Voter,
+            through: {
+              where: {
+                updatedAt: {
+                  [Op.gte] : res.locals.startDate,
+                  [Op.lte] : res.locals.endDate
+                }
+              },
+              required: false
             },
-            required: false,
-            attributes: []
-          }],
+            attributes: [],
+            required: false
+          }]
         },
         group: ['candidates.id'],
         order: [['id','asc']]
