@@ -34,7 +34,7 @@
 
 <script>
 
-import CategoryResult from '../components/result/CategoryResult';
+import CategoryResult from '@/components/result/CategoryResult';
 
 
 export default {
