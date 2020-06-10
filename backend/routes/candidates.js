@@ -86,39 +86,67 @@ router.post('/apply', onlyPreVoting, async (req, res) => {
     try {
         var { firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
 
-        var category = await Category.findByPk(categoryId);
+        let voter = await Voter.findOne({
+            where: {
+                matric
+            }
+        })
 
-        if (category) {
-            let check = await Candidate.count({
-                where: {
-                    matric,
-                    [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+        if (voter) {
+
+            if (voter.accreditedAt) {
+                var category = await Category.findByPk(categoryId);
+
+                if (category) {
+                    let check = await Candidate.count({
+                        where: {
+                            matric,
+                            [Op.or]: [{status: "confirmed"}, {status: "pending"}]
+                        }
+                    })
+        
+                    let firstString = Math.floor(1000 + Math.random() * 9000);
+                    let firstAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+                    let secondAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
+        
+                    let statusCode = `${firstString}${firstAlphabet}${secondAlphabet}`
+        
+                    if (!check) {
+        
+                        if (level >= category.minLevel && level <= category.maxLevel) {
+                            let candidate = await category.createCandidate({
+                                firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
+                                statusCode,
+                                status: "pending"
+                            })
+            
+                            sendRes(res,{candidate},201)
+                        }
+        
+                        else {
+                            sendError(res,403,`Your current level (${level}) does not fall within the category of levels required to run for this post`)
+                        }
+        
+                    }
+        
+                    else {
+                        sendError(res,403,"You have an existing application already!")
+                    }
                 }
-            })
-
-            let firstString = Math.floor(1000 + Math.random() * 9000);
-            let firstAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
-            let secondAlphabet = String.fromCharCode(65+Math.floor(Math.random() * 26));
-
-            let statusCode = `${firstString}${firstAlphabet}${secondAlphabet}`
-
-            if (!check) {
-                let candidate = await category.createCandidate({
-                    firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
-                    statusCode,
-                    status: "pending"
-                })
-
-                sendRes(res,{candidate},201)
+        
+                else {
+                    sendError(res,400,"The category selected does not exist")
+                }
             }
 
             else {
-                sendError(res,403,"You have an existing application already!")
+                sendError(res,403,`You have to be accredited as a voter to be able to apply for candidacy`)
             }
+            
         }
 
         else {
-            sendError(res,400,"The category selected does not exist")
+            sendError(res,404,`Student not found for this ${process.env.APP_TYPE.toLowerCase()}`)
         }
 
     } catch (error) {

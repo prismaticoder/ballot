@@ -1,7 +1,7 @@
 exports.sendRes = function(res,data,status=0,customMsg=undefined) {
     const message = data
     message.success = true;
-    message.status = 200 || status;
+    message.status = status || 200;
 
     if (typeof customMsg !== 'undefined') {
         message.message = customMsg
