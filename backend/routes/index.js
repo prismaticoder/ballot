@@ -9,7 +9,7 @@ var { Op } = Sequelize;
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var { sendRes,sendError } = require('../controllers/res')
-var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,datesNeeded } = require('../controllers/middleware')
+var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting } = require('../controllers/middleware')
 var dotenv = require('dotenv');
 dotenv.config();
 
@@ -17,13 +17,6 @@ dotenv.config();
 router.get('/', function(req, res, next) {
   res.status(200).json({success: true, message: "Welcome to the Ballot API 😁"});
 });
-
-router.get('/cv', async (req, res) => {
-  let candidate = await Candidate.findByPk(52)
-  let voters = await candidate.countVoters()
-  
-  res.json(voters)
-})
 
 router.get('/ballotMainPage', async (req, res) => {
   try {
@@ -91,65 +84,66 @@ router.get('/checkappstate', async (req, res) => {
 router.post('/accredit', onlyPreVoting, async (req, res) => {
   try {
 
-    if (res.locals.state == "prevoting") {
+    let { matric, lastName } = req.body;
 
-      let { matric, lastName } = req.body;
-
-      if (matric && lastName) {
-        let student = await Voter.findOne({
-          where: {
-            matric
-          }
-        })
-    
-        if (!student) {
-          sendError(res,404,"Student not found")
+    if (matric && lastName) {
+      let student = await Voter.findOne({
+        where: {
+          matric
         }
-        
+      })
+  
+      if (!student) {
+        sendError(res,404,"Student not found")
+      }
+      
+      else {
+        if (student.lastName.toLowerCase() != lastName.toLowerCase()) {
+          sendError(res,404,"Error: Credentials do not match")
+        }
+
         else {
-          if (student.lastName.toLowerCase() != lastName.toLowerCase()) {
-            sendError(res,404,"Error: Credentials do not match")
-          }
 
-          else {
+          if (!student.accreditedAt) {
 
-            if (!student.accreditedAt) {
+            if (!student.voterCode) {
 
-              if (!student.voterCode) {
+              //generate the voter code
+              let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
 
-                //generate the voter code
-                let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
+              let voterCode = nanoid()
 
-                let voterCode = nanoid()
+              console.log(voterCode)
+              student.voterCode = voterCode;
 
-                console.log(voterCode)
-                //This is where a mail is sent to the student
-                //await sendMail(student.prospectiveMail)
+              await student.save()
 
-                sendRes(res,{student})
-              }
+              //create a never expiring jwt
+              let voteToken = jwt.sign(
+                {voterCode: student.voterCode, voterId: student.id, matric: student.matric},
+                process.env.TOKEN_SECRET_KEY
+                )
+              //This is where a mail is sent to the student
+              //await sendMail(student.prospectiveMail, voteToken)
 
-              else {
-                sendError(res,403,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
-              }
+              sendRes(res,{student})
             }
 
             else {
-              sendError(res,403,"You have already been accredited and given a voter's number")
+              sendError(res,403,"You have been sent your voter's number but are yet to confirm accreditation. Please click the confirmation link in the mail sent to you.")
             }
           }
+
+          else {
+            sendError(res,403,"You have already been accredited and given a voter's number")
+          }
         }
-    
       }
-
-      else {
-        sendError(res,400,"Bad Request")
-      }
-
+  
     }
 
     else {
-      sendError(res,403,"Accreditation cannot be performed except outside election hours")
+      sendError(res,400,"Bad Request")
     }
 
   } catch (error) {
@@ -190,6 +184,66 @@ router.post('/admin/login', async (req, res) => {
 
       sendRes(res,{username: admin.username, token})
     }
+
+
+  } catch (error) {
+    console.error(error)
+    sendError(res,500)
+  }
+})
+
+router.get('/confirm-accreditation', async (req, res) => {
+  try {
+    
+    let { code } = req.query;
+
+    if (code) {
+      jwt.verify(code,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            sendError(res,403,err)
+        }
+        else {
+            let { voterCode, voterId, matric } = decoded
+            
+            let voter = await Voter.findOne({
+              where: {
+                id: voterId,
+                matric
+              }
+            })
+
+            if (voter) {
+              if (voter.voterCode == voterCode) {
+
+                if (voter.accreditedAt) {
+                  return sendError(res,403,"You have already been confirmed as a voter in this election")
+                }
+
+                else {
+                  voter.accreditedAt = new Date()
+                  await voter.save()
+
+                  return sendRes(res,{message: "You have successfully been accredited as a voter in the upcoming election. Do ensure that you keep the code sent to you in your mail secure as you would be needing it to participate in the election. Cheers :)"})
+                }
+
+              }
+
+              else {
+                return sendError(res,403,"Invalid Credentials")
+              }
+            }
+
+            else {
+              return sendError(res,404,"Voter Not Found")
+            }
+        }
+      })
+    }
+
+    else {
+      return sendError(res,400)
+    }
+
 
 
   } catch (error) {
