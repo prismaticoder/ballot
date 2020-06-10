@@ -97,60 +97,14 @@ router.get('/voters', async (req, res) => {
             }
             else {
                 return 0
-            }
+          }
         })
-
-        //Implement Pagination
-        // let count = voters.length;
-
-        // let totalPages = Math.ceil(count/perPage), nextPage;
-
-        // if (page !== totalPages) {
-        //     voters = voters.slice((page * perPage) - perPage , (page * perPage));
-        //     nextPage = page+1;
-        // }
-        // else {
-        //     voters = voters.slice((page * perPage) - perPage);
-        //     nextPage = null;
-        // }
 
         sendRes(res,{voters})
         
     } catch (error) {
         console.error(error);
         sendError(res,500)
-    }
-})
-
-//Search for a voter by matric
-router.get('/voters/search', async (req, res) => {
-
-    let { q } = req.query;
-
-    if (q) {
-        try {
-            let voter = await Voter.findOne({
-                where: {
-                    accreditedAt: {
-                        [Op.not] : null
-                    },
-                    matric:q
-                }
-            })
-            
-            if (voter) {
-                sendRes(res, {voter})
-            }
-    
-            sendError(res,404)
-                   
-        } catch (error) {
-            console.error(error);
-            sendError(res,500)
-        }
-    }
-    else {
-        sendError(res,400)
     }
 })
 
@@ -661,14 +615,40 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
   
                   console.log(voterCode)
                   //This is where a mail is sent to the student and then to the email address that will be provided
-                //   if (student.voterCode) {
-                    //...
-                    //if the student already has a voterCode, store the voter code in the payload of the confirm to be sent to his student mail so he can restore it if it was wrongly changed
-                //   }
+                  if (student.voterCode) {
+                      let previousCode = student.voterCode;
 
-                //   else {
-                    //...
-                //   }
+                      let retrieveToken = jwt.sign(
+                        {voterCode: previousCode, voterId: student.id, matric: student.matric},
+                        process.env.TOKEN_SECRET_KEY
+                        )
+
+                      student.voterCode = voterCode
+                      await student.save()
+
+                      let voteToken = jwt.sign(
+                        {voterCode: student.voterCode, voterId: student.id, matric: student.matric},
+                        process.env.TOKEN_SECRET_KEY
+                        )
+
+                      //Now send a mail to the mail provided with the votetoken
+                      //send a mail to the user's student mail to inquire if he requested, and with the mail send a link for retrieval of former code with the retrieveToken
+                    // ...
+                    // if the student already has a voterCode, store the voter code in the payload of the confirm to be sent to his student mail so he can restore it if it was wrongly changed
+                  }
+
+                  else {
+                    student.voterCode = voterCode
+                    await student.save()
+
+                    let voteToken = jwt.sign(
+                        {voterCode: student.voterCode, voterId: student.id, matric: student.matric},
+                        process.env.TOKEN_SECRET_KEY
+                        )
+
+                    //now send a mail to the student with the vote token and also to his student mail with his vote token, he doesn't need to retrieve since he didn't have any before
+                    // ...
+                  }
                   //await sendMail(mail)
                   //await sendMail(student.prospectiveMail)
   

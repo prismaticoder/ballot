@@ -192,7 +192,7 @@ router.post('/admin/login', async (req, res) => {
   }
 })
 
-router.get('/confirm-accreditation', async (req, res) => {
+router.get('/confirm_accreditation', async (req, res) => {
   try {
     
     let { code } = req.query;
@@ -251,6 +251,68 @@ router.get('/confirm-accreditation', async (req, res) => {
     sendError(res,500)
   }
 })
+
+
+router.get('/reset_confirmation_code', async (req, res) => {
+  try {
+    
+    let { code } = req.query;
+
+    if (code) {
+      jwt.verify(code,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            sendError(res,403,err)
+        }
+        else {
+            let { voterCode, voterId, matric } = decoded
+            
+            let voter = await Voter.findOne({
+              where: {
+                id: voterId,
+                matric
+              }
+            })
+
+            if (voter) {
+              if (voter.voterCode) {
+
+                if (voter.voterCode !== voterCode) {
+                  voter.voterCode = voterCode;
+                  await voter.save()
+
+                  return sendRes(res, {message: "Voter code restored successfully"})
+                }
+
+                else {
+                  return sendError(res,403,"Voter code already restored")
+                }
+
+              }
+
+              else {
+                return sendError(res,403,"Error: Credentials do not match")
+              }
+            }
+
+            else {
+              return sendError(res,404,"Voter Not Found")
+            }
+        }
+      })
+    }
+
+    else {
+      return sendError(res,400)
+    }
+
+
+
+  } catch (error) {
+    console.error(error)
+    sendError(res,500)
+  }
+})
+
 
 router.get('/categories', async (req, res) => {
 
