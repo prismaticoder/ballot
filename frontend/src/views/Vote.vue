@@ -18,7 +18,7 @@
         <div class="mt-4" v-else-if="isLoaded && submitPage">
             <p class="mt-2 text-left">
                 <span class="header">CAST VOTE</span>
-                Please confirm your candidate selections and click the "Cast Vote" button to cast your vote 
+                Please check through your candidate selections and click the "Cast Vote" button to cast your vote if satisfied, or the "Go Back" button to change a selection. 
             </p>
             <hr>
             <v-dialog v-model="dialog" persistent max-width="350">
@@ -50,13 +50,22 @@
                     </v-card-actions>
                 </v-card>
             </v-dialog>
-            
-            <v-btn tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3 col-md-2 col-5">
-                CAST VOTE &nbsp;
-                <v-icon small>
-                    mdi-check
-                </v-icon>
-            </v-btn>
+
+            <div class="col-md-2 col-5 mx-auto">
+                <v-btn block tile title="Back" @click="goBack()" :color="btnColor" class="mt-5 bg-white blueColor p-3">
+                    <v-icon small>
+                        mdi-arrow-left
+                    </v-icon> &nbsp;
+                    GO BACK
+                </v-btn>            
+                <v-btn block tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3">
+                    CAST VOTE &nbsp;
+                    <v-icon small>
+                        mdi-check
+                    </v-icon>
+                </v-btn>
+            </div>
+
         </div>
         <div class="mt-4" v-else>
             <v-skeleton-loader class="mx-auto" type="heading"></v-skeleton-loader>
@@ -108,6 +117,9 @@ export default {
     methods: {
         updateToken() {
             window.location.reload()
+        },
+        goBack() {
+            this.submitPage = false
         },
         storeVote(type, categoryId, candidateId) {
             this.votes = this.votes.filter(vote => vote.categoryId !== categoryId)
