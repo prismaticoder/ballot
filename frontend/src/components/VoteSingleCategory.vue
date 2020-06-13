@@ -55,7 +55,13 @@ export default {
     props: ["category","currentIndex","categories"],
     methods: {
         selectCandidate(id) {
-            this.selectedCandidate = id
+            if (this.selectedCandidate == id) {
+                this.selectedCandidate = null
+            } 
+            else {
+                this.selectedCandidate = id
+            }
+            
         },
     },
     watch: {
