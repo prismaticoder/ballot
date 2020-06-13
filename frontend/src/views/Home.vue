@@ -9,7 +9,7 @@
         </div>
         <div class="col-md-7 text-left">
           <blockquote class="blockquote">
-            <p><span class="blueColor">BALLOT</span> is a coercion-resistant voting application designed for use within student bodies in the University of Ibadan. You can get more information about us <a class="blueColor" href="#">here</a>.</p>
+            <p><span class="blueColor">BALLOT</span> is a secure remote voting application designed for use within student bodies in the University of Ibadan. You can get more information about us <a class="blueColor" href="#">here</a>.</p>
           </blockquote>
         </div>
       </div>
