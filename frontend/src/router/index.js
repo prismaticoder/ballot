@@ -7,6 +7,7 @@ import Candidates from '../views/Candidates.vue'
 import CandidateApply from '../views/CandidateApply.vue'
 import CandidateAppCheck from '../views/CandidateAppCheck.vue'
 import Accreditation from '../views/Accreditation.vue'
+import ConfirmAccreditation from '../views/ConfirmAccreditation.vue'
 import Stats from '../views/Stats.vue'
 import Vote from '../views/Vote.vue'
 import Result from '../views/Result.vue'
@@ -70,6 +71,16 @@ const routes = [
       requiresCheck: true,
       onlyState: 'prevoting'
     }
+  },
+  {
+    path: '/confirm_accreditation',
+    name: 'confirm-accreditation',
+    component: ConfirmAccreditation,
+  },
+  {
+    path: '/reset_code',
+    name: 'reset_code',
+    component: ConfirmAccreditation,
   },
   {
     path: '/stats',
