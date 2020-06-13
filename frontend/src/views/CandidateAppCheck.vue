@@ -33,7 +33,7 @@
     <div v-else class="mx-auto mt-5 text-left">
       <div v-if="candidate.status == 'confirmed'">
         <p class="mb-5">
-          <strong>Congratulations {{candidate.firstName}},</strong><br><br>
+          <strong>Congratulations {{candidate.fullName}},</strong><br><br>
           You have been confirmed as a candidate for the post of <strong>{{candidate.category.name}}</strong> in the upcoming elections. We wish you best of luck.<br><br>
           Regards,<br>
           The <strong>{{appName}}</strong> Electoral Committee.
@@ -43,7 +43,7 @@
       </div>
       <div v-else-if="candidate.status == 'denied'">
         <p class="mb-5">
-          <strong>Dear {{candidate.firstName}},</strong><br><br>
+          <strong>Dear {{candidate.fullName}},</strong><br><br>
           We regret to inform you that your application for candidacy for the post of <strong>{{candidate.category.name}}</strong> in the upcoming election has been denied after thorough vetting by the electoral committee. Do well to check in with us if you assume we made any error as reagrds this decision.<br><br>
           Regards,<br>
           The <strong>{{appName}}</strong> Electoral Committee.
@@ -52,7 +52,7 @@
         <v-icon>mdi-arrow-left</v-icon> <a href="#" class="blueColor" @click.prevent="reloadPage()">Go Back</a>
       </div>
       <div v-else>
-        Dear {{candidate.firstName}},<br>
+        Dear {{candidate.fullName}},<br>
         Your application for the candidacy for the post of <strong>{{candidate.category.name}}</strong> in the upcoming election is still <strong>pending</strong>. Keep checking this page as regards any updates.<br>
         In the mean time, you can update some parts of your application here:
 

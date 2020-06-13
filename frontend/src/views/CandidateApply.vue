@@ -43,7 +43,7 @@
                 <v-dialog v-model="dialog" persistent max-width="400">
 
                     <v-card>
-                        <v-card-title class="headline">Hey {{candidate.firstName}},</v-card-title>
+                        <v-card-title class="headline">Hey {{candidate.fullName}},</v-card-title>
 
                         <v-card-text>
                         Your application has been submitted and has been placed in the <strong>pending</strong> category. After being vetted and verified, the electoral committee will either confirm or deny your application.<br>
