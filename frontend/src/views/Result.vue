@@ -3,7 +3,10 @@
     <h3 class="main-header" style="text-align: center;">Approved Election Results</h3>
     <hr>
     <div v-if="isLoaded && !pageText">
-        <a href="#downloadResults" class="list-group-item mt-1 blueColor" @click.prevent="downloadResult()">Download in PDF Format<v-icon>mdi-download</v-icon> </a>
+        <a href="#downloadResults" class="list-group-item mt-1 blueColor" @click.prevent="downloadResult()">Download with detailed analysis (PDF Format) <v-icon>mdi-download</v-icon> </a>
+
+        <h5 class="mt-4">TOTAL VOTES - <strong>{{totalVotes}}</strong></h5>
+        <hr>
         <div class="mt-5 mx-auto" :id="category.id" v-for="category in categories" v-bind:key="category.id">
             <h4 class="text-center">CATEGORY: {{category.name.toUpperCase()}}</h4>
             <hr>
