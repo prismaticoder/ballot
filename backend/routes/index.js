@@ -198,9 +198,9 @@ router.get('/confirm_accreditation', async (req, res) => {
     let { code } = req.query;
 
     if (code) {
-      jwt.verify(code,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+      jwt.verify(code,process.env.TOKEN_SECRET_KEY, async (err, decoded) => {
         if (err) {
-            sendError(res,403,err)
+            sendError(res,403,"There was an issue processing the code sent, please check to be sure you are sending the correct code and try again")
         }
         else {
             let { voterCode, voterId, matric } = decoded
@@ -253,15 +253,15 @@ router.get('/confirm_accreditation', async (req, res) => {
 })
 
 
-router.get('/reset_confirmation_code', async (req, res) => {
+router.get('/reset_voter_code', async (req, res) => {
   try {
     
     let { code } = req.query;
 
     if (code) {
-      jwt.verify(code,process.env.TOKEN_SECRET_KEY, (err, decoded) => {
+      jwt.verify(code,process.env.TOKEN_SECRET_KEY, async (err, decoded) => {
         if (err) {
-            sendError(res,403,err)
+            sendError(res,403,"There was an issue processing the code sent, please check to be sure you are sending the correct code and try again")
         }
         else {
             let { voterCode, voterId, matric } = decoded
