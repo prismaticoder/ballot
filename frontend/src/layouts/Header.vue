@@ -20,7 +20,7 @@
                  <router-link v-else-if="state == 'voting'" to="/vote" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">VOTE</a>
                  </router-link>
-                 <router-link v-else to="/results" tag="li" class="nav-item" active-class="active">
+                 <router-link v-else-if="state == 'postvoting'" to="/results" tag="li" class="nav-item" active-class="active">
                     <a class="nav-link">RESULTS</a>
                  </router-link>
                  <router-link v-if="state == 'voting'" to="/stats" tag="li" class="nav-item" active-class="active">

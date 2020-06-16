@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h3 class="main-header" style="text-align: center;">Download Voter List</h3>
+    <h3 class="main-header mt-4" style="text-align: center;">Download Voter List</h3>
     <hr>
 
     <div class="container mt-5">

@@ -3,7 +3,7 @@
 
         <div v-if="setting">
             <div v-if="interval > (24*60*60*1000)">
-                <h5>DATE AND TIME</h5>
+                <h5>ELECTION DATE AND TIME</h5>
                 <hr>
                  <v-timeline>
                     <v-timeline-item :color="btnColor">Start: {{formatDate(setting.startDate)}}</v-timeline-item>
@@ -41,7 +41,7 @@
         </div>
 
         <div v-else>
-            <h5>DATE AND TIME</h5>
+            <h5>ELECTION DATE AND TIME</h5>
             <hr>
             <i style="display:block" class="text-grey">
                 No date and time set yet
@@ -85,7 +85,7 @@
             VOTE
         </v-btn>
     </div>
-    <div v-else>
+    <div v-else-if="state == 'postvoting'">
         <h5>RESULTS</h5>
         <hr>
 

@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-      <h3 class="main-header" style="text-align: center;">Voting Stats By Level</h3>
+      <h3 class="main-header mt-4" style="text-align: center;">Voting Stats By Level</h3>
       <hr>
 
       <div class="row mt-5 justify-content-center" v-if="isLoaded">
-        <div class="col-lg-3 col-4 m-3 border" v-for="stat in stats" :key="stat.level">
+        <div class="col-lg-3 col-4 m-3 p-3 border" v-for="stat in stats" :key="stat.level">
             <div class="col-12">
                 <h5>{{stat.level}} LEVEL</h5>
             </div>

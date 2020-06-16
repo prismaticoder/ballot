@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="token">
-      <h3 class="main-header" style="text-align: center;">Vote Your Candidates | Ballot</h3>
+      <h3 class="main-header mt-4" style="text-align: center;">Vote Your Candidates | Ballot</h3>
       <hr>
 
         <div class="mt-4" v-if="isLoaded && !submitPage">

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="main-header" style="text-align: center;">Approved Election Results</h3>
+    <h3 class="main-header mt-4" style="text-align: center;">Approved Election Results</h3>
     <hr>
     <div v-if="isLoaded && !pageText">
         <a href="#downloadResults" class="list-group-item mt-1 blueColor" @click.prevent="downloadResult()">Download with detailed analysis (PDF Format) <v-icon>mdi-download</v-icon> </a>

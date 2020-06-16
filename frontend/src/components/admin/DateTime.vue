@@ -46,7 +46,7 @@
           <b-alert class="col-md-10 mx-auto" v-model="showAlert" variant="warning" dismissible>
               <strong>{{errorMsg}}</strong>
           </b-alert>
-          <div class="row">
+          <div class="row mt-4">
 
               <div class="col-md-4">
                   <v-menu ref="startMenu" v-model="startMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
@@ -62,6 +62,9 @@
               <div class="col-md-4 col-6">
                   <v-select :items="types" v-model="startPeriod" solo></v-select>
               </div>
+
+              <span class="tag d-block text-center mx-auto">TO</span>
+              <hr>
 
           </div>
           <div class="row border-top pt-3">
@@ -98,7 +101,7 @@
               <div class="col-md-4">
                   <v-menu ref="startMenu" v-model="startMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                       <template v-slot:activator="{ on }">
-                          <v-text-field solo readonly @change="setEndDate()" v-model="startDay" label="Date" persistent-hint v-on="on"></v-text-field>
+                          <v-text-field solo readonly @change="setEndDate()" v-model="startDay" label="Date" v-on="on"></v-text-field>
                       </template>
                       <v-date-picker :color="btnColor" :min="today"  v-model="startDay" no-title @input="startMenu = false"></v-date-picker>
                   </v-menu>
@@ -109,10 +112,12 @@
               <div class="col-md-4 col-6">
                   <v-select :items="types" v-model="startPeriod" solo></v-select>
               </div>
-
+              <span class="tag d-block text-center mx-auto">TO</span>
+              <hr>
           </div>
+          
           <div class="row">
-              <div class="col-md-4 border-top pt-3">
+              <div class="col-md-4">
                   <v-menu ref="endMenu" v-model="endMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                       <template v-slot:activator="{ on }">
                           <v-text-field solo readonly v-model="endDay" label="Date" persistent-hint v-on="on"></v-text-field>

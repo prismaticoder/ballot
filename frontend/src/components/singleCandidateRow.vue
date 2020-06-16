@@ -1,5 +1,5 @@
 <template>
-    <div class="border mx-auto" style="width: 20rem">
+    <div class="border mx-auto mt-5 p-2" style="width: 18rem">
 
         <div class="col-12 text-left">
             <span class="tag mt-2">NAME</span>
@@ -12,7 +12,7 @@
             {{candidate.status[0].toUpperCase() + candidate.status.toLowerCase().slice(1)}}
         </div>
 
-        <div class="col-12 border-top justify-content-center">
+        <div class="col-12 mt-3 p-2 border-top justify-content-center">
 
             <v-btn fab small :color="btnColor" style="color: #162059" title="Deny Application" class="mr-3 btn-fix" @click.prevent="type = 'deny'; dialog = true">
                 <v-icon>mdi-close</v-icon>

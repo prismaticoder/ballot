@@ -1,10 +1,10 @@
 <template>
-  <div class="border" v-if="!editMode">
-      <div class="col-12 border-bottom">
+  <div class="border mt-5 p-2" v-if="!editMode">
+      <div class="col-12 border-bottom p-3">
           <h5>POST</h5>
           <span class="text-capitalize">{{category.name}}</span>
       </div>
-      <div class="row">
+      <div class="row mt-4">
         <div class="col-6 border-right">
             <h5>MIN. LEVEL</h5>
             {{category.minLevel}} Level
@@ -14,7 +14,7 @@
             {{category.maxLevel}} Level
         </div>
       </div>
-      <div class="col-12 border-top justify-content-center">
+      <div class="col-12 mt-3 border-top p-3 justify-content-center">
           <!-- Edit and Delete Buttons -->
             <v-btn fab small :color="btnColor" style="color: #162059" title="Edit Category Details" class="mr-3 btn-fix" @click.prevent="editMode = true">
                 <v-icon>mdi-pencil</v-icon>
@@ -39,11 +39,11 @@
             </v-card>
         </v-dialog>
   </div>
-    <div class="border" v-else>
+    <div class="border mt-5 p-2" v-else>
         <b-alert class="col-12 mx-auto" v-model="showAlert" variant="warning" dismissible>
             {{errorMsg}}
         </b-alert>
-      <div class="col-12 border-bottom">
+      <div class="col-12 border-bottom p-3">
           <h5>POST</h5>
           <input type="text" class="form-control" v-model="name">
       </div>
@@ -61,7 +61,7 @@
             </b-form-select>
         </div>
       </div>
-      <div class="col-12 border-top justify-content-center">
+      <div class="col-12 mt-3 p-3 border-top justify-content-center">
         <v-btn fab small :color="btnColor" dark style="color: #162059" title="Cancel" class="mr-3 btn-fix" @click.prevent="editMode = false">
             <v-icon>mdi-close</v-icon>
         </v-btn>

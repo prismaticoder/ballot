@@ -1,7 +1,7 @@
 <template>
   <div class="container">
 
-      <h3 class="main-header" style="text-align: center;">Candidate Application | Ballot</h3>
+      <h3 class="main-header mt-4" style="text-align: center;">Candidate Application | Ballot</h3>
       <v-breadcrumbs :items="items" class="">
             <template v-slot:divider>
                 <v-icon>mdi-chevron-right</v-icon>

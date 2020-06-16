@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="main-header" style="text-align: center;">Election Results</h3>
+    <h3 class="main-header mt-4" style="text-align: center;">Election Results</h3>
     <hr>
     <div v-if="isLoaded && !pageText">
         <div class="container" v-show="!isApproved">

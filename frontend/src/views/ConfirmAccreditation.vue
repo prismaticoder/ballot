@@ -1,8 +1,8 @@
 <template>
     <div class="container">
-        <h3 v-if="name == 'confirm_accreditation'" class="main-header" style="text-align: center;">Confirm Accreditation</h3>
-        <h3 v-else-if="name == 'reset_code'" class="main-header" style="text-align: center;">Restore Voter Code</h3>
-        <h3 v-else class="main-header" style="text-align: center;">Page Not Found</h3>
+        <h3 v-if="name == 'confirm_accreditation'" class="main-header mt-4" style="text-align: center;">Confirm Accreditation</h3>
+        <h3 v-else-if="name == 'reset_code'" class="main-header mt-4" style="text-align: center;">Restore Voter Code</h3>
+        <h3 v-else class="main-header mt-4" style="text-align: center;">Page Not Found</h3>
         <hr>
 
 

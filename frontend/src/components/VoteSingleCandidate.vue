@@ -1,5 +1,5 @@
 <template>
-  <v-card style="text-decoration:none" class="mx-auto" width="20rem" hover :shaped="true" @click="$emit('selectCandidate', candidate.id)">
+  <v-card style="text-decoration:none" class="mx-auto mt-5" width="20rem" hover :shaped="true" @click="$emit('selectCandidate', candidate.id)">
 
     <v-img class="img-fluid" :src="candidate.imageUrl" :lazy-src="require('../assets/image.png')"></v-img>
 

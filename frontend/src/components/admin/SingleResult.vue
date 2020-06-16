@@ -1,5 +1,5 @@
 <template>
-    <v-card style="text-decoration:none" class="mx-auto" width="20rem" tile>
+    <v-card style="text-decoration:none" class="mx-auto mt-5" width="20rem" tile>
 
     <v-card-title class="text-center">{{candidate.fullName}}</v-card-title>
 

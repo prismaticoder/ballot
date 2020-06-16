@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-4">
+  <div class="col-lg-4 mt-5">
       <h5>{{categoryName.toUpperCase()}}</h5>
       {{candidateName}}
   </div>

@@ -1,6 +1,6 @@
 <template>
 <div class="container" v-if="state && state == 'prevoting'">
-     <h3 class="main-header" style="text-align: center;">Admin Accreditation</h3>
+     <h3 class="main-header mt-4" style="text-align: center;">Admin Accreditation</h3>
       <hr>
 
       <p class="mt-5 text-left" v-show="!student">
@@ -47,7 +47,7 @@
   </div>
 
   <div class="container" v-else-if="!state">
-    <h3 class="main-header" style="text-align: center;">Admin Accreditation</h3>
+    <h3 class="main-header mt-4" style="text-align: center;">Admin Accreditation</h3>
     <hr>
       <p class="mt-3">
         Loading...
@@ -55,7 +55,7 @@
   </div>
 
   <div class="container" v-else>
-    <h3 class="main-header" style="text-align: center;">Admin Accreditation</h3>
+    <h3 class="main-header mt-4" style="text-align: center;">Admin Accreditation</h3>
       <hr>
     <p class="mt-3">
       Sorry, accreditation can only be performed during the pre-election period. You would have to wait till the next election iteration to get accredited.

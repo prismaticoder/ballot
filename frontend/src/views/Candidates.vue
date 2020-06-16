@@ -1,7 +1,7 @@
 <template>
   <div class="container">
 
-      <h3 class="main-header" style="text-align: center;">{{appName}} ELECTION CANDIDATES</h3>
+      <h3 class="main-header mt-4" style="text-align: center;">{{appName}} ELECTION CANDIDATES</h3>
       <hr>
 
       <div v-if="isLoaded">
@@ -19,6 +19,7 @@
           <div class="mt-5 mx-auto" v-for="category in categories" v-bind:key="category.id">
             <span :id="formatName(category.name)" class="mt-n5">&nbsp;</span>
             <h4 class="text-center"><strong>CATEGORY: {{category.name.toUpperCase()}}</strong></h4>
+            <hr>
             <SingleCategory class="justify-content-center" :category="category"></SingleCategory>
             <hr>
           </div>

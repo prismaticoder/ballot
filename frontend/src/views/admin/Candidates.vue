@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <h3 class="main-header" style="text-align: center;">Candidate Applications</h3>
+        <h3 class="main-header mt-4" style="text-align: center;">Candidate Applications</h3>
         <hr>
 
 
@@ -8,7 +8,7 @@
             <v-btn v-show="candidates.length !== allCandidates.length" fab top left absolute :color="btnColor" style="color: #162059" title="Back" class="mt-4 btn-fix" @click.prevent="candidates = [...allCandidates]; statusFilter=''; postFilter=''">
                 <v-icon>mdi-arrow-left</v-icon>
             </v-btn>
-            <div class="col-md-8 mx-auto mt-2 border">
+            <div class="col-md-8 mx-auto mt-2 p-4 border">
                 <h4>Filter Candidate List</h4>
                  <form class="candidateForm mx-auto" @submit.prevent="filterCandidates()">
                 <div class="row text-left">
@@ -30,8 +30,8 @@
                     </div>
                 </div>
 
-                 <div class="col-12 mt-2">
-                    <v-btn :disabled="!hasLoaded" :color="otherColor" type="submit" style="color: floralwhite" class="btn btn-block myBtn col-4 text-capitalize">Apply Filter</v-btn>
+                 <div class="col-12 mt-4">
+                    <v-btn :disabled="!hasLoaded" :color="otherColor" type="submit" style="color: floralwhite" class="btn btn-block myBtn col-md-4 text-capitalize">Apply Filter</v-btn>
                 </div>
 
             </form>
@@ -47,7 +47,7 @@
         </v-snackbar>        
 
         <div class="row justify-content-center" v-if="hasLoaded && candidates.length > 0">
-            <div class="col-md-4" v-for="candidate in candidates" :key="candidate.id">
+            <div class="col-lg-4" v-for="candidate in candidates" :key="candidate.id">
                 <singleCandidateRow v-on:approveCandidate="approveCandidate" v-on:rejectCandidate="rejectCandidate" :candidate="candidate" :btnColor="btnColor"/>
             </div>
         </div>
