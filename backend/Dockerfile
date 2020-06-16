@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 4010
 
-ENTRYPOINT [ "./entrypoint.sh" ]
+CMD [ "npm","start" ]
