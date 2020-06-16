@@ -18,9 +18,8 @@ module.exports = {
 
       for (let i = 0; i < 50; i++) {
           const seedData = {
-              firstName: faker.name.firstName(),
-              lastName: faker.name.lastName(),
-              image: faker.image.imageUrl(),
+              fullName: faker.name.findName(),
+              imageUrl: faker.image.imageUrl(),
               alias: faker.name.firstName(),
               statusCode: faker.random.alphaNumeric(6),
               matric: faker.random.number({min:190000,max:215999}),
