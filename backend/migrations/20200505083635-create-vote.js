@@ -10,15 +10,15 @@ module.exports = {
       },
       voterId: {
         type: Sequelize.INTEGER,
-        references: { model: 'voters', key: 'id' }
+        references: { model: 'Voters', key: 'id' }
       },
       candidateId: {
         type: Sequelize.INTEGER,
-        references: { model: 'candidates', key: 'id' }
+        references: { model: 'Candidates', key: 'id' }
       },
       categoryId: {
         type: Sequelize.INTEGER,
-        references: { model: 'categories', key: 'id' }
+        references: { model: 'Categories', key: 'id' }
       },
       createdAt: {
         allowNull: false,
