@@ -84,7 +84,7 @@ router.get('/checkIfQualify', async (req, res) => {
 //Candidate Applying For A Position
 router.post('/apply', onlyPreVoting, async (req, res) => {
     try {
-        var { firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
+        var { fullName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,categoryId } = req.body;
 
         let voter = await Voter.findOne({
             where: {
@@ -115,7 +115,7 @@ router.post('/apply', onlyPreVoting, async (req, res) => {
         
                         if (level >= category.minLevel && level <= category.maxLevel) {
                             let candidate = await category.createCandidate({
-                                firstName,lastName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
+                                fullName,alias,manifesto,instagram,twitter,phoneNumber,imageUrl,level,matric,
                                 statusCode,
                                 status: "pending"
                             })

@@ -61,8 +61,7 @@ describe('All Prevoting endpoints', () => {
 
         it('should enter a candidate\'s application for a post', async () => {
             const response = await app().post('/v1/candidates/apply').send({
-                firstName: 'Hiram',
-                lastName: 'Sipes',
+                fullName: 'Hiram Sipes',
                 alias: 'Tunmise',
                 manifesto: 'This is a test manifesto for a test candidate',
                 instagram: 'https://instagram.com/hiram',
@@ -79,8 +78,7 @@ describe('All Prevoting endpoints', () => {
 
         it('should refuse an application if said candidate has already applied', async () => {
             const response = await app().post('/v1/candidates/apply').send({
-                firstName: 'Ifejesu',
-                lastName: 'Salam',
+                fullName: 'Ifejesu Salam',
                 alias: 'Prismatic',
                 manifesto: 'This is a test manifesto for a test candidate',
                 instagram: 'https://instagram.com/hiram',
@@ -98,8 +96,7 @@ describe('All Prevoting endpoints', () => {
 
         it('should refuse an application if said candidate has not been accredited', async () => {
             const response = await app().post('/v1/candidates/apply').send({
-                firstName: 'Jesutomiwa',
-                lastName: 'Salam',
+                fullName: 'Jesutomiwa Salam',
                 alias: 'Prismatic',
                 manifesto: 'This is a test manifesto for a test candidate',
                 instagram: 'https://instagram.com/hiram',
@@ -117,8 +114,7 @@ describe('All Prevoting endpoints', () => {
 
         it('should refuse an application if said candidate does not exist', async () => {
             const response = await app().post('/v1/candidates/apply').send({
-                firstName: 'Jesutomiwa',
-                lastName: 'Salam',
+                fullName: 'Jesutomiwa Salam',
                 alias: 'Prismatic',
                 manifesto: 'This is a test manifesto for a test candidate',
                 instagram: 'https://instagram.com/hiram',
@@ -136,8 +132,7 @@ describe('All Prevoting endpoints', () => {
 
         it('should refuse an application if said candidate\'s level does not fall within criteria', async () => {
             const response = await app().post('/v1/candidates/apply').send({
-                firstName: 'Hiram',
-                lastName: 'Sipes',
+                fullName: 'Hiram Sipes',
                 alias: 'Tunmise',
                 manifesto: 'This is a test manifesto for a test candidate',
                 instagram: 'https://instagram.com/hiram',

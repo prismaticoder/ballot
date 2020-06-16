@@ -1,11 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Candidate = sequelize.define('Candidate', {
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    lastName: {
+    fullName: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -32,27 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     categoryId: DataTypes.INTEGER,
-    fullName: {
-      type: DataTypes.VIRTUAL,
-      get() {
-        let lastname = this.lastName.split('-');
-        let firstname = this.firstName.split('-');
-        lastname.forEach((name,index) => {
-          lastname.splice(index,1,name[0].toUpperCase() + name.slice(1).toLowerCase())
-        })
-        firstname.forEach((name,index) => {
-          firstname.splice(index,1,name[0].toUpperCase() + name.slice(1).toLowerCase())
-        })
-        lastname = lastname.join('-');
-        firstname = firstname.join('-')
-
-        return `${firstname} ${lastname}`
-      }
-    },
     refinedLink: {
       type: DataTypes.VIRTUAL,
       get() {
-        let name = `${this.firstName} ${this.lastName}`
+        let name = `${this.fullName}`
 
         let link = name.toLowerCase().split(' ')
         link.push(this.id)

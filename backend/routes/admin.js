@@ -143,10 +143,10 @@ router.get('/candidates', async (req, res) => {
         }
         
         candidates = candidates.sort((a,b) => {
-            if (a.firstName < b.firstName) {
+            if (a.fullName < b.fullName) {
                 return -1
             }
-            else if (a.firstName > b.firstName) {
+            else if (a.fullName > b.fullName) {
                 return 1
             }
             else {

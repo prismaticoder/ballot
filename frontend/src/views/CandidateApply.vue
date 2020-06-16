@@ -172,7 +172,7 @@ export default {
 
             if (this.showFullForm) {
                 let {instagram, twitter, phoneNumber, alias, manifesto} = this;
-                let {firstName,lastName,level} = this.voter;
+                let {fullName,level} = this.voter;
 
                 let numWords = manifesto.split(' ').length;
 
@@ -202,7 +202,7 @@ export default {
                         let { delete_token } = res.data;
 
                         return this.$http.post(`candidates/apply`, {
-                            instagram, twitter, phoneNumber, alias, manifesto,firstName,lastName,level,imageUrl,categoryId,matric
+                            instagram, twitter, phoneNumber, alias, manifesto,fullName,level,imageUrl,categoryId,matric
                         })
                         .then(res => {
                             this.loading = false

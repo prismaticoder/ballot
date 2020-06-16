@@ -8,10 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
-        type: Sequelize.STRING
-      },
-      lastName: {
+      fullName: {
         type: Sequelize.STRING
       },
       alias: {
@@ -48,7 +45,7 @@ module.exports = {
       },
       categoryId: {
         type: Sequelize.INTEGER,
-        references: { model: 'categories', key: 'id' },
+        references: { model: 'Categories', key: 'id' },
         onDelete: 'CASCADE',
       },
       createdAt: {
