@@ -100,7 +100,6 @@ export default {
   },
   data() {
     return {
-      state: this.$store.getters.state,
       name: process.env.VUE_APP_NAME.toUpperCase(),
       pageType: 'home',
       setting: null,
@@ -126,6 +125,11 @@ export default {
   },
   mounted() {
     this.init()
+  },
+  computed: {
+    state() {
+      return this.$store.getters.state
+    }
   }
 }
 </script>
