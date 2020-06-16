@@ -47,7 +47,7 @@
                 No date and time set yet
             </i>
 
-            <v-btn to="/command/settings" v-if="pageType == 'admin'" rounded text :color="btnColor" class="mt-4 col-md-7">
+            <v-btn to="/command/settings" v-if="pageType == 'admin'" rounded :color="btnColor" class="mt-4 text-white col-md-7">
                 Set Day and Time
             </v-btn>
             <v-btn to="/accreditation" v-else rounded :color="btnColor" class="mt-4 text-white col-md-7">

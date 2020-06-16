@@ -94,7 +94,9 @@ export default {
     },
     methods: {
         init() {
-            this.$http.get(`candidates/${this.$route.params.id.split('-')[2]}`)
+            let params = this.$route.params.id.split('-')
+            let candidateId = params[params.length - 1]
+            this.$http.get(`candidates/${candidateId}`)
             .then(res => {
                 if (res.data.candidate.refinedLink == this.$route.params.id) {
                     this.isLoaded = true

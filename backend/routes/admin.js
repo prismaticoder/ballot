@@ -427,7 +427,9 @@ router.get('/settings', async (req, res) => {
             return sendRes(res,{setting})    
         }
         
-        sendError(res,404)
+        else {
+            return sendRes(res,{setting: null})
+        }
 
     } catch (error) {
         console.error(error)
