@@ -46,13 +46,13 @@ router.get('/checkappstate', async (req, res) => {
   try {
     
     let [ config ] = await Config.findAll();
+    var data = {};
 
     if (config) {
 
       var currentTime = new Date()
       , hasStarted = currentTime >= config.startDate
       , hasEnded = currentTime >= config.endDate
-      , data = {};
 
       if (!hasStarted && !hasEnded) {
         data.state = "prevoting"
@@ -463,7 +463,7 @@ router.get('/results', onlyPostVoting, async (req, res) => {
         attributes: ["id","name"],
         include: {
           model: Candidate,
-          attributes: ["id","firstName","lastName","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Voters.id')), 'voteCount']],
+          attributes: ["id","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Voters.id')), 'voteCount']],
           as: "candidates",
           where: {
               status: "confirmed"
