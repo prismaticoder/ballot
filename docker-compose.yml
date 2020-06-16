@@ -42,6 +42,7 @@ services:
         image: phpmyadmin/phpmyadmin:latest
         environment: 
             PMA_HOST: db
+            PMA_ABSOLUTE_URI: "${PMA_URL}"
         depends_on: 
             - db
         ports:
