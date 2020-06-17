@@ -18,7 +18,7 @@ module.exports = {
   var candidateArray = {1:[1,36],2:[10,34,50,52],3:[24,45,47],4:[8,19,21],5:[18,20,56],6:[3,5,12,27,31,32,39],7:[40],10:[4,35,38,41],11:[58]}
    var newData = [];
 
-   for (let i = 854; i < 1353; i++) {
+   for (let i = 1; i < 500; i++) {
      for (let j = 0; j < categoryArray.length; j++) {
        const seedData = {
         voterId: i,
