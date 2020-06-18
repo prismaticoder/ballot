@@ -33,8 +33,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                    <v-btn color="green darken-1" text @click="$emit('deleteCategory', category.id)">Yes</v-btn>
+                    <v-btn :disabled="btnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                    <v-btn :loading="btnLoading" :disabled="btnLoading" color="green darken-1" text @click="deleteCategory()">Yes</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -86,7 +86,8 @@ export default {
             name: this.category.name,
             minLevel: this.category.minLevel,
             maxLevel: this.category.maxLevel,
-            id: this.category.id
+            id: this.category.id,
+            btnLoading: false
         }
     },
     methods: {
@@ -118,6 +119,12 @@ export default {
                 })
             }
             
+        },
+        async deleteCategory() {
+            this.btnLoading = true; 
+            await this.$emit('deleteCategory', this.category.id); 
+            this.btnLoading = false; 
+            this.dialog = false
         }
     }
 
