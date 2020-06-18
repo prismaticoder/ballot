@@ -4,7 +4,7 @@
         <SingleResult :candidate="candidate" :index="index" :categoryTotal="categoryTotal" :totalVotes="totalVotes" :highestVote="highestVote"/>
     </div>
     <div class="col-md-4">
-        <v-card style="text-decoration:none" class="mx-auto" width="20rem" tile>
+        <v-card style="text-decoration:none" class="mx-auto mt-5" width="20rem" tile>
 
             <v-card-title class="text-center">Undecided/Void Votes</v-card-title>
 

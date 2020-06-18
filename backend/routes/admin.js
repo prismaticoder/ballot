@@ -679,27 +679,43 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
   router.get('/results', onlyPostVoting, async (req, res) => {
     try {
 
+        let levels = []
+        let attributeArray = []
+
+        for (let i = 100; i <= process.env.HIGHEST_LEVEL; i+=100) {
+            levels.push(i)
+        }
+
+        levels.forEach((level,index) => {
+            attributeArray.push([Sequelize.fn('COALESCE', Sequelize.fn('SUM', Sequelize.where(Sequelize.col('candidates.Voters.level') , level)), 0), `voteCount${index + 1}`])
+        })
+
+
         let categories = await Category.findAll({
+            attributes: ["id","name"],
             include: {
             model: Candidate,
+            attributes: ["id","alias","fullName","level","matric",[Sequelize.fn('COUNT', Sequelize.col('candidates.Voters.id')), 'voteCount']],
             as: "candidates",
             where: {
                 status: "confirmed"
             },
-            attributes: { 
-                include: [[Sequelize.fn('COUNT', Sequelize.col('candidates.Votes.id')), 'voteCount']]
-            },
             include: [{
-                model: Vote,
+                model: Voter,
+                through: {
+                // as: "votes",
                 where: {
-                updatedAt: {
+                    updatedAt: {
                     [Op.gte] : res.locals.startDate,
                     [Op.lte] : res.locals.endDate
-                }
+                    }
                 },
-                required: false,
-                attributes: []
-            }],
+                attributes: [],
+                required: false
+                },
+                attributes: attributeArray,
+                required: false
+            }]
             },
             group: ['candidates.id'],
             order: [['id','asc']]

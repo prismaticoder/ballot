@@ -47,8 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'candidateId',
     })
     Candidate.belongsToMany(models.Voter, {
-      through: 'votes',
-      as: "voters"
+      through: models.Vote
     })
     Candidate.belongsTo(models.Category, {
       foreignKey: 'categoryId',

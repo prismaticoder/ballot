@@ -90,11 +90,31 @@ export default {
             };
 
             this.categories.forEach(category => {
+
+                let categoryTotal = category.candidates.reduce((acc, candidate) => {
+                    return acc + candidate.voteCount
+                },0)
+
+                let undecidedVoteCount = this.totalVotes - categoryTotal
+
+                let highestVote = (undecidedVoteCount >= category.candidates[0].voteCount) ? undecidedVoteCount : category.candidates[0].voteCount
+
+                let categoryResults = category.candidates.map((candidate,index) => {
+                    let voteCountArray;
+                    if (candidate.Voters.length > 0) {
+                        voteCountArray = Object.values(candidate.Voters[0])
+                    }
+                    else {
+                        voteCountArray = new Array(this.levels.length).fill(0)
+                    }
+                    return [index+1,category.name,candidate.fullName, ...voteCountArray ,candidate.voteCount,(candidate.voteCount == highestVote) ? 'WINNER' : '-']
+                })
+
+                categoryResults.push([category.candidates.length + 1, category.name, "Void Votes", ...new Array(this.levels.length).fill('-'),undecidedVoteCount,'-'])
+
                 doc.autoTable({
                     head: [['S/N', 'POST', 'CANDIDATE NAME', ...this.levels , 'TOTAL','STATUS']],
-                    body: category.candidates.map((candidate,index) => {
-                        return [index+1,category.name,candidate.fullName,...Object.values(candidate.voters[0]),candidate.voteCount,(index == 0 || candidate.voteCount == category.candidates[0].voteCount) ? 'WINNER' : '-']
-                    }),
+                    body: categoryResults,
                     margin: {top: 30},
                     didDrawPage: header
                 })

@@ -455,7 +455,7 @@ router.get('/results', onlyPostVoting, async (req, res) => {
       }
 
       levels.forEach((level,index) => {
-        attributeArray.push([Sequelize.fn('SUM', Sequelize.where(Sequelize.col('candidates.Voters.level') , level)), `voteCount${index + 1}`])
+        attributeArray.push([Sequelize.fn('COALESCE', Sequelize.fn('SUM', Sequelize.where(Sequelize.col('candidates.Voters.level') , level)), 0), `voteCount${index + 1}`])
       })
 
 
@@ -471,6 +471,7 @@ router.get('/results', onlyPostVoting, async (req, res) => {
           include: [{
             model: Voter,
             through: {
+              // as: "votes",
               where: {
                 updatedAt: {
                   [Op.gte] : res.locals.startDate,
@@ -478,9 +479,8 @@ router.get('/results', onlyPostVoting, async (req, res) => {
                 }
               },
               attributes: [],
-              required: false
+              required: false,
             },
-            as: "voters",
             attributes: attributeArray,
             required: false
           }]

@@ -52,13 +52,13 @@
             </v-dialog>
 
             <div class="col-md-2 col-5 mx-auto">
-                <v-btn block tile title="Back" @click="goBack()" :color="btnColor" class="mt-5 bg-white blueColor p-3">
+                <v-btn :disabled="voteBtnLoading" block tile title="Back" @click="goBack()" :color="btnColor" class="mt-5 bg-white blueColor p-3">
                     <v-icon small>
                         mdi-arrow-left
                     </v-icon> &nbsp;
                     GO BACK
                 </v-btn>            
-                <v-btn block tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3">
+                <v-btn :loading="voteBtnLoading" :disabled="voteBtnLoading" block tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3">
                     CAST VOTE &nbsp;
                     <v-icon small>
                         mdi-check
@@ -110,6 +110,7 @@ export default {
             currentIndex: 0,
             btnColor: "#162059",
             isLoaded: false,
+            voteBtnLoading: false,
             submitPage: false,
             votes: JSON.parse(localStorage.getItem('votes-stored')) || []
         }
@@ -153,9 +154,12 @@ export default {
             window.location.reload()
         },
         castVote() {
+            this.voteBtnLoading = true
+
             this.$http.post('vote', {votes: JSON.stringify(this.votes)})
             .then(res => {
                 this.dialog = false;
+                this.voteBtnLoading = false;
                 localStorage.removeItem('bToken')
                 localStorage.removeItem('votes-stored')
                 this.successDialog = true;
@@ -164,6 +168,7 @@ export default {
             })
             .catch(err => {
                 this.dialog = false;
+                this.voteBtnLoading = false;
                 alert(err.response ? err.response.data.error : "There was an error processing your request, please reload the page and try again")
 
                 if (err.status == 403) {
