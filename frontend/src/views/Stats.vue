@@ -4,14 +4,15 @@
       <hr>
 
       <div class="row mt-5 justify-content-center" v-if="isLoaded">
-        <div class="col-lg-3 col-4 m-3 p-3 border" v-for="stat in stats" :key="stat.level">
-            <div class="col-12">
-                <h5>{{stat.level}} LEVEL</h5>
-            </div>
-            <div class="col-12">
-                <span class="voter">{{stat.count}}</span>
-            </div>
-        </div>
+        <v-card v-for="stat in stats" :key="stat.level" class="mx-auto mt-5" width="20rem" shaped>
+            <v-card-title class="text-center">{{stat.level}} LEVEL</v-card-title>
+            <v-card-text>
+                <div>
+                    <span class="tag mb-2">VOTES SO FAR</span>
+                    <span class="voter blueColor">{{stat.count}}</span>
+                </div>
+            </v-card-text>
+        </v-card>
       </div>
       <div class="row mt-5 justify-content-center" v-else> 
         <v-skeleton-loader type="card" class="m-3 col-lg-3 col-4"></v-skeleton-loader>
