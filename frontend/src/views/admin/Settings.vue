@@ -203,9 +203,6 @@ export default {
                         this.setting = null
                         this.isLoaded = true
                     }
-                    else {
-                        console.log(err)
-                    }
                 })
             })
             .catch(err => {

@@ -160,8 +160,8 @@ export default {
             .then(res => {
                 this.categories = res.data.categories
             })
-            .catch(err => {
-                console.log(err)
+            .catch(() => {
+                this.categories = null
             })
         },
         attemptSubmit() {
@@ -222,8 +222,7 @@ export default {
                             window.scrollTo(0,0);
 
                             return this.$http.post(`${process.env.VUE_APP_CLOUDINARY_DELETE}`, {token: delete_token})
-                            .then(res => {
-                                console.log(res)
+                            .then(() => {
                                 window.location.reload(true)
                             })
                             .catch(err => {
@@ -233,12 +232,11 @@ export default {
 
                         })
                     })
-                    .catch(err => {
+                    .catch(() => {
                         this.loading = false;
                         this.showAlert = true;
                         this.errorMsg = "Error uploading image, please reload the page and try again"
                         window.scrollTo(0,0);
-                        console.log(err)
                     })
                 }
 

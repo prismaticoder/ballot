@@ -107,12 +107,10 @@ export default {
                 }
             })
             .catch(err => {
-                console.log(err)
 
                 if (err.response) {
                     if (err.response.data.status == 404) {
                         this.$router.replace({name: '404'})
-                        console.log(err)
                     }
                 }
             })

@@ -40,10 +40,9 @@ export default {
   },
   beforeCreate() {
     this.$store.dispatch('setState')
-    .catch(err => {
+    .catch(() => {
       
-      this.error = true
-      console.log(`${err}`)})
+      this.error = true})
   },
 
   created() {
