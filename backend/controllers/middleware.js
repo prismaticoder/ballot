@@ -196,6 +196,7 @@ exports.validateAdminToken = async (req, res, next) => {
                     sendError(res,401,err)
                 }
                 else {
+                    res.locals.username = decoded.username
                     next()
                 }
             })
@@ -209,6 +210,21 @@ exports.validateAdminToken = async (req, res, next) => {
         sendError(res,500,error)
     }
 
+}
+
+exports.onlySuperAdmin = async (req, res, next) => {
+    try {
+        if (res.locals.username == process.env.MAIN_USER) {
+            next()
+        }
+
+        else {
+            sendError(res,401,"This action requires extra administrative privileges to be performed")
+        }
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
 }
 
 exports.validateVoterToken = async (req, res, next) => {
