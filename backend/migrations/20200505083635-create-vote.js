@@ -10,15 +10,18 @@ module.exports = {
       },
       voterId: {
         type: Sequelize.INTEGER,
-        references: { model: 'Voters', key: 'id' }
+        references: { model: 'Voters', key: 'id' },
+        onDelete: 'CASCADE',
       },
       candidateId: {
         type: Sequelize.INTEGER,
-        references: { model: 'Candidates', key: 'id' }
+        references: { model: 'Candidates', key: 'id' },
+        onDelete: 'CASCADE',
       },
       categoryId: {
         type: Sequelize.INTEGER,
-        references: { model: 'Categories', key: 'id' }
+        references: { model: 'Categories', key: 'id' },
+        onDelete: 'CASCADE',
       },
       createdAt: {
         allowNull: false,
