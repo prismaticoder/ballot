@@ -784,11 +784,10 @@ router.post('/create', onlySuperAdmin, async (req, res) => {
     }
 })
 
-router.delete('/candidates', onlySuperAdmin, exceptVoting, async (req, res) => {
+router.delete('/candidates', onlySuperAdmin, onlyPostVoting, async (req, res) => {
     try {
         await Candidate.destroy({
-            where: {},
-            truncate: true
+            where: {}
         })
 
         sendRes(res,{message: "All candidates have been removed from the application"})

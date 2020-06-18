@@ -120,6 +120,26 @@
               </div>
           </div>
       </div>
+
+      <hr>
+      <v-btn v-show="state == 'postvoting'" class="text-white" rounded  :disabled="!isLoaded" :color="btnColor" @click="dialog = true">
+          Begin Fresh Election
+      </v-btn>
+
+        <v-dialog v-if="state == 'postvoting'" v-model="dialog" persistent max-width="350">
+            <v-card>
+                <v-card-title class="headline">Start Fresh Election</v-card-title>
+                <v-card-text>
+                Are you sure you want to start a fresh election? This will remove every candidate and vote from the election
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn :disabled="btnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                    <v-btn :loading="btnLoading" :disabled="btnLoading" color="green darken-1" text @click="startNewElection()">Yes</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
   </div>
 </template>
 
@@ -145,7 +165,9 @@ export default {
             btnColor: "#162059",
             username: "",
             password: "",
-            conf_password: ""
+            conf_password: "",
+            dialog: false,
+            btnLoading: false
         }
     },
     methods: {
@@ -197,6 +219,27 @@ export default {
                 this.errorMsg = err.response ? err.response.data.error : "There was an error processing your request, try again"
                 this.showAlert = true
             })
+        },
+        startNewElection() {
+            this.btnLoading = true;
+
+            this.$http.delete('admin/candidates')
+            .then(res => {
+                this.btnLoading = false;
+                this.dialog = false
+                this.text = res.data.message
+                this.snackbar = true
+            })
+            .catch(err => {
+                this.btnLoading = false
+                this.dialog = false
+                alert (err.response ? err.response.data.error : "Error processing request, try again")
+            })
+        }
+    },
+    computed: {
+        state() {
+            return this.$store.getters.state
         }
     },
     mounted() {
