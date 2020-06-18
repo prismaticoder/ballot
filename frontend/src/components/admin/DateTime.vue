@@ -31,12 +31,12 @@
             CHANGE
           </v-btn>
           <div v-else class="row justify-content-center mx-auto">
-            <v-btn rounded :color="btnColor" class="mt-3 text-white col-md-3 col-12" @click="dialog = true">
+            <v-btn rounded :color="btnColor" class="mt-3 text-white col-md-5 col-12" @click="dialog = true">
               END ELECTION
             </v-btn>
             <div class="col-md-1"></div>
-            <v-btn rounded v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-3 col-12">
-              ELONGATE ELECTION
+            <v-btn rounded v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-5 col-12">
+              ELONGATE
             </v-btn>
           </div>
       </div>

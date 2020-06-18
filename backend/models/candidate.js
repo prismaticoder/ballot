@@ -43,11 +43,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Candidate.associate = function(models) {
     // associations can be defined here
-    Candidate.hasMany(models.Vote, {
-      foreignKey: 'candidateId',
-    })
     Candidate.belongsToMany(models.Voter, {
-      through: models.Vote
+      through: 'Votes'
     })
     Candidate.belongsTo(models.Category, {
       foreignKey: 'categoryId',

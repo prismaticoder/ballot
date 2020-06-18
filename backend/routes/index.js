@@ -416,7 +416,6 @@ router.get('/stats', onlyVoting, async (req, res) => {
     let voters = await Voter.findAll({
       include: {
         model: Vote,
-        as: "votes",
         where: {
           updatedAt: {
             [Op.gte] : res.locals.startDate,
