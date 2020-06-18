@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import AdminHome from '../views/admin/Home.vue'
+import Major from '../views/admin/Major.vue'
 import Voters from '../views/admin/Voters.vue'
 import Candidates from '../views/Candidates.vue'
 import CandidateApply from '../views/CandidateApply.vue'
@@ -172,6 +173,14 @@ const routes = [
     meta: {
       requireAuth: true,
       requiresCheck: true
+    }
+  },
+  {
+    path: '/command/major',
+    name: 'main-command',
+    component: Major,
+    meta: {
+      requireAuth: true
     }
   },
   {
