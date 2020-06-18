@@ -2,11 +2,12 @@ var express = require('express');
 var router = express.Router();
 var { customAlphabet } = require('nanoid')
 var models = require('../models');
-var { Category,Candidate,Voter,Vote } = models;
+var { Category,Candidate,Voter,Vote,Admin } = models;
 var Config = models.Setting
+var bcrypt = require('bcryptjs');
 const Sequelize = require('sequelize')
 var { Op } = Sequelize;
-var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,exceptVoting } = require('../controllers/middleware')
+var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,exceptVoting,onlySuperAdmin } = require('../controllers/middleware')
 var { sendError, sendRes } = require('../controllers/res')
 
 //Login middleware needed to access this section
@@ -738,7 +739,92 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
   })
 
 
+router.post('/create', onlySuperAdmin, async (req, res) => {
+    try {
+        let { username, password } = req.body;
 
+        if (username && password) {
+            let check = await Admin.findOne({
+                username
+            })
+
+            if (check) {
+                sendError(res,403,"Username already exists")
+            }
+
+            else {
+                bcrypt.genSalt(10, function(err, salt) {
+                    bcrypt.hash(password, salt, async function(err, hash) {
+                      if (!err) {
+                        let newAdmin = await Admin.create({
+                                    username,
+                                    password: hash
+                                })
+
+                        sendRes(res,{message: `User ${newAdmin.username} created successfully`},201)
+                      }
+              
+                      else {
+                        sendError(res,500,err)
+                      }
+
+                    });
+                });
+            }
+        }
+
+        else {
+            return sendError(res,400)
+        }
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
+router.delete('/candidates', onlySuperAdmin, onlyPostVoting, async (req, res) => {
+    try {
+        await Candidate.destroy()
+
+        sendRes(res,{message: "All candidates have been removed from the application"})
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
+router.get('/all', onlySuperAdmin, async (req, res) => {
+    try {
+        
+        let admins = await Admin.findAll({
+            attributes: ["id","username"]
+        })
+
+        sendRes(res,{admins})
+
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
+
+router.delete('/deleteAdmin/:id', onlySuperAdmin, async (req, res) => {
+    try {
+        let admin = Admin.findByPk(req.params.id)
+
+        if (admin) {
+            await admin.destroy()
+            sendRes(res,{message: "User removed successfully"})
+        }
+
+        else {
+
+        }
+    } catch (error) {
+        console.error(error)
+        sendError(res,500)
+    }
+})
 
 
 module.exports = router;
