@@ -745,7 +745,9 @@ router.post('/create', onlySuperAdmin, async (req, res) => {
 
         if (username && password) {
             let check = await Admin.findOne({
-                username
+                where: {
+                    username
+                }
             })
 
             if (check) {
@@ -761,7 +763,7 @@ router.post('/create', onlySuperAdmin, async (req, res) => {
                                     password: hash
                                 })
 
-                        sendRes(res,{message: `User ${newAdmin.username} created successfully`},201)
+                        sendRes(res,{message: `User ${newAdmin.username} created successfully`, admin: newAdmin},201)
                       }
               
                       else {
@@ -784,7 +786,10 @@ router.post('/create', onlySuperAdmin, async (req, res) => {
 
 router.delete('/candidates', onlySuperAdmin, exceptVoting, async (req, res) => {
     try {
-        await Candidate.destroy()
+        await Candidate.destroy({
+            where: {},
+            truncate: true
+        })
 
         sendRes(res,{message: "All candidates have been removed from the application"})
     } catch (error) {
@@ -797,7 +802,12 @@ router.get('/all', onlySuperAdmin, async (req, res) => {
     try {
         
         let admins = await Admin.findAll({
-            attributes: ["id","username"]
+            attributes: ["id","username"],
+            where: {
+                username: {
+                    [Op.ne] : process.env.MAIN_USER
+                }
+            }
         })
 
         sendRes(res,{admins})
@@ -810,15 +820,15 @@ router.get('/all', onlySuperAdmin, async (req, res) => {
 
 router.delete('/deleteAdmin/:id', onlySuperAdmin, async (req, res) => {
     try {
-        let admin = Admin.findByPk(req.params.id)
+        let admin = await Admin.findByPk(req.params.id)
 
-        if (admin) {
+        if (admin && admin.username !== process.env.MAIN_USER) {
             await admin.destroy()
             sendRes(res,{message: "User removed successfully"})
         }
 
         else {
-
+            sendError(res,404,"Cannot delete non existent user")
         }
     } catch (error) {
         console.error(error)

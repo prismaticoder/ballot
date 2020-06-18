@@ -219,7 +219,7 @@ exports.onlySuperAdmin = async (req, res, next) => {
         }
 
         else {
-            sendError(res,401,"This action requires extra administrative privileges to be performed")
+            sendError(res,403,"This action requires extra administrative privileges to be performed")
         }
     } catch (error) {
         console.error(error)
