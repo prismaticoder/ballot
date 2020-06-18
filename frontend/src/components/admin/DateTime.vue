@@ -146,7 +146,6 @@ export default {
     props: ["setting","btnColor","types","items","today"],
     data() {
       return {
-        state: this.$store.getters.state,
         changeDateForm: false,
         startMenu: false,
         endMenu: false,
@@ -161,6 +160,11 @@ export default {
         startPeriod: "",
         loading: false
 
+      }
+    },
+    computed: {
+      state() {
+        return this.$store.getters.state
       }
     },
     mounted() {
@@ -346,9 +350,6 @@ export default {
           this.$emit('updateSetting', res.data.setting)
           this.dialog = false;
             return this.$store.dispatch('setState')
-                  .then(res => {
-                    this.state = res
-                  })
                   .catch(err => console.log(err))
         })
         .catch(err => {

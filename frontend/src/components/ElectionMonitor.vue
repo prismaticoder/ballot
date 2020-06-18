@@ -106,7 +106,6 @@ export default {
     data() {
         return {
             interval: null,
-            state: this.$store.getters.state,
             hours: '-',
             minutes: '-',
             seconds: '-',
@@ -114,6 +113,11 @@ export default {
         }
     },
     props: ["setting","btnColor","pageType"],
+    computed: {
+        state() {
+            return this.$store.getters.state
+        }
+    },
     methods: {
         formatDate(dateString) {
         const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
@@ -155,7 +159,6 @@ export default {
                 this.seconds = 0;
                 this.$store.dispatch('setState')
                 .then(res => {
-                    this.state = res;
                     if (res == 'voting') {
                         this.interval = new Date(this.setting.endDate).getTime() - new Date().getTime()
                         this.x = setInterval(this.changeInterval,1000)
