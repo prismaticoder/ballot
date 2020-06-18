@@ -70,8 +70,8 @@
                   </v-card-text>
                   <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                      <v-btn :loading="dialogLoad" color="green darken-1" text @click="cancelApplication(candidate.id)">Yes</v-btn>
+                      <v-btn :disabled="dialogLoad" color="green darken-1" text @click="dialog = false">No</v-btn>
+                      <v-btn :loading="dialogLoad" :disabled="dialogLoad" color="green darken-1" text @click="cancelApplication(candidate.id)">Yes</v-btn>
                   </v-card-actions>
               </v-card>
           </v-dialog>
@@ -201,6 +201,7 @@ export default {
 
         this.$http.delete(`candidates/${id}?statusCode=${this.statusCode}`)
         .then(res => {
+          this.dialogLoad = false
           this.dialog = false;
           alert(res.data.message)
           this.$router.replace({name : 'all-candidates'})

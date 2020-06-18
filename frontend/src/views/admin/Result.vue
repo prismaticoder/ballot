@@ -26,8 +26,8 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                        <v-btn color="green darken-1" text @click="approveResult()">Yes</v-btn>
+                        <v-btn :disabled="btnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                        <v-btn :loading="btnLoading" :disabled="btnLoading" color="green darken-1" text @click="approveResult()">Yes</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -90,7 +90,8 @@ export default {
             loading: false,
             dialog: false,
             snackbar:false,
-            text: null
+            text: null,
+            btnLoading: false
         }
     },
     methods: {
@@ -108,8 +109,11 @@ export default {
             })
         },
         approveResult() {
+            this.btnLoading = true
+
             this.$http.get('admin/approveResults')
             .then(res => {
+                this.btnLoading = false
                 this.dialog = false,
                 this.isApproved = 1,
                 this.snackbar = true,
@@ -118,6 +122,7 @@ export default {
                 setTimeout(function() {this.snackbar = false}, 2500)
             })
             .catch(err => {
+                this.btnLoading = false
                 this.dialog = false
                 alert(err.response ? err.response.data.error : "Error processing request, please try again")
             })

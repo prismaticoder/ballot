@@ -89,7 +89,7 @@
           </p>
       </div>
       <div v-else class="row">
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -98,7 +98,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -107,7 +107,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -116,7 +116,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -125,7 +125,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -134,7 +134,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -160,7 +160,6 @@ export default {
     },
     data() {
         return {
-            otherColor: "white",
             setting: null,
             categories: null,
             levels: [],
@@ -210,7 +209,7 @@ export default {
                 })
             })
             .catch(err => {
-                console.log(err.response)
+                alert(err.response ? err.response.data.error : "There was an error loading this page, please try again")
             })
         },
         updateCategory(index,category) {
@@ -224,7 +223,7 @@ export default {
                 this.categories = this.categories.filter(category => category.id !== id)
             })
             .catch(err => {
-                console.log(err.response.data.error)
+                alert(err.response ? err.response.data.error : "There was an error processing your request, please try again")
             })
         },
         addCategory() {
@@ -266,7 +265,6 @@ export default {
         //Automatically set the end date to the start date on change
         setEndDate() {
             if (this.endDay < this.startDay) {
-                console.log("end")
                 this.endDay = this.startDay
             }
         },

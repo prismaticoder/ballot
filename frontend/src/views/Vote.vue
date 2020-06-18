@@ -29,8 +29,8 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                        <v-btn color="green darken-1" text @click="castVote()">Yes</v-btn>
+                        <v-btn :disabled="voteBtnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                        <v-btn :loading="voteBtnLoading" :disabled="voteBtnLoading" color="green darken-1" text @click="castVote()">Yes</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -52,13 +52,13 @@
             </v-dialog>
 
             <div class="col-md-2 col-5 mx-auto">
-                <v-btn :disabled="voteBtnLoading" block tile title="Back" @click="goBack()" :color="btnColor" class="mt-5 bg-white blueColor p-3">
+                <v-btn block tile title="Back" @click="goBack()" :color="btnColor" class="mt-5 bg-white blueColor p-3">
                     <v-icon small>
                         mdi-arrow-left
                     </v-icon> &nbsp;
                     GO BACK
                 </v-btn>            
-                <v-btn :loading="voteBtnLoading" :disabled="voteBtnLoading" block tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3">
+                <v-btn block tile title="Cast Vote" @click="dialog = true" :color="btnColor" class="mt-5 text-white p-3">
                     CAST VOTE &nbsp;
                     <v-icon small>
                         mdi-check

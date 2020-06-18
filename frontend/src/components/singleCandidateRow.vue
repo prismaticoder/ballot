@@ -31,8 +31,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                    <v-btn color="green darken-1" text @click.prevent="rejectCandidate()">Yes</v-btn>
+                    <v-btn :disabled="btnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                    <v-btn :loading="btnLoading" :disabled="btnLoading" color="green darken-1" text @click.prevent="rejectCandidate()">Yes</v-btn>
                 </v-card-actions>
             </v-card>
             <v-card v-else>
@@ -42,8 +42,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                    <v-btn color="green darken-1" text @click.prevent="approveCandidate()">Yes</v-btn>
+                    <v-btn :disabled="btnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                    <v-btn :loading="btnLoading" :disabled="btnLoading" color="green darken-1" text @click.prevent="approveCandidate()">Yes</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -58,19 +58,24 @@ export default {
     data() {
         return {
             dialog: false,
-            type: ''
+            type: '',
+            btnLoading: false,
         }
     },
     methods: {
         approveCandidate() {
+            this.btnLoading = true;
+
             this.$http.get(`admin/candidates/${this.candidate.id}/confirm`)
             .then(() => {
+                this.btnLoading = false
                 this.dialog = false;
                 this.type = ''
                 this.candidate.status = 'confirmed'
                 this.$emit('approveCandidate', this.candidate.id)
             })
             .catch(err => {
+                this.btnLoading = false
                 this.dialog = false;
                 this.type = '';
                 err.response ? alert(err.response.data.error) : alert("Error processing request, please try again");
@@ -78,14 +83,16 @@ export default {
             })
         },
         rejectCandidate() {
+            this.btnLoading = true
             this.$http.get(`admin/candidates/${this.candidate.id}/deny`)
-            .then(res => {
-                console.log(res.data)
+            .then(() => {
+                this.btnLoading = false
                 this.dialog = false;
                 this.type = ''
                 this.$emit('rejectCandidate', this.candidate.id)   
             })
             .catch(err => {
+                this.btnLoading = false;
                 err.response ? alert(err.response.data.error) : alert("Error processing request, please try again");
                 window.location.reload()
             })

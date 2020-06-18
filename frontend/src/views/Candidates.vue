@@ -4,7 +4,7 @@
       <h3 class="main-header mt-4" style="text-align: center;">{{appName}} ELECTION CANDIDATES</h3>
       <hr>
 
-      <div v-if="isLoaded">
+      <div v-if="isLoaded && categories.length > 0">
 
             <b-form-group class="mt-3 col-md-4 mx-auto" label-for="category">
                 <template v-slot:label>
@@ -23,6 +23,12 @@
             <SingleCategory class="justify-content-center" :category="category"></SingleCategory>
             <hr>
           </div>
+      </div>
+
+      <div v-else-if="isLoaded && categories.length == 0">
+          <p class="mt-5">
+              No categories have been added yet at this time. Do ensure to check back for more updates :)
+          </p>
       </div>
 
       <div v-else>

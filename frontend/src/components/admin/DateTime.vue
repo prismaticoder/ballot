@@ -10,8 +10,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="green darken-1" text @click="dialog = false">No</v-btn>
-                    <v-btn color="green darken-1" text @click="endElection()">Yes</v-btn>
+                    <v-btn :disabled="btnLoading" color="green darken-1" text @click="dialog = false">No</v-btn>
+                    <v-btn :loading="btnLoading" :disabled="btnLoading" color="green darken-1" text @click="endElection()">Yes</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -27,15 +27,15 @@
               {{formatDate(setting.endDate)}}
           </div>
           <div class="col-md-2"></div>
-          <v-btn rounded v-if="state !== 'voting'" v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-2">
+          <v-btn rounded v-if="state !== 'voting'" v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-3">
             CHANGE
           </v-btn>
           <div v-else class="row justify-content-center mx-auto">
-            <v-btn rounded :color="btnColor" class="mt-3 text-white col-md-2" @click="dialog = true">
+            <v-btn rounded :color="btnColor" class="mt-3 text-white col-md-3 col-12" @click="dialog = true">
               END ELECTION
             </v-btn>
             <div class="col-md-1"></div>
-            <v-btn rounded v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-2">
+            <v-btn rounded v-show="!changeDateForm" @click.prevent="changeDateForm = true" :color="btnColor" class="mt-3 text-white col-md-3 col-12">
               ELONGATE ELECTION
             </v-btn>
           </div>
@@ -158,7 +158,8 @@ export default {
         endTime: "",
         endPeriod: "",
         startPeriod: "",
-        loading: false
+        loading: false,
+        btnLoading: false
 
       }
     },
@@ -345,15 +346,18 @@ export default {
         }
       },
       endElection() {
+        this.btnLoading = true
         this.$http.patch('admin/settings?type=end')
         .then(res => {
           this.$emit('updateSetting', res.data.setting)
+          this.btnLoading = false
           this.dialog = false;
             return this.$store.dispatch('setState')
                   .catch(err => console.log(err))
         })
         .catch(err => {
           this.dialog = false;
+          this.btnLoading = false
           err.response ? alert(err.response.data.error) : alert("Error processing request, please try again")
         })
       }

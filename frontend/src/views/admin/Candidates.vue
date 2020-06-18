@@ -53,11 +53,11 @@
         </div>
         <div v-else-if="hasLoaded && candidates.length == 0">
             <p class="text-center">
-                There are no candidates in this category
+                No candidates available
             </p>
         </div>
         <div v-else class="row justify-content-center">
-            <div class="col-lg-4">
+            <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -66,7 +66,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -75,7 +75,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -84,7 +84,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -93,7 +93,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
@@ -102,7 +102,7 @@
                   <v-skeleton-loader class="col-4" type="avatar"></v-skeleton-loader>
               </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-4 mt-5">
               <v-skeleton-loader type="image" width="20rem"></v-skeleton-loader>
               <div class="row mx-auto">
                   <div class="col-2"></div>
