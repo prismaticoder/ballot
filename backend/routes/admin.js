@@ -782,7 +782,7 @@ router.post('/create', onlySuperAdmin, async (req, res) => {
     }
 })
 
-router.delete('/candidates', onlySuperAdmin, onlyPostVoting, async (req, res) => {
+router.delete('/candidates', onlySuperAdmin, exceptVoting, async (req, res) => {
     try {
         await Candidate.destroy()
 
