@@ -24,51 +24,57 @@ import store from '../store';
 
 Vue.use(VueRouter)
 
+const appName = process.env.VUE_APP_NAME;
+
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
     meta: {
+      title: `Ballot | ${appName}`,
       requiresCheck: true
     }
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  },
-  {
     path: '/candidates',
     name: 'all-candidates',
-    component: Candidates
+    component: Candidates,
+    meta: {
+      title: `Ballot | ${appName} - Candidates`
+    }
   },
   {
     path: '/candidates/apply',
     name: 'candidate-apply',
     component: CandidateApply,
     meta: {
+      title: `Ballot | ${appName} - Apply For Candidacy`,
       requiresCheck: true
     }
   },
   {
     path: '/candidates/application-check',
     name: 'candidate-app-check',
-    component: CandidateAppCheck
+    component: CandidateAppCheck,
+    meta: {
+      title: `Ballot | ${appName} - Check Application Status`,
+    }
   },
   {
     path: '/candidates/:id',
     name: 'single-candidate',
-    component: SingleCandidate
+    component: SingleCandidate,
+    meta: {
+      title: `Ballot | ${appName} - View Candidate`,
+    }
   },
   {
     path: '/accreditation',
     name: 'accreditation',
     component: Accreditation,
     meta: {
+      title: `Ballot | ${appName} - Voter Accreditation`,
       requiresCheck: true,
       onlyState: 'prevoting'
     }
@@ -77,17 +83,24 @@ const routes = [
     path: '/confirm_accreditation',
     name: 'confirm-accreditation',
     component: ConfirmAccreditation,
+    meta: {
+      title: `Ballot | ${appName} - Confirmation`
+    }
   },
   {
     path: '/reset_code',
     name: 'reset_code',
     component: ConfirmAccreditation,
+    meta: {
+      title: `Ballot | ${appName} - Confirmation`
+    }
   },
   {
     path: '/stats',
     name: 'stats',
     component: Stats,
     meta: {
+      title: `Ballot | ${appName} - Realtime Voter Statistics`,
       requiresCheck: true,
       onlyState: 'voting'
     }
@@ -97,6 +110,7 @@ const routes = [
     name: 'vote',
     component: Vote,
     meta: {
+      title: `Ballot | ${appName} - Vote`,
       requiresCheck: true,
       onlyState: 'voting'
     }
@@ -106,6 +120,7 @@ const routes = [
     name: 'results',
     component: Result,
     meta: {
+      title: `Ballot | ${appName} - View Results`,
       requiresCheck: true,
       onlyState: 'postvoting'
     }
@@ -114,12 +129,16 @@ const routes = [
     path: '/command/login',
     name: 'admin-login',
     component: AdminLogin,
+    meta: {
+      title: `Ballot | ${appName} - Command Login`
+    }
   },
   {
     path: '/command',
     name: 'admin-home',
     component: AdminHome,
     meta: {
+      title: `Ballot | ${appName} - Command Post Home`,
       requireAuth: true,
       requiresCheck: true
     }
@@ -129,6 +148,7 @@ const routes = [
     name: 'voters',
     component: Voters,
     meta: {
+      title: `Ballot | ${appName} - Command Post | Download Voter List`,
       requireAuth: true
     }
   },
@@ -137,6 +157,7 @@ const routes = [
     name: 'candidates',
     component: AdminCandidates,
     meta: {
+      title: `Ballot | ${appName} - Command Post | Review Candidate Applications`,
       requireAuth: true
     }
   },
@@ -153,6 +174,7 @@ const routes = [
     name: 'admin-settings',
     component: Settings,
     meta: {
+      title: `Ballot | ${appName} - Command Post | Election Settings`,
       requireAuth: true,
       requiresCheck: true
     }
@@ -162,6 +184,7 @@ const routes = [
     name: 'admin-accreditation',
     component: AdminAccreditation,
     meta: {
+      title: `Ballot | ${appName} - Command Post | Accredit Voters`,
       requireAuth: true,
       requiresCheck: true
     }
@@ -171,6 +194,7 @@ const routes = [
     name: 'admin-results',
     component: AdminResult,
     meta: {
+      title: `Ballot | ${appName} - Command Post | View And Approve Election Results`,
       requireAuth: true,
       requiresCheck: true
     }
@@ -188,7 +212,7 @@ const routes = [
     name: '404',
     component: PageNotFound,
     meta: {
-      title: "Ballot | Page Not Found"
+      title: `Ballot | ${appName} - Page Not Found`
     }
   },
   {
@@ -196,7 +220,7 @@ const routes = [
     name: 'PageNotFound',
     component: PageNotFound,
     meta: {
-      title: "Ballot | Page Not Found"
+      title: `Ballot | ${appName} - Page Not Found`
     }
   },
 
@@ -209,6 +233,10 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta && r.meta.title);
+
+  if(nearestWithTitle) document.title = nearestWithTitle.meta.title;
+
   if(to.matched.some(record => record.meta.requiresCheck)) {
     store.dispatch('setState')
     .then(res => {
