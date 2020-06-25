@@ -81,7 +81,7 @@ const routes = [
   },
   {
     path: '/confirm_accreditation',
-    name: 'confirm-accreditation',
+    name: 'confirm_accreditation',
     component: ConfirmAccreditation,
     meta: {
       title: `Ballot | ${appName} - Confirmation`
