@@ -6,8 +6,10 @@ var { Category,Candidate,Voter,Vote,Admin } = models;
 var Config = models.Setting
 var bcrypt = require('bcryptjs');
 const Sequelize = require('sequelize')
+var jwt = require('jsonwebtoken');
 var { Op } = Sequelize;
 var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting,exceptVoting,onlySuperAdmin } = require('../controllers/middleware')
+var { sendConfirmationMail } = require('../controllers/mailController')
 var { sendError, sendRes } = require('../controllers/res')
 
 //Login middleware needed to access this section
@@ -611,14 +613,14 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
                   //Here, we want to generate the voter code, send a mail to the personal email address of the student and also to the student email address to confirm if he/she did approve it
                   //Link sent to student mail should include a link to invalidate the code generated if not.
 
-                  //generate the voter code
                   let nanoid = customAlphabet('123456789abcdefghjkmnpqrstuvwxyz', 6)
   
                   let voterCode = nanoid()
   
-                  console.log(voterCode)
-                  //This is where a mail is sent to the student and then to the email address that will be provided
+
+                  //Send a security alert if the student already has a voter code
                   if (student.voterCode) {
+                      console.log("yeah")
                       let previousCode = student.voterCode;
 
                       let retrieveToken = jwt.sign(
@@ -626,37 +628,46 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
                         process.env.TOKEN_SECRET_KEY
                         )
 
-                      student.voterCode = voterCode
-                      await student.save()
+                    res.render('reset-email', { 
+                        layout: null, 
+                        student, 
+                        url: `${process.env.APP_URL}/reset_code?code=${retrieveToken}`
+                        }, async function(err,html) {
+                            try {
+                                if (err) console.log("Internal Server Error")
 
-                      let voteToken = jwt.sign(
-                        {voterCode: student.voterCode, voterId: student.id, matric: student.matric},
-                        process.env.TOKEN_SECRET_KEY
-                        )
+                                await sendConfirmationMail(student,html,"Security Alert")
+                            } catch (error) {
+                                return sendError(res,500)
+                            }
+                    })
 
-                      //Now send a mail to the mail provided with the votetoken
-                      //send a mail to the user's student mail to inquire if he requested, and with the mail send a link for retrieval of former code with the retrieveToken
-                    // ...
-                    // if the student already has a voterCode, store the voter code in the payload of the confirm to be sent to his student mail so he can restore it if it was wrongly changed
                   }
 
-                  else {
-                    student.voterCode = voterCode
-                    await student.save()
+                    let voteToken = jwt.sign({voterCode, voterId: student.id, matric: student.matric},process.env.TOKEN_SECRET_KEY)
+                    let sendTo = {fullName: student.fullName, prospectiveMail: mail}
+                    
+                    res.render('confirmation-email', { 
+                        layout: null, 
+                        student,
+                        voterCode, 
+                        url: `${process.env.APP_URL}/confirm_accreditation?code=${voteToken}`
+                        }, async function(err,html) {
+                            try {
+                                if (err) throw "Internal Server Error"
 
-                    let voteToken = jwt.sign(
-                        {voterCode: student.voterCode, voterId: student.id, matric: student.matric},
-                        process.env.TOKEN_SECRET_KEY
-                        )
+                                await sendConfirmationMail(sendTo,html,"Confirm Accreditation")
 
-                    //now send a mail to the student with the vote token and also to his student mail with his vote token, he doesn't need to retrieve since he didn't have any before
-                    // ...
-                  }
-                  //await sendMail(mail)
-                  //await sendMail(student.prospectiveMail)
+                                student.voterCode = voterCode
+                                await student.save()
+                            } catch (error) {
+                                return sendError(res,500)
+                            }
+                    })    
+
   
-                  sendRes(res,{student})
-                }
+                    sendRes(res,{student})
+            }
   
               else {
                 sendError(res,403,"This student has already confirmed accreditation and has been given a voter's number")
