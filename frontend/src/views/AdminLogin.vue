@@ -26,7 +26,7 @@
 
 
         <div class="d-flex justify-content-center mt-5">
-                <v-btn type="submit" :loading="loading" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-5 col-xs-12 col-sm-12">Submit</v-btn>
+                <v-btn type="submit" :loading="loading" :disabled="loading" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-5 col-xs-12 col-sm-12">Submit</v-btn>
         </div>
 
     </form>

@@ -34,7 +34,7 @@
           <input required type="text" id="matric" minlength="6" maxlength="6" v-model="matric" class="form-control" placeholder="Enter your matric number here...">
         </div>
         <div class="mt-5">
-          <v-btn type="submit" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Verify Me!</v-btn>
+          <v-btn type="submit" :disabled="dialog" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Verify Me!</v-btn>
         </div>
       </form>
     </div>

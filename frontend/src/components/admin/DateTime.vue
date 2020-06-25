@@ -85,7 +85,7 @@
           </div>
 
           <div class="col-12 mt-2">
-              <v-btn :loading="loading" :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-4" @click="createSetting()">SUBMIT</v-btn>
+              <v-btn :loading="loading" :disabled="loading" :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-4" @click="createSetting()">SUBMIT</v-btn>
           </div>
       </div>
 
@@ -134,7 +134,7 @@
           </div>
 
           <div class="col-12 mt-2">
-              <v-btn :loading="loading" :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-7" @click="updateSetting()"><span v-if="state !== 'voting'">CHANGE</span><span v-else>ELONGATE</span></v-btn>
+              <v-btn :loading="loading" :disabled="loading" :color="btnColor" style="color: floralwhite" class="btn btn-block myBtn col-7" @click="updateSetting()"><span v-if="state !== 'voting'">CHANGE</span><span v-else>ELONGATE</span></v-btn>
           </div>
       </div>
   </div>

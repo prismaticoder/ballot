@@ -27,7 +27,7 @@
           <input required type="email" id="mail" v-model="mail" class="form-control" placeholder="Enter the personal email address here...">
         </div>
         <div class="mt-5">
-          <v-btn type="submit" :loading="loading" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Accredit Student</v-btn>
+          <v-btn type="submit" :loading="loading" :disabled="loading" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Accredit Student</v-btn>
         </div>
       </form>
     </div>

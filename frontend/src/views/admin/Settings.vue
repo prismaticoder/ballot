@@ -65,7 +65,7 @@
             </b-form-group>
 
             <div class="mt-3">
-                <v-btn type="submit" :loading="loading" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Submit</v-btn>
+                <v-btn type="submit" :loading="loading" :disabled="loading" :block="true" :color="btnColor" style="color: floralwhite" class="text-capitalize btn btn-block myBtn col-md-6">Submit</v-btn>
             </div>
         </b-form>
         <hr>
