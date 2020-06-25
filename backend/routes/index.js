@@ -133,7 +133,9 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
               }, async function(err,html) {
                   try {
                     if (err) throw "Internal Server Error"
-                    await sendConfirmationMail(student,html)
+                    await sendConfirmationMail(student,html,"Confirm Accreditation")
+                    student.voterCode = voterCode
+                    await student.save()
                     sendRes(res,{student}) 
                   } catch (error) {
                     return sendError(res,500)
@@ -286,24 +288,32 @@ router.get('/reset_voter_code', async (req, res) => {
             })
 
             if (voter) {
-              if (voter.voterCode) {
+              if (!voter.accreditedAt) {
+                if (voter.voterCode) {
 
-                if (voter.voterCode !== voterCode) {
-                  voter.voterCode = voterCode;
-                  await voter.save()
-
-                  return sendRes(res, {message: "Voter code restored successfully"})
+                  if (voter.voterCode !== voterCode) {
+                    voter.voterCode = voterCode;
+                    voter.accreditedAt = new Date()
+                    await voter.save()
+  
+                    return sendRes(res, {message: "Voter code restored successfully"})
+                  }
+  
+                  else {
+                    return sendError(res,403,"Voter code already restored")
+                  }
+  
                 }
-
+  
                 else {
-                  return sendError(res,403,"Voter code already restored")
+                  return sendError(res,403,"Error: Credentials do not match")
                 }
-
               }
-
+              
               else {
-                return sendError(res,403,"Error: Credentials do not match")
+                return sendError(res,403,"Voter code can't be reset for user already accredited")
               }
+              
             }
 
             else {
