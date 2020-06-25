@@ -4,7 +4,7 @@
 
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Confirm Accreditation</title>
+  <title>Security Alert</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style type="text/css">
   /**
@@ -106,7 +106,7 @@
 
   <!-- start preheader -->
   <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    <%= student.fullName %>, confirm your accreditation for the upcoming elections...
+    Security Alert
   </div>
   <!-- end preheader -->
 
@@ -150,7 +150,7 @@
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
-              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Confirm Accreditation</h1>
+              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Security Alert</h1>
             </td>
           </tr>
         </table>
@@ -177,9 +177,7 @@
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
             Dear <b><%= student.fullName %></b>,
-              <p style="margin: 0;">Your request for accreditation in the upcoming elections was successful.<br>
-                Your voter's number is <b><%= voterCode %></b>. Ensure you keep this code securely as you will be using it in the upcoming elections<br>  
-                Kindly tap the button below to confirm that you have been accredited. Please note that if you do not do so, your accreditation will be on a pending status and you will not be allowed to vote in the coming elections.</p>
+              <p style="margin: 0;">Your voter's number was recently changed by administrative privileges. You are getting this email to confirm that the change was requested by you. In the event that this is not the case, kindly click the button below to reset your voter's number to it's previous value.</p>
             </td>
           </tr>
           <!-- end copy -->
@@ -193,7 +191,7 @@
                     <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                          <a href="<%= url %>" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; background-color: #162059; border-radius: 6px;">Confirm Accreditation</a>
+                          <a href="<%= url %>" target="_blank" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; background-color: #162059; border-radius: 6px;">Reset Voter Number</a>
                         </td>
                       </tr>
                     </table>
