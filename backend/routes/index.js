@@ -3,6 +3,7 @@ var router = express.Router();
 var { customAlphabet } = require('nanoid')
 var models = require('../models');
 var Config = models.Setting;
+var nodemailer = require('nodemailer')
 var { Admin,Category,Candidate,Voter,Vote } = models
 const Sequelize = require('sequelize')
 var { Op } = Sequelize;
@@ -10,6 +11,7 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var { sendRes,sendError } = require('../controllers/res')
 var { checkState,onlyPreVoting,onlyVoting,onlyPostVoting } = require('../controllers/middleware')
+var { sendConfirmationMail } = require('../controllers/mailController')
 var dotenv = require('dotenv');
 dotenv.config();
 
@@ -113,20 +115,30 @@ router.post('/accredit', onlyPreVoting, async (req, res) => {
 
               let voterCode = nanoid()
 
-              console.log(voterCode)
-              student.voterCode = voterCode;
+              // student.voterCode = voterCode;
 
-              await student.save()
+              // await student.save()
 
               //create a never expiring jwt
               let voteToken = jwt.sign(
-                {voterCode: student.voterCode, voterId: student.id, matric: student.matric},
+                {voterCode, voterId: student.id, matric: student.matric},
                 process.env.TOKEN_SECRET_KEY
                 )
-              //This is where a mail is sent to the student
-              //await sendMail(student.prospectiveMail, voteToken)
 
-              sendRes(res,{student})
+              res.render('confirmation-email', { 
+                layout: null, 
+                student,
+                voterCode, 
+                url: `${process.env.APP_URL}/confirm_accreditation?code=${voteToken}`
+              }, async function(err,html) {
+                  try {
+                    if (err) throw "Internal Server Error"
+                    await sendConfirmationMail(student,html)
+                    sendRes(res,{student}) 
+                  } catch (error) {
+                    return sendError(res,500)
+                  }
+              })
             }
 
             else {
