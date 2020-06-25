@@ -18,13 +18,13 @@ var transporter = nodemailer.createTransport({
   debug: true
 })
 
-exports.sendConfirmationMail = async (to,html) => {
+exports.sendConfirmationMail = async (to,html,subject) => {
     try {
 
           await transporter.sendMail({
             from,
             to: `${to.fullName} <${to.prospectiveMail}>`,
-            subject: "Confirm Accreditation",
+            subject,
             html
         })
 
