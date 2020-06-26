@@ -1,4 +1,5 @@
 var nodemailer = require('nodemailer')
+var htmlToText = require('nodemailer-html-to-text').htmlToText;
 const from = `Ballot | ${process.env.APP_NAME.toUpperCase()} [Do Not Reply] <${process.env.EMAIL}>`
 const user = process.env.EMAIL_USER
 const pass = process.env.EMAIL_PASS
@@ -18,6 +19,8 @@ var transporter = nodemailer.createTransport({
   debug: true
 })
 
+transporter.use('compile', htmlToText());
+
 exports.sendConfirmationMail = async (to,html,subject) => {
     try {
 
@@ -25,7 +28,7 @@ exports.sendConfirmationMail = async (to,html,subject) => {
             from,
             to: `${to.fullName} <${to.prospectiveMail}>`,
             subject,
-            html
+            html,
         })
 
     } catch (error) {
